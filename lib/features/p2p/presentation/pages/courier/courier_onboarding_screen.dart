@@ -79,13 +79,15 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
     };
 
     try {
-      await GetIt.instance<P2pCourierRepository>().applyAsCourier(payload);
+      final repo = GetIt.instance<P2pCourierRepository>();
+      await repo.applyAsCourier(payload);
+      await repo.submitForReview();
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Profile created! Upload your ID or passport to complete KYC.',
+            'Application submitted! Our team will review your profile shortly.',
           ),
           duration: Duration(seconds: 5),
           backgroundColor: Colors.green,

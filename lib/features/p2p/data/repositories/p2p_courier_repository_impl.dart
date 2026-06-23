@@ -39,6 +39,19 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
   }
 
   @override
+  Future<P2pCourierProfile> submitForReview() async {
+    try {
+      final response =
+          await _client.dio.post(ApiConstants.p2pCourierMeSubmit);
+      return P2pCourierProfile.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
   Future<P2pCourierProfile> updateProfile(
       Map<String, dynamic> updates) async {
     try {

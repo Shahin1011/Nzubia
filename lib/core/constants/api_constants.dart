@@ -50,6 +50,7 @@ class ApiConstants {
   // Couriers
   static const String p2pCouriers = '/p2p/couriers';
   static const String p2pCourierMe = '/p2p/couriers/me';
+  static const String p2pCourierMeSubmit = '/p2p/couriers/me/submit';
   static const String p2pCourierMeAvailability = '/p2p/couriers/me/availability';
   static const String p2pCourierMeStatus = '/p2p/couriers/me/status';
   static String p2pCourierById(String id) => '/p2p/couriers/$id';

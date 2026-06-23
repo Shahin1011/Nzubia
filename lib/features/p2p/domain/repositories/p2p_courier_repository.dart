@@ -12,6 +12,10 @@ abstract class P2pCourierRepository {
   /// Submits the courier application (creates the DRAFT profile).
   Future<P2pCourierProfile> applyAsCourier(Map<String, dynamic> applicationData);
 
+  /// Transitions the courier profile from DRAFT → PENDING_REVIEW so the admin
+  /// can see it in the verification queue.
+  Future<P2pCourierProfile> submitForReview();
+
   /// Updates the courier profile (radius, accepted categories, home location).
   Future<P2pCourierProfile> updateProfile(Map<String, dynamic> updates);
 
