@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/enums/p2p_enums.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
+import 'package:customer_nzubia_global/features/p2p/presentation/bloc/onboarding/p2p_onboarding_bloc.dart';
 
 /// Single-screen courier profile creation.
 ///
@@ -28,7 +29,6 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
 
   final List<ItemCategory> _selectedCategories = [];
   bool _checking = true;
-  bool _submitting = false;
 
   @override
   void initState() {
@@ -46,6 +46,8 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
         return;
       }
     } catch (_) {}
+    // Reset onboarding bloc so collected data from a prior attempt is cleared.
+    GetIt.instance<P2pOnboardingBloc>().add(const P2pOnboardingStarted());
     if (mounted) setState(() => _checking = false);
   }
 
@@ -66,9 +68,10 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
       return;
     }
 
-    setState(() => _submitting = true);
-
-    final payload = <String, dynamic>{
+    // Store profile preferences in the onboarding bloc and continue to the
+    // identity step. The profile is created + submitted at the end of the
+    // multi-step flow (CourierReviewScreen → P2pOnboardingConfirmSubmit).
+    final data = <String, dynamic>{
       'acceptedCategories':
           _selectedCategories.map((c) => c.toJson()).toList(),
       if (_radiusController.text.trim().isNotEmpty)
@@ -78,34 +81,10 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
         'reputationSummary': _bioController.text.trim(),
     };
 
-    try {
-      final repo = GetIt.instance<P2pCourierRepository>();
-      await repo.applyAsCourier(payload);
-      await repo.submitForReview();
-      if (!mounted) return;
+    GetIt.instance<P2pOnboardingBloc>()
+        .add(P2pOnboardingProfileSubmitted(data));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Application submitted! Our team will review your profile shortly.',
-          ),
-          duration: Duration(seconds: 5),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      context.pushReplacement('/p2p/courier/dashboard');
-    } catch (e) {
-      if (mounted) {
-        setState(() => _submitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: AppTheme.errorColor,
-          ),
-        );
-      }
-    }
+    context.push('/p2p/courier/identity');
   }
 
   @override
@@ -381,26 +360,17 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _submitting ? null : _submit,
+                  onPressed: _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppTheme.primaryColor.withAlpha(60),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: _submitting
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2.5),
-                        )
-                      : const Text(
-                          'Create Courier Profile',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
+                  child: const Text(
+                    'Continue',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
 

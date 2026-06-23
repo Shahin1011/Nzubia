@@ -16,6 +16,15 @@ abstract class P2pCourierRepository {
   /// can see it in the verification queue.
   Future<P2pCourierProfile> submitForReview();
 
+  /// Uploads a single file (multipart/form-data) and returns the GCS URL.
+  Future<String> uploadDocument(String localPath, String folder);
+
+  /// Saves KYC identity data and document URLs to the courier profile.
+  Future<void> submitKyc({
+    required Map<String, dynamic> identity,
+    required List<Map<String, dynamic>> documentUrls,
+  });
+
   /// Updates the courier profile (radius, accepted categories, home location).
   Future<P2pCourierProfile> updateProfile(Map<String, dynamic> updates);
 

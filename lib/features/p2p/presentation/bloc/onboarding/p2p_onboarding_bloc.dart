@@ -40,6 +40,7 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
         _routeRepo = routeRepository,
         super(const P2pOnboardingState()) {
     on<P2pOnboardingStarted>(_onStarted);
+    on<P2pOnboardingProfileSubmitted>(_onProfileSubmitted);
     on<P2pOnboardingIdentitySubmitted>(_onIdentitySubmitted);
     on<P2pOnboardingDocumentsSubmitted>(_onDocumentsSubmitted);
     on<P2pOnboardingRouteSubmitted>(_onRouteSubmitted);
@@ -53,6 +54,19 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
       status: OnboardingStatus.step,
       stepIndex: 0,
       collectedData: {},
+    ));
+  }
+
+  void _onProfileSubmitted(
+    P2pOnboardingProfileSubmitted event,
+    Emitter<P2pOnboardingState> emit,
+  ) {
+    final merged = Map<String, dynamic>.from(state.collectedData)
+      ..addAll(event.data);
+    emit(state.copyWith(
+      status: OnboardingStatus.step,
+      stepIndex: 1,
+      collectedData: merged,
     ));
   }
 
@@ -114,12 +128,27 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
   ) async {
     emit(state.copyWith(status: OnboardingStatus.submitting));
     try {
+      // 1. Upload document images to GCS and collect their URLs.
+      final docUrls = await _uploadDocuments(state.collectedData);
+
+      // 2. Create the courier profile with service preferences.
       final profilePayload = _extractCourierData(state.collectedData);
       final profile = await _courierRepo.applyAsCourier(profilePayload);
 
-      // If route data was collected (optional during onboarding), also create
-      // the initial route in DRAFT. Failure here is non-fatal so the courier
-      // is still onboarded — they can publish a route from the dashboard.
+      // 3. Save KYC identity data and the uploaded document URLs.
+      final identity = _extractIdentityData(state.collectedData);
+      if (identity.isNotEmpty || docUrls.isNotEmpty) {
+        try {
+          await _courierRepo.submitKyc(
+            identity: identity,
+            documentUrls: docUrls,
+          );
+        } catch (_) {
+          // KYC save failure is non-fatal — the courier can re-upload later.
+        }
+      }
+
+      // 4. Optionally create the initial route in DRAFT.
       final routeData = _extractRouteData(state.collectedData);
       if (routeData.isNotEmpty) {
         try {
@@ -128,6 +157,10 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
           // intentionally swallowed
         }
       }
+
+      // 5. Transition the profile to PENDING_REVIEW so it appears in the
+      //    admin verification queue.
+      await _courierRepo.submitForReview();
 
       emit(state.copyWith(
         status: OnboardingStatus.success,
@@ -140,6 +173,45 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
         stepIndex: 5,
       ));
     }
+  }
+
+  /// Uploads passport, visa, and itinerary images to GCS and returns the
+  /// list of `{type, url, uploaded_at}` maps ready for the KYC endpoint.
+  Future<List<Map<String, dynamic>>> _uploadDocuments(
+      Map<String, dynamic> data) async {
+    final results = <Map<String, dynamic>>[];
+    final uploads = <String, String>{
+      'PASSPORT': data['passport_image_path'] as String? ?? '',
+      'VISA': data['visa_image_path'] as String? ?? '',
+      'ITINERARY': data['itinerary_image_path'] as String? ?? '',
+    };
+
+    for (final entry in uploads.entries) {
+      if (entry.value.isEmpty) continue;
+      try {
+        final url = await _courierRepo.uploadDocument(
+            entry.value, 'p2p-courier-kyc');
+        results.add({
+          'type': entry.key,
+          'url': url,
+          'uploaded_at': DateTime.now().toIso8601String(),
+        });
+      } catch (_) {
+        // Skip failed uploads — admin will see which docs are missing.
+      }
+    }
+    return results;
+  }
+
+  Map<String, dynamic> _extractIdentityData(Map<String, dynamic> data) {
+    const keys = [
+      'full_name', 'first_name', 'last_name', 'dob',
+      'nationality', 'address_line1', 'id_type', 'id_number',
+    ];
+    return {
+      for (final k in keys)
+        if (data[k] != null) k: data[k],
+    };
   }
 
   void _onReset(P2pOnboardingReset event, Emitter<P2pOnboardingState> emit) {

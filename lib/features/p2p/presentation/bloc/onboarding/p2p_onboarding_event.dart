@@ -9,6 +9,13 @@ class P2pOnboardingStarted extends P2pOnboardingEvent {
   const P2pOnboardingStarted();
 }
 
+/// Carries the courier profile form data from the onboarding screen
+/// (service radius, accepted categories, bio). Advances to the identity step.
+class P2pOnboardingProfileSubmitted extends P2pOnboardingEvent {
+  final Map<String, dynamic> data;
+  const P2pOnboardingProfileSubmitted(this.data);
+}
+
 /// Carries identity form data (legal name, DOB, nationality, address, ID type).
 class P2pOnboardingIdentitySubmitted extends P2pOnboardingEvent {
   final Map<String, dynamic> data;

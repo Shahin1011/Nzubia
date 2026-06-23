@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
@@ -46,6 +47,36 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
       return P2pCourierProfile.fromJson(
         response.data as Map<String, dynamic>,
       );
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
+  Future<String> uploadDocument(String localPath, String folder) async {
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(localPath,
+            filename: File(localPath).uri.pathSegments.last),
+        'folder': folder,
+      });
+      final response = await _client.dio.post('/files/upload', data: formData);
+      return (response.data as Map<String, dynamic>)['url'] as String;
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
+  Future<void> submitKyc({
+    required Map<String, dynamic> identity,
+    required List<Map<String, dynamic>> documentUrls,
+  }) async {
+    try {
+      await _client.dio.patch(ApiConstants.p2pCourierMeKyc, data: {
+        'identity': identity,
+        'document_urls': documentUrls,
+      });
     } on DioException catch (e) {
       _handleDioError(e);
     }
