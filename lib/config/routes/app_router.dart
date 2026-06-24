@@ -18,6 +18,7 @@ import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/c
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/courier_in_transit_screen.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/couriers_list_screen.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/courier_profile_screen.dart';
+import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/courier_payout_screen.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/shipment/p2p_create_shipment_screen.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/shipment/p2p_shipment_detail_screen.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/pages/shipment/p2p_my_shipments_screen.dart';
@@ -199,6 +200,11 @@ class AppRouter {
         path: '/p2p/courier/requests',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CourierRequestsScreen(),
+      ),
+      GoRoute(
+        path: '/p2p/courier/payout',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const CourierPayoutScreen(),
       ),
       GoRoute(
         path: '/p2p/courier/shipment/:id/pickup',

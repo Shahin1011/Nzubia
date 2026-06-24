@@ -54,6 +54,9 @@ class ApiConstants {
   static const String p2pCourierMeKyc = '/p2p/couriers/me/kyc';
   static const String p2pCourierMeAvailability = '/p2p/couriers/me/availability';
   static const String p2pCourierMeStatus = '/p2p/couriers/me/status';
+  static const String p2pCourierMeStripeConnect = '/p2p/couriers/me/stripe/connect';
+  static const String p2pCourierMeStripeStatus = '/p2p/couriers/me/stripe/status';
+  static const String p2pCourierMeStripeDashboard = '/p2p/couriers/me/stripe/dashboard-link';
   static String p2pCourierById(String id) => '/p2p/couriers/$id';
   static String p2pCourierReputation(String id) => '/p2p/couriers/$id/reputation';
 

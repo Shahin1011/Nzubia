@@ -62,4 +62,55 @@ abstract class P2pCourierRepository {
     String requestId, {
     String? reason,
   });
+
+  // ── Stripe Connect ──────────────────────────────────────────────────────────
+
+  /// Creates (or reuses) a Stripe Express account for this courier and returns
+  /// the `stripeConnectId` and a one-time `onboardingUrl` to open in a browser.
+  Future<P2pStripeConnectResult> initiateStripeConnect();
+
+  /// Returns the current Stripe Connect onboarding state.
+  Future<P2pStripeConnectStatus> getStripeConnectStatus();
+
+  /// Returns a short-lived Stripe Express Dashboard URL.
+  Future<String> getStripeDashboardLink();
+}
+
+class P2pStripeConnectResult {
+  final String stripeConnectId;
+  final String onboardingUrl;
+  const P2pStripeConnectResult({required this.stripeConnectId, required this.onboardingUrl});
+
+  factory P2pStripeConnectResult.fromJson(Map<String, dynamic> json) {
+    return P2pStripeConnectResult(
+      stripeConnectId: json['stripeConnectId'] as String,
+      onboardingUrl: json['onboardingUrl'] as String,
+    );
+  }
+}
+
+class P2pStripeConnectStatus {
+  final bool connected;
+  final bool payoutReady;
+  final bool? detailsSubmitted;
+  final bool? chargesEnabled;
+  final bool? payoutsEnabled;
+
+  const P2pStripeConnectStatus({
+    required this.connected,
+    required this.payoutReady,
+    this.detailsSubmitted,
+    this.chargesEnabled,
+    this.payoutsEnabled,
+  });
+
+  factory P2pStripeConnectStatus.fromJson(Map<String, dynamic> json) {
+    return P2pStripeConnectStatus(
+      connected: json['connected'] as bool? ?? false,
+      payoutReady: json['payoutReady'] as bool? ?? false,
+      detailsSubmitted: json['detailsSubmitted'] as bool?,
+      chargesEnabled: json['chargesEnabled'] as bool?,
+      payoutsEnabled: json['payoutsEnabled'] as bool?,
+    );
+  }
 }

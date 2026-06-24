@@ -232,6 +232,37 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
     }
   }
 
+  @override
+  Future<P2pStripeConnectResult> initiateStripeConnect() async {
+    try {
+      final response = await _client.dio.post(ApiConstants.p2pCourierMeStripeConnect);
+      return P2pStripeConnectResult.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
+  Future<P2pStripeConnectStatus> getStripeConnectStatus() async {
+    try {
+      final response = await _client.dio.get(ApiConstants.p2pCourierMeStripeStatus);
+      return P2pStripeConnectStatus.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
+  Future<String> getStripeDashboardLink() async {
+    try {
+      final response = await _client.dio.get(ApiConstants.p2pCourierMeStripeDashboard);
+      final body = response.data as Map<String, dynamic>;
+      return body['url'] as String;
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
   Never _handleDioError(DioException e) {
     final code = e.response?.statusCode ?? 0;
     final raw = e.response?.data;

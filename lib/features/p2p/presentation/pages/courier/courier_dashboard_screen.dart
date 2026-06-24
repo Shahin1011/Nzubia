@@ -233,6 +233,11 @@ class _DashboardView extends StatelessWidget {
                       // Active shipments assigned to this courier
                       _ActiveShipmentsSection(
                           shipments: state.activeShipments),
+
+                      const SizedBox(height: 16),
+                      // Payout settings — always visible so couriers can
+                      // connect their bank account at any verification stage.
+                      _PayoutSettingsTile(payoutReady: profile.payoutReady),
                     ],
                   ),
                 );
@@ -1556,5 +1561,66 @@ class _ActiveShipmentTile extends StatelessWidget {
       default:
         return (Colors.grey[600]!, s.label);
     }
+  }
+}
+
+// ─── Payout settings tile ─────────────────────────────────────────────────────
+
+class _PayoutSettingsTile extends StatelessWidget {
+  final bool payoutReady;
+  const _PayoutSettingsTile({required this.payoutReady});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () => context.push('/p2p/courier/payout'),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.4)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: payoutReady
+                    ? Colors.green.withOpacity(0.12)
+                    : Colors.orange.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                payoutReady ? Icons.account_balance : Icons.account_balance_outlined,
+                color: payoutReady ? Colors.green[700] : Colors.orange[700],
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Payout Settings',
+                    style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    payoutReady ? 'Bank account connected' : 'Connect your bank to receive payouts',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: payoutReady ? Colors.green[700] : Colors.orange[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 20),
+          ],
+        ),
+      ),
+    );
   }
 }
