@@ -149,7 +149,14 @@ class _DashboardView extends StatelessWidget {
                       // rejects route creation for any state other than ACTIVE).
                       if (!canPostRoutes)
                         _VerificationStatusBanner(
-                            verificationState: profile.verificationState)
+                          verificationState: profile.verificationState,
+                          onSubmitForReview: profile.verificationState ==
+                                  CourierVerificationState.draft
+                              ? () => context
+                                  .read<CourierDashboardBloc>()
+                                  .add(const CourierDashboardSubmitForReviewRequested())
+                              : null,
+                        )
                       else if (state.activeRoute == null)
                         SizedBox(
                           width: double.infinity,
@@ -916,8 +923,12 @@ class _RequestTileState extends State<_RequestTile> {
 
 class _VerificationStatusBanner extends StatelessWidget {
   final CourierVerificationState verificationState;
+  final VoidCallback? onSubmitForReview;
 
-  const _VerificationStatusBanner({required this.verificationState});
+  const _VerificationStatusBanner({
+    required this.verificationState,
+    this.onSubmitForReview,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -955,6 +966,27 @@ class _VerificationStatusBanner extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
+                if (onSubmitForReview != null) ...[
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: onSubmitForReview,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Submit for Review',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

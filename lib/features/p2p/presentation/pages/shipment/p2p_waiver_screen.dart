@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
+import 'package:customer_nzubia_global/features/p2p/data/services/p2p_payment_tracker.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_waiver.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_compliance_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_shipment_repository.dart';
@@ -25,6 +26,27 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
     super.initState();
     _previewFuture = GetIt.instance<P2pComplianceRepository>()
         .previewWaiver(widget.shipmentId);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _enforcePaymentGate());
+  }
+
+  void _enforcePaymentGate() {
+    if (!mounted) return;
+    // If a payment is still pending (not yet confirmed by the payment sheet),
+    // redirect back to the payment screen rather than letting the user sign the
+    // waiver and call reserve — the backend will reject it, but we can surface
+    // a better UX here first.
+    if (!P2pPaymentTracker.hasCompletedPayment(widget.shipmentId) &&
+        P2pPaymentTracker.hasPaymentPending(widget.shipmentId)) {
+      final secret =
+          P2pPaymentTracker.getPendingClientSecret(widget.shipmentId);
+      final amount = P2pPaymentTracker.getPendingAmount(widget.shipmentId);
+      if (secret != null && amount != null) {
+        context.pushReplacement(
+          '/p2p/shipment/${widget.shipmentId}/payment',
+          extra: {'clientSecret': secret, 'amountUsd': amount},
+        );
+      }
+    }
   }
 
   bool _allChecked(P2pWaiverPreview preview) =>

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_courier_profile.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_route_repository.dart';
+import 'package:customer_nzubia_global/features/p2p/data/exceptions/p2p_exception.dart';
 
 part 'p2p_onboarding_event.dart';
 part 'p2p_onboarding_state.dart';
@@ -132,8 +133,22 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
       final docUrls = await _uploadDocuments(state.collectedData);
 
       // 2. Create the courier profile with service preferences.
+      //    If a profile already exists (409), fetch it and continue — this
+      //    handles the case where a previous submission failed after profile
+      //    creation, leaving the profile stuck in DRAFT.
       final profilePayload = _extractCourierData(state.collectedData);
-      final profile = await _courierRepo.applyAsCourier(profilePayload);
+      P2pCourierProfile profile;
+      try {
+        profile = await _courierRepo.applyAsCourier(profilePayload);
+      } on P2pException catch (e) {
+        if (e.statusCode == 409) {
+          profile = await _courierRepo.getMyProfile() ??
+              (throw const P2pException(
+                  statusCode: 404, message: 'Courier profile not found.'));
+        } else {
+          rethrow;
+        }
+      }
 
       // 3. Save KYC identity data and the uploaded document URLs.
       final identity = _extractIdentityData(state.collectedData);

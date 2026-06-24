@@ -185,6 +185,7 @@ class P2pShipmentBloc extends Bloc<P2pShipmentEvent, P2pShipmentState> {
         P2pPaymentTracker.savePendingPayment(
           event.shipmentId!,
           accepted.offerAmountUsd!,
+          clientSecret: accepted.clientSecret,
         );
       }
       P2pShipmentState next;

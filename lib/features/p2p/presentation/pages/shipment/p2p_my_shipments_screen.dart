@@ -297,17 +297,27 @@ class _ShipmentCard extends StatelessWidget {
         context.push('/p2p/shipment/${s.id}/offers');
         break;
       case ShipmentRequestStatus.matched:
-        // If payment hasn't been completed yet, send the seeker back to
-        // the payment screen rather than skipping straight to the waiver.
+        // Route based on payment state:
+        //  - completed → waiver (payment already captured)
+        //  - pending with secret → payment screen
+        //  - pending without secret (app data cleared) → shipment detail;
+        //    the backend will block reserve until payment is captured
+        //  - no record (free offer) → waiver
         final pendingAmount = P2pPaymentTracker.getPendingAmount(s.id);
-        if (pendingAmount != null && pendingAmount > 0) {
+        final pendingSecret = P2pPaymentTracker.getPendingClientSecret(s.id);
+        if (P2pPaymentTracker.hasCompletedPayment(s.id)) {
+          context.push('/p2p/shipment/${s.id}/waiver');
+        } else if (pendingAmount != null && pendingAmount > 0 && pendingSecret != null) {
           context.push(
             '/p2p/shipment/${s.id}/payment',
             extra: {
-              'clientSecret': 'mock_${s.id}',
+              'clientSecret': pendingSecret,
               'amountUsd': pendingAmount,
             },
           );
+        } else if (pendingAmount != null && pendingAmount > 0) {
+          // Secret lost (cleared storage) — show detail; backend guards reserve.
+          context.push('/p2p/shipment/${s.id}');
         } else {
           context.push('/p2p/shipment/${s.id}/waiver');
         }

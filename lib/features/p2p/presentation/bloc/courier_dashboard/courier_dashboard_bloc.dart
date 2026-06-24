@@ -33,6 +33,7 @@ class CourierDashboardBloc
     on<CourierDashboardRequestDeclined>(_onRequestDeclined);
     on<CourierDashboardRouteArchiveRequested>(_onRouteArchiveRequested);
     on<CourierDashboardLocationUpdated>(_onLocationUpdated);
+    on<CourierDashboardSubmitForReviewRequested>(_onSubmitForReviewRequested);
   }
 
   Future<void> _onLoadRequested(
@@ -237,6 +238,25 @@ class CourierDashboardBloc
         status: CourierDashboardStatus.failure,
         errorMessage: e.toString(),
         profile: previous,
+      ));
+    }
+  }
+
+  Future<void> _onSubmitForReviewRequested(
+    CourierDashboardSubmitForReviewRequested event,
+    Emitter<CourierDashboardState> emit,
+  ) async {
+    emit(state.copyWith(status: CourierDashboardStatus.loading));
+    try {
+      final updated = await _courierRepo.submitForReview();
+      emit(state.copyWith(
+        status: CourierDashboardStatus.success,
+        profile: updated,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: CourierDashboardStatus.failure,
+        errorMessage: e.toString(),
       ));
     }
   }

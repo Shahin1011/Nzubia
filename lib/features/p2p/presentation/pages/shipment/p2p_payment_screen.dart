@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:customer_nzubia_global/core/services/payment_service.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
 import 'package:customer_nzubia_global/features/p2p/data/services/p2p_payment_tracker.dart';
 
 /// Shown after the seeker accepts a courier offer that has a payment amount.
-/// Uses a mock payment flow (no real Stripe) — real integration comes later.
+/// Presents the Stripe payment sheet using the PaymentIntent client_secret
+/// returned by the backend at offer-acceptance time.
 /// Back navigation is blocked: payment is mandatory to proceed to the waiver.
 class P2pPaymentScreen extends StatefulWidget {
   final String shipmentId;
@@ -27,24 +30,54 @@ class P2pPaymentScreen extends StatefulWidget {
 class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
   bool _processing = false;
   bool _done = false;
+  String? _errorMessage;
 
-  Future<void> _mockPay() async {
-    setState(() => _processing = true);
-
-    // Simulate payment processing delay.
-    await Future<void>.delayed(const Duration(milliseconds: 1800));
-
-    if (!mounted) return;
-
-    P2pPaymentTracker.markPaymentComplete(widget.shipmentId);
+  Future<void> _pay() async {
     setState(() {
-      _processing = false;
-      _done = true;
+      _processing = true;
+      _errorMessage = null;
     });
 
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    context.pushReplacement('/p2p/shipment/${widget.shipmentId}/waiver');
+    try {
+      final paymentService = GetIt.instance<PaymentService>();
+
+      // Initialise the Stripe payment sheet with the PI client_secret the
+      // backend created at offer-acceptance time.
+      await paymentService.initPaymentSheetWithClientSecret(widget.clientSecret);
+
+      // Present the sheet — throws if user cancels or card is declined.
+      await paymentService.presentPaymentSheet();
+
+      // Success: update local tracker and navigate to waiver.
+      P2pPaymentTracker.markPaymentComplete(widget.shipmentId);
+
+      if (!mounted) return;
+      setState(() {
+        _processing = false;
+        _done = true;
+      });
+
+      // Brief moment so the success state is visible before navigation.
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      context.pushReplacement('/p2p/shipment/${widget.shipmentId}/waiver');
+    } on Exception catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _processing = false;
+        _errorMessage = _friendlyError(e.toString());
+      });
+    }
+  }
+
+  String _friendlyError(String raw) {
+    if (raw.contains('cancel') || raw.contains('Canceled')) {
+      return 'Payment cancelled. Tap below to try again.';
+    }
+    if (raw.contains('declined') || raw.contains('insufficient_funds')) {
+      return 'Your card was declined. Please try a different payment method.';
+    }
+    return 'Payment failed. Please try again.';
   }
 
   Future<bool> _onWillPop() async {
@@ -64,8 +97,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(
-                foregroundColor: AppTheme.errorColor),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.errorColor),
             child: const Text('Go back'),
           ),
         ],
@@ -78,9 +110,10 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Platform fee is 2.5% of the offer amount; the courier receives the rest.
     const feeRate = 0.025;
     final fee = widget.amountUsd * feeRate;
-    final total = widget.amountUsd;
+    final courierReceives = widget.amountUsd - fee;
 
     return PopScope(
       canPop: false,
@@ -96,7 +129,6 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
           backgroundColor: theme.colorScheme.surface,
           elevation: 0,
           title: const Text('Confirm Payment'),
-          // Back button wired through PopScope so the dialog fires.
           leading: BackButton(onPressed: () async {
             final allow = await _onWillPop();
             if (allow && context.mounted) context.pop();
@@ -107,46 +139,14 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Mock / demo banner ────────────────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.amber[50],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.amber[300]!),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline,
-                        size: 16, color: Colors.amber[800]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Demo mode — no real charge. '
-                        'Payment integration coming soon.',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.amber[900],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Escrow header ─────────────────────────────────────────────
+              // ── Escrow assurance header ───────────────────────────────────
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withAlpha(18),
                   borderRadius: BorderRadius.circular(14),
-                  border:
-                      Border.all(color: AppTheme.primaryColor.withAlpha(50)),
+                  border: Border.all(color: AppTheme.primaryColor.withAlpha(50)),
                 ),
                 child: Row(
                   children: [
@@ -176,8 +176,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                           Text(
                             'Funds are only released to the courier after you confirm delivery.',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface
-                                  .withOpacity(0.65),
+                              color: theme.colorScheme.onSurface.withOpacity(0.65),
                               height: 1.4,
                             ),
                           ),
@@ -224,16 +223,14 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                     const SizedBox(height: 16),
                     if (widget.courierName != null) ...[
                       _SummaryRow(
-                        label: 'Courier',
-                        value: widget.courierName!,
-                        bold: false,
-                      ),
+                          label: 'Courier',
+                          value: widget.courierName!,
+                          bold: false),
                       const SizedBox(height: 10),
                     ],
                     _SummaryRow(
-                      label: 'Delivery fee',
-                      value:
-                          '\$${(widget.amountUsd - fee).toStringAsFixed(2)}',
+                      label: 'Courier fee',
+                      value: '\$${courierReceives.toStringAsFixed(2)}',
                       bold: false,
                     ),
                     const SizedBox(height: 10),
@@ -248,7 +245,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                     ),
                     _SummaryRow(
                       label: 'Total charged now',
-                      value: '\$${total.toStringAsFixed(2)} USD',
+                      value: '\$${widget.amountUsd.toStringAsFixed(2)} USD',
                       bold: true,
                     ),
                     const SizedBox(height: 14),
@@ -282,74 +279,42 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Mock card details ─────────────────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.5)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.credit_card_outlined,
-                            size: 16, color: AppTheme.primaryColor),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Card Details',
-                          style: theme.textTheme.bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.amber[100],
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'DEMO',
-                            style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.amber[900]),
+              // ── Error message ─────────────────────────────────────────────
+              if (_errorMessage != null) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppTheme.errorColor.withAlpha(18),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppTheme.errorColor.withAlpha(80)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline,
+                          size: 18, color: AppTheme.errorColor),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.errorColor,
+                            height: 1.4,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    _MockField(
-                        label: 'Card number',
-                        value: '4242  4242  4242  4242'),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: const [
-                        Expanded(
-                            child: _MockField(
-                                label: 'Expiry', value: '12 / 28')),
-                        SizedBox(width: 12),
-                        Expanded(
-                            child: _MockField(label: 'CVC', value: '•••')),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-              const SizedBox(height: 32),
+                const SizedBox(height: 16),
+              ],
 
               // ── Pay button ────────────────────────────────────────────────
               SizedBox(
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton.icon(
-                  onPressed: (_processing || _done) ? null : _mockPay,
+                  onPressed: (_processing || _done) ? null : _pay,
                   icon: _processing
                       ? const SizedBox(
                           width: 18,
@@ -365,7 +330,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                         ? 'Processing…'
                         : _done
                             ? 'Payment confirmed!'
-                            : 'Pay \$${total.toStringAsFixed(2)} & Continue',
+                            : 'Pay \$${widget.amountUsd.toStringAsFixed(2)} & Continue',
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w600),
                   ),
@@ -385,7 +350,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
               const SizedBox(height: 12),
               Center(
                 child: Text(
-                  'Demo mode · No real charge will be made',
+                  'Powered by Stripe · Your payment is encrypted and secure',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.4),
                     fontSize: 11,
@@ -431,53 +396,8 @@ class _SummaryRow extends StatelessWidget {
           value,
           style: theme.textTheme.bodySmall?.copyWith(
             fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
-            color:
-                bold ? AppTheme.primaryColor : theme.colorScheme.onSurface,
+            color: bold ? AppTheme.primaryColor : theme.colorScheme.onSurface,
             fontSize: bold ? 15 : null,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MockField extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _MockField({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
-            fontSize: 11,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          width: double.infinity,
-          padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onSurface.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-                color: theme.colorScheme.outline.withOpacity(0.4)),
-          ),
-          child: Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-              letterSpacing: 1.2,
-            ),
           ),
         ),
       ],

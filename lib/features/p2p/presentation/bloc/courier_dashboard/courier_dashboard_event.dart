@@ -51,3 +51,7 @@ class CourierDashboardLocationUpdated extends CourierDashboardEvent {
     required this.longitude,
   });
 }
+
+class CourierDashboardSubmitForReviewRequested extends CourierDashboardEvent {
+  const CourierDashboardSubmitForReviewRequested();
+}

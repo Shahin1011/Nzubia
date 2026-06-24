@@ -32,9 +32,8 @@ class _DocumentsViewState extends State<_DocumentsView> {
 
   String? _passportPath;
   String? _visaPath;
-  String? _itineraryPath;
 
-  bool get _canContinue => _passportPath != null && _itineraryPath != null;
+  bool get _canContinue => _passportPath != null;
 
   @override
   Widget build(BuildContext context) {
@@ -93,16 +92,6 @@ class _DocumentsViewState extends State<_DocumentsView> {
                   ),
                   const SizedBox(height: 16),
 
-                  _UploadCard(
-                    title: 'Flight Itinerary',
-                    subtitle:
-                        'Booking confirmation showing your travel dates & route.',
-                    icon: Icons.flight_outlined,
-                    isRequired: true,
-                    filePath: _itineraryPath,
-                    onTap: () => _pickImage('itinerary'),
-                    onClear: () => setState(() => _itineraryPath = null),
-                  ),
                   const SizedBox(height: 12),
 
                   Container(
@@ -179,8 +168,6 @@ class _DocumentsViewState extends State<_DocumentsView> {
           _passportPath = picked.path;
         case 'visa':
           _visaPath = picked.path;
-        case 'itinerary':
-          _itineraryPath = picked.path;
       }
     });
   }
@@ -227,7 +214,6 @@ class _DocumentsViewState extends State<_DocumentsView> {
           P2pOnboardingDocumentsSubmitted({
             'passport_image_path': _passportPath,
             if (_visaPath != null) 'visa_image_path': _visaPath,
-            'itinerary_image_path': _itineraryPath,
           }),
         );
     context.push('/p2p/courier/route');
