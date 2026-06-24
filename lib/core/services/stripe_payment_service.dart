@@ -49,13 +49,13 @@ class StripePaymentService implements PaymentService {
   Future<void> presentPaymentSheet() async {
     try {
       await Stripe.instance.presentPaymentSheet();
+    } on StripeException catch (e) {
+      final code = e.error.code.toString();
+      final msg = e.error.localizedMessage ?? e.error.message ?? code;
+      // Propagate a message that _friendlyError can classify.
+      throw Exception('Payment failed: $msg (code: $code)');
     } catch (e) {
-       // Allow cancellation
-       if (e is StripeException) {
-         throw Exception('Payment failed: ${e.error.localizedMessage}');
-       } else {
-         throw Exception('Payment failed: $e');
-       }
+      throw Exception('Payment failed: $e');
     }
   }
 

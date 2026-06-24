@@ -17,22 +17,36 @@ class P2pPaymentTracker {
   static const _donePrefix = 'p2p_pay_done_';
   static const _amountPrefix = 'p2p_pay_amount_';
   static const _secretPrefix = 'p2p_pay_secret_';
+  static const _offerPrefix = 'p2p_pay_offer_';
 
   static void savePendingPayment(
     String shipmentId,
     double amountUsd, {
     String? clientSecret,
+    String? offerId,
   }) {
     _box.put('$_amountPrefix$shipmentId', amountUsd);
     _box.put('$_donePrefix$shipmentId', false);
     if (clientSecret != null) {
       _box.put('$_secretPrefix$shipmentId', clientSecret);
     }
+    if (offerId != null) {
+      _box.put('$_offerPrefix$shipmentId', offerId);
+    }
   }
 
   static String? getPendingClientSecret(String shipmentId) {
     final val = _box.get('$_secretPrefix$shipmentId');
     return val is String ? val : null;
+  }
+
+  static String? getPendingOfferId(String shipmentId) {
+    final val = _box.get('$_offerPrefix$shipmentId');
+    return val is String ? val : null;
+  }
+
+  static void updatePendingClientSecret(String shipmentId, String clientSecret) {
+    _box.put('$_secretPrefix$shipmentId', clientSecret);
   }
 
   static bool hasCompletedPayment(String shipmentId) =>
@@ -42,6 +56,7 @@ class P2pPaymentTracker {
     _box.put('$_donePrefix$shipmentId', true);
     _box.delete('$_amountPrefix$shipmentId');
     _box.delete('$_secretPrefix$shipmentId');
+    _box.delete('$_offerPrefix$shipmentId');
   }
 
   /// Returns the pending amount, or null if payment was already completed or

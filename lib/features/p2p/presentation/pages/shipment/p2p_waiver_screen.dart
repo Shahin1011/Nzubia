@@ -40,10 +40,15 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
       final secret =
           P2pPaymentTracker.getPendingClientSecret(widget.shipmentId);
       final amount = P2pPaymentTracker.getPendingAmount(widget.shipmentId);
+      final offerId = P2pPaymentTracker.getPendingOfferId(widget.shipmentId);
       if (secret != null && amount != null) {
         context.pushReplacement(
           '/p2p/shipment/${widget.shipmentId}/payment',
-          extra: {'clientSecret': secret, 'amountUsd': amount},
+          extra: {
+            'offerId': offerId ?? '',
+            'clientSecret': secret,
+            'amountUsd': amount,
+          },
         );
       }
     }

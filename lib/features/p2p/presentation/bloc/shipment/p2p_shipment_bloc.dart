@@ -186,6 +186,7 @@ class P2pShipmentBloc extends Bloc<P2pShipmentEvent, P2pShipmentState> {
           event.shipmentId!,
           accepted.offerAmountUsd!,
           clientSecret: accepted.clientSecret,
+          offerId: accepted.id,
         );
       }
       P2pShipmentState next;
@@ -200,12 +201,14 @@ class P2pShipmentBloc extends Bloc<P2pShipmentEvent, P2pShipmentState> {
           requests: updatedList,
           pendingPaymentClientSecret: accepted.clientSecret,
           pendingPaymentAmountUsd: accepted.offerAmountUsd,
+          pendingPaymentOfferId: accepted.id,
         );
       } else {
         next = state.copyWith(
           status: P2pShipmentStatus.success,
           pendingPaymentClientSecret: accepted.clientSecret,
           pendingPaymentAmountUsd: accepted.offerAmountUsd,
+          pendingPaymentOfferId: accepted.id,
         );
       }
       emit(next);

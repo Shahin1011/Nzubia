@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:customer_nzubia_global/config/routes/app_router.dart';
+import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
 import 'package:customer_nzubia_global/core/utils/service_locator.dart';
 import 'package:customer_nzubia_global/core/services/deep_link_service.dart';
@@ -25,6 +27,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+  Stripe.publishableKey = ApiConstants.stripePublishableKey;
+  await Stripe.instance.applySettings();
   await setupServiceLocator();
 
   // Initialize Hive

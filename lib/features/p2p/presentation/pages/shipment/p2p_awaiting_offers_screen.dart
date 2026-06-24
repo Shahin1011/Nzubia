@@ -114,6 +114,7 @@ class _AwaitingOffersViewState extends State<_AwaitingOffersView>
             context.push(
               '/p2p/shipment/${widget.shipmentId}/payment',
               extra: {
+                'offerId': state.pendingPaymentOfferId ?? '',
                 'clientSecret': clientSecret,
                 'amountUsd': amount,
               },

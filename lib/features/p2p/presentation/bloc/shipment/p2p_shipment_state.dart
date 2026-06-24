@@ -18,6 +18,8 @@ class P2pShipmentState {
   final String? pendingPaymentClientSecret;
   /// The accepted offer amount in USD, carried alongside the client_secret.
   final double? pendingPaymentAmountUsd;
+  /// The accepted offer ID, needed to refresh a stale PaymentIntent.
+  final String? pendingPaymentOfferId;
 
   const P2pShipmentState({
     this.status = P2pShipmentStatus.initial,
@@ -30,6 +32,7 @@ class P2pShipmentState {
     this.errorMessage,
     this.pendingPaymentClientSecret,
     this.pendingPaymentAmountUsd,
+    this.pendingPaymentOfferId,
   });
 
   P2pShipmentState copyWith({
@@ -43,6 +46,7 @@ class P2pShipmentState {
     String? errorMessage,
     String? pendingPaymentClientSecret,
     double? pendingPaymentAmountUsd,
+    String? pendingPaymentOfferId,
     bool clearPendingPayment = false,
   }) {
     return P2pShipmentState(
@@ -51,7 +55,7 @@ class P2pShipmentState {
       selectedRequest: selectedRequest ?? this.selectedRequest,
       offers: offers ?? this.offers,
       matches: matches ?? this.matches,
-        courierRequestCounts: courierRequestCounts ?? this.courierRequestCounts,
+      courierRequestCounts: courierRequestCounts ?? this.courierRequestCounts,
       courierRequests: courierRequests ?? this.courierRequests,
       errorMessage: errorMessage ?? this.errorMessage,
       pendingPaymentClientSecret: clearPendingPayment
@@ -60,6 +64,9 @@ class P2pShipmentState {
       pendingPaymentAmountUsd: clearPendingPayment
           ? null
           : (pendingPaymentAmountUsd ?? this.pendingPaymentAmountUsd),
+      pendingPaymentOfferId: clearPendingPayment
+          ? null
+          : (pendingPaymentOfferId ?? this.pendingPaymentOfferId),
     );
   }
 }

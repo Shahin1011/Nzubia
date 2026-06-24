@@ -262,6 +262,7 @@ class AppRouter {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           return P2pPaymentScreen(
             shipmentId: id,
+            offerId: extra['offerId'] as String? ?? '',
             clientSecret: extra['clientSecret'] as String? ?? '',
             amountUsd: (extra['amountUsd'] as num?)?.toDouble() ?? 0,
             courierName: extra['courierName'] as String?,

@@ -4,6 +4,11 @@ class ApiConstants {
     defaultValue: 'https://api.nzubia.com/api/v1',
   );
 
+  static String get stripePublishableKey => const String.fromEnvironment(
+    'STRIPE_PUBLISHABLE_KEY',
+    defaultValue: 'pk_test_51QkFWRRmupAg6DSvEYMN01EnmCHe1bkV1kfY7RgT2PM8wqiEknRM69IUcvFxtc9Dwg4ObaUG1ZjuxxSpxqj4emsy00XehTlY6w',
+  );
+
   static const String googleMapApiKey = 'AIzaSyCSlfixlzcrhwpOI6RQdWVWiXqpAqLxNa0';
 
   static String get socketUrl {
@@ -83,6 +88,8 @@ class ApiConstants {
   // Offers (nested under shipments controller)
   static String p2pOfferAccept(String offerId) =>
       '/p2p/shipments/offers/$offerId/accept';
+  static String p2pOfferRefreshPayment(String offerId) =>
+      '/p2p/shipments/offers/$offerId/refresh-payment';
   static String p2pOfferReject(String offerId) =>
       '/p2p/shipments/offers/$offerId/reject';
 

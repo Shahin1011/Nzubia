@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:customer_nzubia_global/core/constants/api_constants.dart';
+import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:customer_nzubia_global/core/services/payment_service.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
 import 'package:customer_nzubia_global/features/p2p/data/services/p2p_payment_tracker.dart';
@@ -11,6 +14,7 @@ import 'package:customer_nzubia_global/features/p2p/data/services/p2p_payment_tr
 /// Back navigation is blocked: payment is mandatory to proceed to the waiver.
 class P2pPaymentScreen extends StatefulWidget {
   final String shipmentId;
+  final String offerId;
   final String clientSecret;
   final double amountUsd;
   final String? courierName;
@@ -18,6 +22,7 @@ class P2pPaymentScreen extends StatefulWidget {
   const P2pPaymentScreen({
     super.key,
     required this.shipmentId,
+    required this.offerId,
     required this.clientSecret,
     required this.amountUsd,
     this.courierName,
@@ -31,6 +36,14 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
   bool _processing = false;
   bool _done = false;
   String? _errorMessage;
+  // Mutable — may be replaced by a refreshed PaymentIntent.
+  late String _clientSecret;
+
+  @override
+  void initState() {
+    super.initState();
+    _clientSecret = widget.clientSecret;
+  }
 
   Future<void> _pay() async {
     setState(() {
@@ -41,31 +54,54 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
     try {
       final paymentService = GetIt.instance<PaymentService>();
 
-      // Initialise the Stripe payment sheet with the PI client_secret the
-      // backend created at offer-acceptance time.
-      await paymentService.initPaymentSheetWithClientSecret(widget.clientSecret);
-
-      // Present the sheet — throws if user cancels or card is declined.
+      await paymentService.initPaymentSheetWithClientSecret(_clientSecret);
       await paymentService.presentPaymentSheet();
 
-      // Success: update local tracker and navigate to waiver.
       P2pPaymentTracker.markPaymentComplete(widget.shipmentId);
-
       if (!mounted) return;
       setState(() {
         _processing = false;
         _done = true;
       });
-
-      // Brief moment so the success state is visible before navigation.
       await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
       context.pushReplacement('/p2p/shipment/${widget.shipmentId}/waiver');
     } on Exception catch (e) {
+      final raw = e.toString();
+      // FailureCode.Failed means the PaymentIntent is broken (e.g. it was
+      // created routing to an incomplete Stripe Connect account). Fetch a
+      // fresh PI from the backend and ask the user to try again.
+      if (raw.contains('FailureCode.Failed') && widget.offerId.isNotEmpty) {
+        await _refreshPaymentIntent();
+        return;
+      }
       if (!mounted) return;
       setState(() {
         _processing = false;
-        _errorMessage = _friendlyError(e.toString());
+        _errorMessage = _friendlyError(raw);
+      });
+    }
+  }
+
+  Future<void> _refreshPaymentIntent() async {
+    try {
+      final dio = GetIt.instance<DioClient>().dio;
+      final response = await dio.post(
+        ApiConstants.p2pOfferRefreshPayment(widget.offerId),
+      );
+      final freshSecret = response.data['clientSecret'] as String?;
+      if (freshSecret == null || freshSecret.isEmpty) {
+        throw Exception('No client secret returned');
+      }
+      _clientSecret = freshSecret;
+      P2pPaymentTracker.updatePendingClientSecret(widget.shipmentId, freshSecret);
+      if (!mounted) return;
+      setState(() => _processing = false);
+    } on Exception catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _processing = false;
+        _errorMessage = 'Payment setup failed. Please contact support.';
       });
     }
   }
@@ -77,6 +113,8 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
     if (raw.contains('declined') || raw.contains('insufficient_funds')) {
       return 'Your card was declined. Please try a different payment method.';
     }
+    // In debug builds, surface the raw Stripe error so it can be diagnosed.
+    if (kDebugMode) return 'Payment failed: $raw';
     return 'Payment failed. Please try again.';
   }
 

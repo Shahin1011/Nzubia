@@ -305,12 +305,14 @@ class _ShipmentCard extends StatelessWidget {
         //  - no record (free offer) → waiver
         final pendingAmount = P2pPaymentTracker.getPendingAmount(s.id);
         final pendingSecret = P2pPaymentTracker.getPendingClientSecret(s.id);
+        final pendingOfferId = P2pPaymentTracker.getPendingOfferId(s.id);
         if (P2pPaymentTracker.hasCompletedPayment(s.id)) {
           context.push('/p2p/shipment/${s.id}/waiver');
         } else if (pendingAmount != null && pendingAmount > 0 && pendingSecret != null) {
           context.push(
             '/p2p/shipment/${s.id}/payment',
             extra: {
+              'offerId': pendingOfferId ?? '',
               'clientSecret': pendingSecret,
               'amountUsd': pendingAmount,
             },
