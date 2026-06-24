@@ -96,7 +96,10 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
       _clientSecret = freshSecret;
       P2pPaymentTracker.updatePendingClientSecret(widget.shipmentId, freshSecret);
       if (!mounted) return;
-      setState(() => _processing = false);
+      setState(() {
+        _processing = false;
+        _errorMessage = 'Payment was reset. Please tap Pay to try again.';
+      });
     } on Exception catch (_) {
       if (!mounted) return;
       setState(() {
