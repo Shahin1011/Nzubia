@@ -84,6 +84,13 @@ class CourierDashboardBloc
         // Non-fatal — dashboard still works without active shipments.
       }
 
+      List<P2pShipmentRequest> disputedShipments = const [];
+      try {
+        disputedShipments = await _shipmentRepo.listMyDisputedShipments();
+      } catch (_) {
+        // Non-fatal — dashboard still works without dispute data.
+      }
+
       emit(state.copyWith(
         status: CourierDashboardStatus.success,
         profile: profile,
@@ -91,6 +98,7 @@ class CourierDashboardBloc
         activeRoute: activeRoute,
         pendingRequests: pendingRequests,
         activeShipments: activeShipments,
+        disputedShipments: disputedShipments,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -148,6 +156,7 @@ class CourierDashboardBloc
         myRoutes: newRoutes,
         pendingRequests: state.pendingRequests,
         activeShipments: state.activeShipments,
+        disputedShipments: state.disputedShipments,
       ));
     } catch (e) {
       emit(state.copyWith(

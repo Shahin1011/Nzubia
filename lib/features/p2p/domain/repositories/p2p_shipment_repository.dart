@@ -74,6 +74,9 @@ abstract class P2pShipmentRepository {
   /// Filters to active states: HANDOFF_PENDING, IN_TRANSIT, DELIVERED.
   Future<List<P2pShipmentRequest>> listAssignedShipments();
 
+  /// Returns shipments in DISPUTED status where this courier is the assigned carrier.
+  Future<List<P2pShipmentRequest>> listMyDisputedShipments();
+
   /// Returns OPEN shipment requests within 50 miles of the courier's home location.
   Future<List<P2pShipmentRequest>> fetchNearbyShipments();
 

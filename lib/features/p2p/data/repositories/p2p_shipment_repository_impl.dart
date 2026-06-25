@@ -278,6 +278,19 @@ class P2pShipmentRepositoryImpl implements P2pShipmentRepository {
   }
 
   @override
+  Future<List<P2pShipmentRequest>> listMyDisputedShipments() async {
+    try {
+      final response = await _client.dio.get(ApiConstants.p2pCourierMeDisputes);
+      final list = response.data as List;
+      return list
+          .map((e) => P2pShipmentRequest.fromJson(e as Map<String, dynamic>))
+          .toList(growable: false);
+    } on DioException catch (e) {
+      _handleDioError(e);
+    }
+  }
+
+  @override
   Future<List<P2pShipmentRequest>> fetchNearbyShipments() async {
     try {
       final response = await _client.dio.get(ApiConstants.p2pCourierMeNearbyShipments);

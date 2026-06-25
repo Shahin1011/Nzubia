@@ -15,6 +15,9 @@ class CourierDashboardState extends Equatable {
   /// HANDOFF_PENDING, IN_TRANSIT, or DELIVERED.
   final List<P2pShipmentRequest> activeShipments;
 
+  /// Shipments where the seeker raised a dispute — status DISPUTED.
+  final List<P2pShipmentRequest> disputedShipments;
+
   final String? errorMessage;
 
   const CourierDashboardState({
@@ -24,6 +27,7 @@ class CourierDashboardState extends Equatable {
     this.myRoutes = const [],
     this.pendingRequests = const [],
     this.activeShipments = const [],
+    this.disputedShipments = const [],
     this.errorMessage,
   });
 
@@ -34,6 +38,7 @@ class CourierDashboardState extends Equatable {
     List<P2pRoute>? myRoutes,
     List<P2pCourierRequest>? pendingRequests,
     List<P2pShipmentRequest>? activeShipments,
+    List<P2pShipmentRequest>? disputedShipments,
     String? errorMessage,
   }) {
     return CourierDashboardState(
@@ -43,6 +48,7 @@ class CourierDashboardState extends Equatable {
       myRoutes: myRoutes ?? this.myRoutes,
       pendingRequests: pendingRequests ?? this.pendingRequests,
       activeShipments: activeShipments ?? this.activeShipments,
+      disputedShipments: disputedShipments ?? this.disputedShipments,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -55,6 +61,7 @@ class CourierDashboardState extends Equatable {
         myRoutes,
         pendingRequests,
         activeShipments,
+        disputedShipments,
         errorMessage,
       ];
 }

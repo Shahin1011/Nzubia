@@ -235,6 +235,14 @@ class _DashboardView extends StatelessWidget {
                           shipments: state.activeShipments),
 
                       const SizedBox(height: 16),
+
+                      // Disputed deliveries — shown whenever count > 0
+                      if (state.disputedShipments.isNotEmpty) ...[
+                        _DisputedShipmentsSection(
+                            shipments: state.disputedShipments),
+                        const SizedBox(height: 16),
+                      ],
+
                       // Payout settings — always visible so couriers can
                       // connect their bank account at any verification stage.
                       _PayoutSettingsTile(payoutReady: profile.payoutReady),
@@ -1561,6 +1569,247 @@ class _ActiveShipmentTile extends StatelessWidget {
       default:
         return (Colors.grey[600]!, s.label);
     }
+  }
+}
+
+// ─── Disputed shipments section ───────────────────────────────────────────────
+
+class _DisputedShipmentsSection extends StatelessWidget {
+  final List<P2pShipmentRequest> shipments;
+
+  const _DisputedShipmentsSection({required this.shipments});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.report_problem_outlined,
+                color: Colors.red, size: 18),
+            const SizedBox(width: 6),
+            Text(
+              'Disputed Deliveries',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Colors.red[700],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.red[700],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                shipments.length.toString(),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.red.withAlpha(15),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.red.withAlpha(60)),
+          ),
+          child: Text(
+            'The recipient has raised a dispute on the delivery below. Payment is on hold. Our team will reach out to both parties within 24–48 hours.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: Colors.red[800],
+              height: 1.45,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...shipments.map((s) => _DisputedShipmentTile(shipment: s)),
+      ],
+    );
+  }
+}
+
+class _DisputedShipmentTile extends StatelessWidget {
+  final P2pShipmentRequest shipment;
+
+  const _DisputedShipmentTile({required this.shipment});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dispute =
+        shipment.matchMetadata?['dispute'] as Map<String, dynamic>?;
+    final reason = dispute?['reason'] as String?;
+    final raisedAt = dispute?['raisedAt'] as String?;
+    final evidenceUrls =
+        (dispute?['evidenceUrls'] as List?)?.cast<String>() ?? const [];
+
+    DateTime? raisedDate;
+    if (raisedAt != null) {
+      try {
+        raisedDate = DateTime.parse(raisedAt);
+      } catch (_) {}
+    }
+
+    return GestureDetector(
+      onTap: () =>
+          context.push('/p2p/courier/shipment/${shipment.id}/in-transit'),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.red.withAlpha(80)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withAlpha(6), blurRadius: 3),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(20),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.gavel_outlined,
+                      color: Colors.red, size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '→ ${shipment.destinationCity}, ${shipment.destinationCountry}',
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        shipment.itemDescription,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface
+                                .withOpacity(0.55)),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(22),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Disputed',
+                    style: TextStyle(
+                        color: Colors.red[700],
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+            if (reason != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.withAlpha(12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.withAlpha(50)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.format_quote,
+                            size: 14, color: Colors.red),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Dispute reason',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
+                        ),
+                        if (raisedDate != null) ...[
+                          const Spacer(),
+                          Text(
+                            '${raisedDate.day}/${raisedDate.month}/${raisedDate.year}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface
+                                  .withOpacity(0.45),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      reason,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (evidenceUrls.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${evidenceUrls.length} evidence photo${evidenceUrls.length == 1 ? '' : 's'} submitted by recipient',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.red[700],
+                  fontSize: 11,
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.info_outline,
+                    size: 13,
+                    color: theme.colorScheme.onSurface.withOpacity(0.4)),
+                const SizedBox(width: 4),
+                Text(
+                  'Tap to view shipment details',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

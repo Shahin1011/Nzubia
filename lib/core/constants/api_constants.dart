@@ -102,6 +102,9 @@ class ApiConstants {
 
   // Courier browse: OPEN shipments within 50 miles of courier's home location
   static const String p2pCourierMeNearbyShipments = '/p2p/couriers/me/nearby-shipments';
+
+  // Courier dispute queue: DISPUTED shipments where this courier is the assigned carrier
+  static const String p2pCourierMeDisputes = '/p2p/couriers/me/disputes';
   static String p2pCourierRequestAccept(String id) =>
       '/p2p/couriers/me/requests/$id/accept';
   static String p2pCourierRequestDecline(String id) =>
