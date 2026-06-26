@@ -29,14 +29,22 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.nzubia.global.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Reads GOOGLE_MAPS_API_KEY from local.properties or the CI environment.
+        // Set it in android/local.properties: googleMapsApiKey=AIzaSy...
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+        val mapsKey: String = System.getenv("GOOGLE_MAPS_API_KEY")
+            ?: localProperties.getProperty("googleMapsApiKey", "")
+        manifestPlaceholders["googleMapsApiKey"] = mapsKey
     }
 
     signingConfigs {

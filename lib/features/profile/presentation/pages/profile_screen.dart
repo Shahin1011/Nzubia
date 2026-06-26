@@ -392,30 +392,40 @@ class ProfileView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.deleteAccount),
-        content: Text(
-          role == 'AGENT'
-              ? AppLocalizations.of(context)!.agentDeleteRequest
-              : AppLocalizations.of(context)!.areYouSureDelete,
-        ),
+        content: Text(AppLocalizations.of(context)!.areYouSureDelete),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.cancel)),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             onPressed: () {
               Navigator.pop(ctx);
-              if (role == 'AGENT') {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.deletionRequestSent)));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.deletingAccount)));
-                context.read<AuthBloc>().add(LogoutRequested());
-                context.go('/login');
-              }
+              _performAccountDeletion(context);
             },
-            child: Text(role == 'AGENT' ? AppLocalizations.of(context)!.submitRequest : AppLocalizations.of(context)!.delete),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _performAccountDeletion(BuildContext context) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.deletingAccount)),
+    );
+    try {
+      final repo = sl<AuthRepository>();
+      await repo.deleteAccount();
+      if (context.mounted) {
+        context.read<AuthBloc>().add(LogoutRequested());
+        context.go('/login');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Account deletion failed. Please try again.')),
+        );
+      }
+    }
   }
 
   void _showLogoutConfirmation(BuildContext context) {

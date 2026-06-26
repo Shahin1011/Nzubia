@@ -41,14 +41,10 @@ void main() async {
       options.dsn = 'https://1b0ad525c6a07c42a0313623d7143bee@o4510935086596096.ingest.us.sentry.io/4510935088168960';
       // Adds request headers and IP for users, for more info visit:
       // https://docs.sentry.io/platforms/dart/guides/flutter/data-management/data-collected/
-      options.sendDefaultPii = true;
+      options.sendDefaultPii = false; // Do not send IP addresses or auth headers to Sentry
       options.enableLogs = true;
-      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-      // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
-      // The sampling rate for profiling is relative to tracesSampleRate
-      // Setting to 1.0 will profile 100% of sampled transactions:
-      options.profilesSampleRate = 1.0;
+      options.tracesSampleRate = 0.1; // 10% of transactions — sufficient for performance insights
+      options.profilesSampleRate = 0.1; // Relative to tracesSampleRate
       // Configure Session Replay
       options.replay.sessionSampleRate = 0.1;
       options.replay.onErrorSampleRate = 1.0;

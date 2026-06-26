@@ -6,10 +6,16 @@ class ApiConstants {
 
   static String get stripePublishableKey => const String.fromEnvironment(
     'STRIPE_PUBLISHABLE_KEY',
-    defaultValue: 'pk_test_51QkFWRRmupAg6DSvEYMN01EnmCHe1bkV1kfY7RgT2PM8wqiEknRM69IUcvFxtc9Dwg4ObaUG1ZjuxxSpxqj4emsy00XehTlY6w',
+    // No hardcoded fallback — pass via --dart-define=STRIPE_PUBLISHABLE_KEY=pk_...
+    defaultValue: '',
   );
 
-  static const String googleMapApiKey = 'AIzaSyCSlfixlzcrhwpOI6RQdWVWiXqpAqLxNa0';
+  // Pass via --dart-define=GOOGLE_MAPS_API_KEY=AIzaSy...
+  // For Android the key is also injected via manifestPlaceholders in build.gradle.
+  static const String googleMapApiKey = String.fromEnvironment(
+    'GOOGLE_MAPS_API_KEY',
+    defaultValue: '',
+  );
 
   static String get socketUrl {
     const override = String.fromEnvironment('SOCKET_URL', defaultValue: '');
@@ -35,6 +41,7 @@ class ApiConstants {
   static const String profile = '/users/profile';
   static const String agentOnboarding = '/users/agent/onboarding';
 
+  static const String deleteAccount = '/users/me';
   static const String changePassword = '/auth/change-password';
   static const String stripeOnboarding = '/users/stripe/onboarding';
   static const String stripeStatus = '/users/stripe/status';

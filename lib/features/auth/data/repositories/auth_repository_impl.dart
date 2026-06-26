@@ -269,9 +269,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await _storage.delete(key: 'accessToken');
-    await _settingsBox.delete('cached_user'); // Clear Hive cache
+    await _settingsBox.delete('cached_user');
     _pendingEmail = null;
     _currentUser = null;
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    await _dioClient.dio.delete(ApiConstants.deleteAccount);
+    await logout();
   }
 
   @override

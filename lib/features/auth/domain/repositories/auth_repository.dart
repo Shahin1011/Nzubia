@@ -33,6 +33,7 @@ abstract class AuthRepository {
     int? serviceRadiusKm,
   });
   Future<void> logout();
+  Future<void> deleteAccount();
   Future<UserEntity?> getCurrentUser();
   Future<UserEntity?> getUserById(String id);
   Future<UserEntity?> findUserByEmail(String email);
