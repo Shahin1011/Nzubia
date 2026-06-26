@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:dio/dio.dart'; // Import DioException
@@ -50,14 +51,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await _settingsBox.delete('cached_user');
 
       await _storage.write(key: 'accessToken', value: accessToken);
-      print('AuthRepository: Token saved to storage: ${accessToken.substring(0, 5)}...');
+      if (kDebugMode) debugPrint('AuthRepository: Token saved to storage.');
       _pendingEmail = email; // Store for potential OTP/Resend
-
-      // If biometrics are enabled, update the stored credentials
-      if (await isBiometricsEnabled()) {
-        await _storage.write(key: 'biometricEmail', value: email);
-        await _storage.write(key: 'biometricPassword', value: password);
-      }
 
       if (data['user'] != null) {
         final userModel = UserModel.fromJson(data['user']);
@@ -299,7 +294,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await _cacheUser(userModel); // Update cache
         return _currentUser;
       } catch (apiError) {
-        print('AuthRepository: API fetch failed, trying Hive cache. Error: $apiError');
+        if (kDebugMode) debugPrint('AuthRepository: API fetch failed, trying Hive cache. Error: $apiError');
         // If API fails, fallback to Hive cache
         final cachedJson = _settingsBox.get('cached_user');
         if (cachedJson != null) {
@@ -377,7 +372,7 @@ class AuthRepositoryImpl implements AuthRepository {
       
       return UserModel.fromJson(userJson);
     } catch (e) {
-      print('AuthRepository: Error finding user by query "$query": $e');
+      if (kDebugMode) debugPrint('AuthRepository: Error finding user by query "$query": $e');
       return null;
     }
   }
@@ -387,7 +382,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final jsonString = jsonEncode(user.toJson());
       await _settingsBox.put('cached_user', jsonString);
     } catch (e) {
-      print('AuthRepository: Failed to cache user: $e');
+      if (kDebugMode) debugPrint('AuthRepository: Failed to cache user: $e');
     }
   }
 

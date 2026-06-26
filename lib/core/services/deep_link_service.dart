@@ -16,7 +16,7 @@ class DeepLinkService {
       _handleDeepLink(uri);
     }, onError: (err) {
       if (kDebugMode) {
-        print('Deep Link Error: $err');
+        if (kDebugMode) debugPrint('Deep Link Error: $err');
       }
     });
   }
@@ -29,14 +29,14 @@ class DeepLinkService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Initial Link Error: $e');
+        if (kDebugMode) debugPrint('Initial Link Error: $e');
       }
     }
   }
 
   void _handleDeepLink(Uri uri) {
     if (kDebugMode) {
-      print('Handling Deep Link: $uri');
+      if (kDebugMode) debugPrint('Handling Deep Link: $uri');
     }
 
     // Example: nzubia://shipment/123

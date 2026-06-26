@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
@@ -22,7 +23,7 @@ class MessagingRemoteDatasourceImpl implements MessagingRemoteDatasource {
       // If already initialized but disconnected, reconnect
       if (!socketClient.socket.connected) {
         socketClient.socket.connect();
-        print('🔄 Socket reconnected');
+        if (kDebugMode) debugPrint('🔄 Socket reconnected');
       }
       return;
     }
@@ -41,11 +42,11 @@ class MessagingRemoteDatasourceImpl implements MessagingRemoteDatasource {
             _messageStreamController.add(message);
           }
         } catch (e) {
-          print('Error parsing received message: $e');
+          if (kDebugMode) debugPrint('Error parsing received message: $e');
         }
       }
     });
-    print('✅ Socket listener registered for receive_message');
+    if (kDebugMode) debugPrint('✅ Socket listener registered for receive_message');
   }
 
   @override
@@ -57,7 +58,7 @@ class MessagingRemoteDatasourceImpl implements MessagingRemoteDatasource {
     // this datasource is a singleton shared across the app. Closing it from
     // one screen (chat room) would break real-time for the whole session.
     // The socket remains connected for push notifications even when chat is closed.
-    print('💬 Chat screen closed — keeping socket alive for background messages');
+    if (kDebugMode) debugPrint('💬 Chat screen closed — keeping socket alive for background messages');
   }
 
   /// Call this only when completely logging out or terminating the app.
@@ -152,7 +153,7 @@ class MessagingRemoteDatasourceImpl implements MessagingRemoteDatasource {
       final response = await dioClient.dio.get('/users/admin/contact');
       return response.data;
     } catch (e) {
-      print('Error fetching support admin: $e');
+      if (kDebugMode) debugPrint('Error fetching support admin: $e');
       return null;
     }
   }

@@ -41,6 +41,8 @@
 		<true/>
 		<key>NSCameraUsageDescription</key>
 		<string>Nzubia requires camera access to capture documents for account verification and photos of cargo items for shipping documentation.</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>Nzubia uses Face ID to let you sign in quickly and securely without entering your password.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Nzubia uses your location to provide accurate shipment tracking and to match you with nearby logistics services.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>

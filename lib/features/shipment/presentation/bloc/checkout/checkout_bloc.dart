@@ -7,6 +7,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   final PaymentService _paymentService;
   late double _amount;
   late String _currency;
+  late String _quoteId;
 
   CheckoutBloc({required PaymentService paymentService})
       : _paymentService = paymentService,
@@ -21,13 +22,13 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   void _onInitialized(CheckoutInitialized event, Emitter<CheckoutState> emit) {
     _amount = event.amount;
     _currency = event.currency;
-    // We could pre-initialize payment sheet here if we want
+    _quoteId = event.quoteId;
   }
 
   Future<void> _onPaymentRequested(CheckoutPaymentRequested event, Emitter<CheckoutState> emit) async {
     emit(state.copyWith(status: CheckoutStatus.loading));
     try {
-      await _paymentService.initPaymentSheet(amount: _amount.toString(), currency: _currency);
+      await _paymentService.initPaymentSheet(amount: _amount.toString(), currency: _currency, quoteId: _quoteId);
       await _paymentService.presentPaymentSheet();
       emit(state.copyWith(status: CheckoutStatus.success));
     } catch (e) {

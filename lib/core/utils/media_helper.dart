@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,7 @@ class MediaPickerHelper {
       }
       return null;
     } catch (e) {
-      print('Error picking image: $e');
+      if (kDebugMode) debugPrint('Error picking image: $e');
       return null;
     }
   }
@@ -37,7 +38,7 @@ class MediaPickerHelper {
       }
       return null;
     } catch (e) {
-      print('Error picking document: $e');
+      if (kDebugMode) debugPrint('Error picking document: $e');
       return null;
     }
   }

@@ -38,8 +38,6 @@ class ShipmentModel extends ShipmentEntity {
   });
 
   factory ShipmentModel.fromJson(Map<String, dynamic> json) {
-    print('ShipmentModel Parsing ID: ${json['id']}');
-    // ... debug prints ...
 
     // Helper to extract address from String or Map
     String parseAddress(dynamic value) {

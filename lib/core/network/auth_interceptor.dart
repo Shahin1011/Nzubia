@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
+import 'package:customer_nzubia_global/config/routes/app_router.dart';
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 
 class AuthInterceptor extends Interceptor {
@@ -11,26 +14,28 @@ class AuthInterceptor extends Interceptor {
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final token = await _storage.read(key: 'accessToken');
     if (token != null) {
-      print('AuthInterceptor: Attaching token ${token.substring(0, 5)}...');
+      if (kDebugMode) debugPrint('AuthInterceptor: Attaching token...');
       options.headers['Authorization'] = 'Bearer $token';
     } else {
-      // If running locally, allow a DEV_ACCESS_TOKEN to be provided via --dart-define
       final devToken = ApiConstants.devAccessToken;
       if (devToken.isNotEmpty) {
-        print('AuthInterceptor: Using DEV_ACCESS_TOKEN fallback...');
+        if (kDebugMode) debugPrint('AuthInterceptor: Using DEV_ACCESS_TOKEN fallback...');
         options.headers['Authorization'] = 'Bearer $devToken';
       } else {
-        print('AuthInterceptor: No token found in storage!');
+        if (kDebugMode) debugPrint('AuthInterceptor: No token found in storage!');
       }
     }
     super.onRequest(options, handler);
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    // Handle 401 Unauthorized (e.g., trigger logout)
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      // Broadcast logout event or clear token
+      await _storage.delete(key: 'accessToken');
+      final context = AppRouter.navigatorKey.currentContext;
+      if (context != null && context.mounted) {
+        GoRouter.of(context).go('/login');
+      }
     }
     super.onError(err, handler);
   }

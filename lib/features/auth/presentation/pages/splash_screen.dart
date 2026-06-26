@@ -1,59 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkStartupState();
-    });
-  }
-
-  Future<void> _checkStartupState() async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      if (!mounted) return;
-
-      final box = Hive.box('settings');
-      final onboardingSeen = box.get('onboarding_seen', defaultValue: false);
-
-      if (!mounted) return;
-
-      if (!onboardingSeen) {
-        context.go('/onboarding');
-        return;
-      }
-
-      context.go('/login');
-    } catch (e) {
-      debugPrint('Splash startup check failed: $e');
-
-      if (!mounted) return;
-
-      context.go('/login');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Center(
-        child: Image.asset(
-          isDark ? 'assets/splash_dark.gif' : 'assets/splash_light.gif',
-          fit: BoxFit.contain,
-           width: 300,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          context.go('/dashboard');
+        } else if (state.status == AuthStatus.unauthenticated) {
+          try {
+            final box = Hive.box('settings');
+            final onboardingSeen = box.get('onboarding_seen', defaultValue: false) as bool;
+            context.go(onboardingSeen ? '/login' : '/onboarding');
+          } catch (_) {
+            context.go('/login');
+          }
+        }
+        // AuthStatus.unknown — still loading, stay on splash
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: Center(
+          child: Image.asset(
+            isDark ? 'assets/splash_dark.gif' : 'assets/splash_light.gif',
+            fit: BoxFit.contain,
+            width: 300,
+          ),
         ),
       ),
     );

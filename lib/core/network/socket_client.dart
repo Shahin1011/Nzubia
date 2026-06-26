@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
@@ -48,80 +49,73 @@ class SocketClient {
         .build());
 
     _socket.onConnect((_) {
-      print('Socket Client Connected: ${_socket.id}');
-      _connectionStatusController.add(true);
+      if (kDebugMode) debugPrint('Socket Client Connected: ${_socket.id}');
+      if (!_connectionStatusController.isClosed) _connectionStatusController.add(true);
     });
 
     _socket.on('shipment_updated', (data) {
-      _shipmentUpdateController.add(Map<String, dynamic>.from(data));
+      if (!_shipmentUpdateController.isClosed) _shipmentUpdateController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.on('shipment_status_update', (data) {
-      _shipmentUpdateController.add(Map<String, dynamic>.from(data));
+      if (!_shipmentUpdateController.isClosed) _shipmentUpdateController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.on('new_message', (data) {
-      _chatMessageController.add(Map<String, dynamic>.from(data));
+      if (!_chatMessageController.isClosed) _chatMessageController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.on('new_offer', (data) {
-      if (data is Map) _newOfferController.add(Map<String, dynamic>.from(data));
+      if (data is Map && !_newOfferController.isClosed) _newOfferController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.on('p2p_offer', (data) {
-      if (data is Map) _newOfferController.add(Map<String, dynamic>.from(data));
+      if (data is Map && !_newOfferController.isClosed) _newOfferController.add(Map<String, dynamic>.from(data));
     });
 
-    // ── P2P lifecycle events ──────────────────────────────────────────────────
-    // These event names match what the backend WILL emit once P2P socket
-    // notifications are added to the gateway. They are no-ops today but allow
-    // screens to react instantly when the backend is upgraded.
     _socket.on('p2p_offer_received', (data) {
       if (data is Map) {
         final m = Map<String, dynamic>.from(data);
-        _newOfferController.add(m);
-        _p2pStatusController.add(m);
+        if (!_newOfferController.isClosed) _newOfferController.add(m);
+        if (!_p2pStatusController.isClosed) _p2pStatusController.add(m);
       }
     });
 
     _socket.on('p2p_shipment_updated', (data) {
       if (data is Map) {
         final m = Map<String, dynamic>.from(data);
-        _shipmentUpdateController.add(m);
-        _p2pStatusController.add(m);
+        if (!_shipmentUpdateController.isClosed) _shipmentUpdateController.add(m);
+        if (!_p2pStatusController.isClosed) _p2pStatusController.add(m);
       }
     });
 
     _socket.on('p2p_pickup_confirmed', (data) {
-      if (data is Map) _p2pStatusController.add(Map<String, dynamic>.from(data));
+      if (data is Map && !_p2pStatusController.isClosed) _p2pStatusController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.on('p2p_status_update', (data) {
-      if (data is Map) _p2pStatusController.add(Map<String, dynamic>.from(data));
+      if (data is Map && !_p2pStatusController.isClosed) _p2pStatusController.add(Map<String, dynamic>.from(data));
     });
 
     _socket.onDisconnect((_) {
-      print('Socket Client Disconnected');
-      _connectionStatusController.add(false);
+      if (kDebugMode) debugPrint('Socket Client Disconnected');
+      if (!_connectionStatusController.isClosed) _connectionStatusController.add(false);
     });
-    
+
     _socket.onConnectError((err) {
-      print('Socket Connection Error: $err');
-      _connectionStatusController.add(false);
+      if (kDebugMode) debugPrint('Socket Connection Error: $err');
+      if (!_connectionStatusController.isClosed) _connectionStatusController.add(false);
     });
-    
+
     _socket.onError((err) {
-        print('Socket Error: $err');
+      if (kDebugMode) debugPrint('Socket Error: $err');
     });
   }
 
   void disconnect() {
     _socket.disconnect();
-    _connectionStatusController.close();
-    _shipmentUpdateController.close();
-    _chatMessageController.close();
-    _newOfferController.close();
-    _p2pStatusController.close();
+    // Do not close StreamControllers here — the socket may be re-initialised
+    // (e.g. after token refresh). Closing them permanently prevents add() calls.
   }
 
   void joinThread(String threadId) {

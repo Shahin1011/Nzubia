@@ -47,7 +47,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Future<void> close() {
     _messageSubscription.cancel();
     _chatMessagesSubscription?.cancel();
-    _messagingRepository.dispose();
     return super.close();
   }
 

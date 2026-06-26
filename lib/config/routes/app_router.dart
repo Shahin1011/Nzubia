@@ -74,6 +74,8 @@ final GlobalKey<NavigatorState> _p2pNavKey = GlobalKey<NavigatorState>(debugLabe
 final GlobalKey<NavigatorState> _profileNavKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
 
 class AppRouter {
+  static final navigatorKey = _rootNavigatorKey;
+
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
@@ -390,7 +392,8 @@ class AppRouter {
       GoRoute(
         path: '/shipment-details',
         builder: (context, state) {
-          final shipment = state.extra as ShipmentEntity;
+          final shipment = state.extra as ShipmentEntity?;
+          if (shipment == null) return const Scaffold(body: Center(child: Text('Shipment not found')));
           return ShipmentDetailScreen(shipment: shipment);
         },
       ),
@@ -463,7 +466,9 @@ class AppRouter {
            if (extra is ShipmentEntity) {
              shipment = extra;
            } else if (extra is Map) {
-             shipment = extra['shipment'] as ShipmentEntity;
+             final s = extra['shipment'];
+             if (s is! ShipmentEntity) throw Exception('Invalid shipment param for quote screen');
+             shipment = s;
              quote = extra['quote'] as QuoteEntity?;
            } else {
              throw Exception('Invalid extra params for create/edit quote');

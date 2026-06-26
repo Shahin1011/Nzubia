@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             OneSignal.login(user.id);
             OneSignal.User.addEmail(user.email);
           } catch (e) {
-            print('OneSignal login failed: $e');
+            debugPrint('OneSignal login failed: $e');
           }
         }
         emit(AuthState.authenticated(user));

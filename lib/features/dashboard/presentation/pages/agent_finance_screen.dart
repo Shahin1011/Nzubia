@@ -68,7 +68,7 @@ class _AgentFinanceScreenState extends State<AgentFinanceScreen> with WidgetsBin
       final response = await sl<DioClient>().dio.get('/users/payout/status');
       if (mounted) setState(() => _payoutStatus = response.data);
     } catch (e) {
-      print('Failed to check payout status: $e');
+      if (kDebugMode) debugPrint('Failed to check payout status: $e');
     }
   }
 
@@ -77,7 +77,7 @@ class _AgentFinanceScreenState extends State<AgentFinanceScreen> with WidgetsBin
       final status = await sl<AuthRepository>().checkStripeStatus();
       if (mounted) setState(() => _stripeStatus = status);
     } catch (e) {
-      print('Failed to check Stripe status: $e');
+      if (kDebugMode) debugPrint('Failed to check Stripe status: $e');
     }
   }
 

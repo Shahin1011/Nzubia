@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:customer_nzubia_global/features/shipment/data/models/quote_model.dart';
@@ -25,7 +26,7 @@ class QuoteRepositoryImpl implements QuoteRepository {
       } else if (rawData is Map && rawData.containsKey('data') && rawData['data'] is List) {
         list = rawData['data'];
       } else {
-        print('Quotes API returned unexpected format: $rawData');
+        if (kDebugMode) debugPrint('Quotes API returned unexpected format: $rawData');
         return [];
       }
 
@@ -33,12 +34,12 @@ class QuoteRepositoryImpl implements QuoteRepository {
         try {
           return QuoteModel.fromJson(e);
         } catch (parseError) {
-          print('Error parsing individual quote: $parseError\nData: $e');
+          if (kDebugMode) debugPrint('Error parsing individual quote: $parseError\nData: $e');
           return null; // Skip invalid
         }
       }).whereType<QuoteModel>().toList();
     } catch (e) {
-      print('Get quotes failed: $e');
+      if (kDebugMode) debugPrint('Get quotes failed: $e');
       throw Exception('Get quotes failed: $e');
     }
   }
@@ -49,7 +50,7 @@ class QuoteRepositoryImpl implements QuoteRepository {
       final response = await _dioClient.dio.get(ApiConstants.quotes);
 
       if (response.data is! List) {
-        print('Quotes API returned non-list data: ${response.data}');
+        if (kDebugMode) debugPrint('Quotes API returned non-list data: ${response.data}');
         return [];
       }
 
@@ -57,13 +58,13 @@ class QuoteRepositoryImpl implements QuoteRepository {
         try {
           return QuoteModel.fromJson(e);
         } catch (parseError) {
-          print('Error parsing individual quote: $parseError\nData: $e');
+          if (kDebugMode) debugPrint('Error parsing individual quote: $parseError\nData: $e');
           return null;
         }
       }).whereType<QuoteModel>().toList();
       } catch (e, stackTrace) {
-      print('Error fetching quotes: $e');
-      print(stackTrace);
+      if (kDebugMode) debugPrint('Error fetching quotes: $e');
+      if (kDebugMode) debugPrint(stackTrace);
       return [];
     }
   }
@@ -117,7 +118,7 @@ class QuoteRepositoryImpl implements QuoteRepository {
 
       await _dioClient.dio.post(ApiConstants.quotes, data: data);
     } catch (e) {
-      print('Create quote failed: $e');
+      if (kDebugMode) debugPrint('Create quote failed: $e');
       throw Exception('Create quote failed: $e');
     }
   }
@@ -148,7 +149,7 @@ class QuoteRepositoryImpl implements QuoteRepository {
 
       await _dioClient.dio.patch('${ApiConstants.quotes}/$quoteId', data: data);
     } catch (e) {
-      print('Update quote failed: $e');
+      if (kDebugMode) debugPrint('Update quote failed: $e');
       throw Exception('Update quote failed: $e');
     }
   }

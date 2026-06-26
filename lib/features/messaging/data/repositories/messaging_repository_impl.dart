@@ -41,7 +41,7 @@ class MessagingRepositoryImpl implements MessagingRepository {
   Future<void> initialize() async {
     await _ensureAuth();
     await remoteDatasource.initialize();
-    print('✅ WebSocket Messaging Repository Initialized for User: $_currentUserId');
+    if (kDebugMode) debugPrint('✅ WebSocket Messaging Repository Initialized for User: $_currentUserId');
   }
 
   @override
@@ -60,7 +60,7 @@ class MessagingRepositoryImpl implements MessagingRepository {
       chats.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
       return chats;
     } catch (e) {
-      print('Error fetching chats: $e');
+      if (kDebugMode) debugPrint('Error fetching chats: $e');
       return [];
     }
   }
@@ -75,7 +75,7 @@ class MessagingRepositoryImpl implements MessagingRepository {
         // Mark as "me" if sender matches
         return messages.map((m) => m.copyWith(isMe: m.senderId == _currentUserId)).toList();
       } catch (e) {
-          print('Error fetching messages: $e');
+          if (kDebugMode) debugPrint('Error fetching messages: $e');
           return [];
       }
   }
@@ -97,7 +97,7 @@ class MessagingRepositoryImpl implements MessagingRepository {
     try {
         await remoteDatasource.sendMessage(receiverId, content, filePath: filePath);
     } catch (e) {
-        print('Error sending message: $e');
+        if (kDebugMode) debugPrint('Error sending message: $e');
         rethrow;
     }
   }

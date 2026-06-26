@@ -9,10 +9,9 @@ class StripePaymentService implements PaymentService {
   StripePaymentService(this._dioClient);
 
   @override
-  Future<void> initPaymentSheet({required String amount, required String currency}) async {
+  Future<void> initPaymentSheet({required String amount, required String currency, required String quoteId}) async {
     try {
-      // 1. Create PaymentIntent on the backend
-      final clientSecret = await _createPaymentIntent(amount, currency);
+      final clientSecret = await _createPaymentIntent(amount, currency, quoteId);
       
       // 2. Initialize the payment sheet
       await Stripe.instance.initPaymentSheet(
@@ -59,13 +58,14 @@ class StripePaymentService implements PaymentService {
     }
   }
 
-  Future<String> _createPaymentIntent(String amount, String currency) async {
+  Future<String> _createPaymentIntent(String amount, String currency, String quoteId) async {
     try {
       final response = await _dioClient.dio.post(
         '/payments/create-intent',
         data: {
-          'amount': (double.parse(amount) * 100).toInt(), // Convert to cents
+          'amount': (double.parse(amount) * 100).toInt(),
           'currency': currency,
+          'quoteId': quoteId,
         },
       );
       return response.data['clientSecret'];

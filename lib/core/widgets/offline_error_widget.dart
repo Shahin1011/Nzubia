@@ -14,7 +14,7 @@ class OfflineErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final lowerCaseError = errorMessage.toLowerCase();
-    print('OfflineErrorWidget received error: $errorMessage');
+    if (kDebugMode) debugPrint('OfflineErrorWidget received error: $errorMessage');
     
     final isNetworkError = lowerCaseError.contains('internet') || 
                            lowerCaseError.contains('connection timeout') ||

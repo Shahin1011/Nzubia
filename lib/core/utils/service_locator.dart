@@ -150,8 +150,8 @@ Future<void> setupServiceLocator() async {
     () => P2pShipmentBloc(repository: sl<P2pShipmentRepository>()),
   );
 
-  // ── P2P – Onboarding (singleton – persists across wizard steps) ─────────────
-  sl.registerLazySingleton<P2pOnboardingBloc>(
+  // P2pOnboardingBloc is a factory so each wizard flow gets a fresh instance
+  sl.registerFactory<P2pOnboardingBloc>(
     () => P2pOnboardingBloc(
       courierRepository: sl<P2pCourierRepository>(),
       routeRepository: sl<P2pRouteRepository>(),
