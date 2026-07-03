@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:customer_nzubia_global/features/messaging/domain/entities/message_entity.dart';
 
 
 class ChatEntity extends Equatable {

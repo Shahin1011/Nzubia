@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:customer_nzubia_global/features/messaging/domain/entities/chat_entity.dart';
 import 'package:customer_nzubia_global/features/messaging/domain/entities/message_entity.dart';
 import 'package:customer_nzubia_global/features/messaging/domain/repositories/messaging_repository.dart';
 import 'chat_event.dart';

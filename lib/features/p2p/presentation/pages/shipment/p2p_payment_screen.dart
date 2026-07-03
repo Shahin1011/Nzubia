@@ -217,7 +217,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                           Text(
                             'Funds are only released to the courier after you confirm delivery.',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.65),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                               height: 1.4,
                             ),
                           ),
@@ -238,7 +238,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.5)),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.5)),
                   boxShadow: [
                     BoxShadow(
                         color: Colors.black.withAlpha(8),
@@ -393,7 +393,7 @@ class _P2pPaymentScreenState extends State<P2pPaymentScreen> {
                 child: Text(
                   'Powered by Stripe · Your payment is encrypted and secure',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontSize: 11,
                   ),
                   textAlign: TextAlign.center,
@@ -429,7 +429,7 @@ class _SummaryRow extends StatelessWidget {
           style: theme.textTheme.bodySmall?.copyWith(
             color: bold
                 ? theme.colorScheme.onSurface
-                : theme.colorScheme.onSurface.withOpacity(0.55),
+                : theme.colorScheme.onSurface.withValues(alpha: 0.55),
             fontWeight: bold ? FontWeight.w700 : FontWeight.normal,
           ),
         ),

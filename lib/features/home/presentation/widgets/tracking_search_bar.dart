@@ -32,10 +32,10 @@ class _TrackingSearchBarState extends State<TrackingSearchBar> {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.onSurface.withOpacity(0.05),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withOpacity(0.1),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -44,7 +44,7 @@ class _TrackingSearchBarState extends State<TrackingSearchBar> {
         style: TextStyle(color: theme.colorScheme.onSurface),
         decoration: InputDecoration(
           hintText: 'Track by code (e.g., NZ-260104-2193)',
-          hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+          hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
           prefixIcon: Icon(Icons.search, color: theme.colorScheme.secondary),
           suffixIcon: IconButton(
             icon: Icon(Icons.arrow_forward, color: theme.colorScheme.secondary),

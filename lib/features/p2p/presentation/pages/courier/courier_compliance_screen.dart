@@ -142,7 +142,7 @@ class _ComplianceViewState extends State<_ComplianceView> {
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.5)),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.5)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,7 @@ class _ComplianceViewState extends State<_ComplianceView> {
                           'countries on your route, and adherence to airline baggage policies.',
                           style: theme.textTheme.bodySmall?.copyWith(
                               color:
-                                  theme.colorScheme.onSurface.withOpacity(0.65),
+                                  theme.colorScheme.onSurface.withValues(alpha: 0.65),
                               height: 1.5),
                         ),
                       ],
@@ -220,7 +220,7 @@ class _ComplianceViewState extends State<_ComplianceView> {
                         backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
                         disabledBackgroundColor:
-                            Theme.of(context).colorScheme.outline.withOpacity(0.4),
+                            Theme.of(context).colorScheme.outline.withValues(alpha: 0.4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -332,7 +332,7 @@ class _AckCheckbox extends StatelessWidget {
               child: Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       height: 1.4,
                     ),
               ),

@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
-import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/core/network/socket_client.dart';
 import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_repository.dart';
 import 'package:customer_nzubia_global/features/auth/data/repositories/auth_repository_impl.dart';

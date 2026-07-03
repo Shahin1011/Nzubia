@@ -61,8 +61,9 @@ class TransactionDetailScreen extends StatelessWidget {
     }
 
     String typeLabel = transaction['type'].toString();
-    if (isPayout) typeLabel = l10n.payout ?? 'Payout';
-    else if (isEscrowHold) typeLabel = l10n.escrowHold ?? 'Escrow Hold';
+    if (isPayout) {
+      typeLabel = l10n.payout ?? 'Payout';
+    } else if (isEscrowHold) typeLabel = l10n.escrowHold ?? 'Escrow Hold';
     else if (isEscrowRelease) typeLabel = l10n.escrowRelease ?? 'Escrow Release';
 
     return Scaffold(
@@ -82,8 +83,8 @@ class TransactionDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isPayout 
-                        ? Colors.orange.withOpacity(0.1)
-                        : (colors?.neonLime ?? Colors.green).withOpacity(0.1),
+                        ? Colors.orange.withValues(alpha: 0.1)
+                        : (colors?.neonLime ?? Colors.green).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

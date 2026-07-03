@@ -247,7 +247,7 @@ class _TrackingBody extends StatelessWidget {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                  color: theme.colorScheme.outline.withOpacity(0.3)),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,7 +255,7 @@ class _TrackingBody extends StatelessWidget {
                 Text(
                   'Shipment Summary',
                   style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.55),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -400,7 +400,7 @@ class _SummaryRow extends StatelessWidget {
             child: Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -440,7 +440,7 @@ class _StepRow extends StatelessWidget {
             : theme.colorScheme.outline;
     final Color lineColor = isDone
         ? Colors.green
-        : theme.colorScheme.outline.withOpacity(0.35);
+        : theme.colorScheme.outline.withValues(alpha: 0.35);
 
     return IntrinsicHeight(
       child: Row(
@@ -497,7 +497,7 @@ class _StepRow extends StatelessWidget {
                           : FontWeight.w500,
                       color: isDone || isActive
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.45),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.45),
                     ),
                   ),
                   if (isActive) ...[
@@ -506,7 +506,7 @@ class _StepRow extends StatelessWidget {
                       step.description,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color:
-                            theme.colorScheme.onSurface.withOpacity(0.55),
+                            theme.colorScheme.onSurface.withValues(alpha: 0.55),
                         height: 1.4,
                       ),
                     ),
@@ -552,7 +552,7 @@ class _DisputeStepRow extends StatelessWidget {
                 Text(
                   'Our team has been notified and will review your case.',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.errorColor.withOpacity(0.75),
+                    color: AppTheme.errorColor.withValues(alpha: 0.75),
                     height: 1.4,
                   ),
                 ),

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:customer_nzubia_global/features/messaging/domain/entities/chat_entity.dart';
 import 'package:customer_nzubia_global/features/messaging/domain/entities/message_entity.dart';
 
 abstract class ChatEvent extends Equatable {

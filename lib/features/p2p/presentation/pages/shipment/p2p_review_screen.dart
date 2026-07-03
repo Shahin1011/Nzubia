@@ -93,7 +93,7 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
             child: Text(
               'Skip',
               style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
             ),
           ),
         ],
@@ -134,7 +134,7 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
                     'Your feedback helps the community find trustworthy couriers.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color:
-                          theme.colorScheme.onSurface.withOpacity(0.6),
+                          theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
@@ -160,7 +160,7 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
                             color: _rating >= starVal
                                 ? Colors.amber[600]
                                 : theme.colorScheme.outline
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                           ),
                         ),
                       );
@@ -190,7 +190,7 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
                           'Add a comment (optional) — e.g. package arrived on time and in great condition.',
                       hintStyle: theme.textTheme.bodySmall?.copyWith(
                         color:
-                            theme.colorScheme.onSurface.withOpacity(0.4),
+                            theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       ),
                       filled: true,
                       fillColor: theme.colorScheme.surface,
@@ -198,13 +198,13 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                             color: theme.colorScheme.outline
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                             color: theme.colorScheme.outline
-                                .withOpacity(0.4)),
+                                .withValues(alpha: 0.4)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -256,7 +256,7 @@ class _P2pReviewScreenState extends State<P2pReviewScreen> {
                     child: Text(
                       'Skip for now',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.45),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                         decoration: TextDecoration.underline,
                       ),
                     ),

@@ -113,7 +113,7 @@ class _ShipmentBody extends StatelessWidget {
                 color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: theme.colorScheme.outline.withOpacity(0.5)),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.5)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withAlpha(8),
@@ -167,11 +167,11 @@ class _ShipmentBody extends StatelessWidget {
                 finishedStepBorderColor: AppTheme.primaryColor,
                 unreachedStepBorderColor: theme.colorScheme.outline,
                 unreachedStepBackgroundColor:
-                    theme.colorScheme.outline.withOpacity(0.2),
+                    theme.colorScheme.outline.withValues(alpha: 0.2),
                 activeStepIconColor: Colors.white,
                 finishedStepIconColor: Colors.white,
                 unreachedStepIconColor:
-                    theme.colorScheme.onSurface.withOpacity(0.4),
+                    theme.colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ),
 
@@ -535,7 +535,7 @@ class _MilestoneList extends StatelessWidget {
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: done
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.4),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.4),
                   fontWeight:
                       done ? FontWeight.w500 : FontWeight.normal,
                 ),
@@ -617,7 +617,7 @@ class _SectionCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         border:
-            Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+            Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
@@ -668,7 +668,7 @@ class _DetailRow extends StatelessWidget {
             child: Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
             ),
           ),
           Expanded(
@@ -730,7 +730,7 @@ class _ActionCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                   ),
                 ],
               ),
@@ -766,7 +766,7 @@ class _ErrorState extends StatelessWidget {
             const SizedBox(height: 8),
             Text(message,
                 style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -870,7 +870,7 @@ class _CourierRequestStatusTile extends StatelessWidget {
             Text(
               routeLabel,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
             ),
           ],
           if (cr.status == CourierRequestStatus.declined &&
@@ -1055,7 +1055,7 @@ class _OfferTile extends StatelessWidget {
             Text(
               '${route.pickupOrigin} → ${route.destinationCity}, ${route.destinationCountry}',
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
             ),
           ],
           const SizedBox(height: 4),

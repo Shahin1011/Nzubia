@@ -1,7 +1,6 @@
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
-import 'package:customer_nzubia_global/features/shipment/data/models/cargo_item_model.dart';
 import 'package:customer_nzubia_global/features/shipment/data/models/shipment_model.dart';
 import 'package:customer_nzubia_global/features/shipment/domain/entities/cargo_item_entity.dart';
 import 'package:customer_nzubia_global/features/shipment/domain/entities/shipment_entity.dart';

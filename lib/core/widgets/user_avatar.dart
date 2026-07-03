@@ -60,9 +60,9 @@ class UserAvatar extends StatelessWidget {
       width: radius * 2,
       height: radius * 2,
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.1),
+        color: primaryColor.withValues(alpha: 0.1),
         shape: BoxShape.circle,
-        border: Border.all(color: primaryColor.withOpacity(0.5), width: 1),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.5), width: 1),
       ),
       alignment: Alignment.center,
       child: isLoading

@@ -147,7 +147,7 @@ class _RegisterViewState extends State<RegisterView> {
                   AppLocalizations.of(context)!.joinNetwork,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -251,12 +251,12 @@ class _PhoneInput extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: smsConsent
-                      ? theme.colorScheme.primary.withOpacity(0.5)
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -276,7 +276,7 @@ class _PhoneInput extends StatelessWidget {
                       child: RichText(
                         text: TextSpan(
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.textTheme.bodySmall?.color?.withOpacity(0.8),
+                            color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                             height: 1.4,
                           ),
                           children: [

@@ -107,7 +107,7 @@ class _HomeView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.38),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.38),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -145,12 +145,12 @@ class _HomeView extends StatelessWidget {
   TabBar _buildTabBar(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
 
     return TabBar(
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
-        color: primaryColor.withOpacity(0.12),
+        color: primaryColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
       indicatorColor: Colors.transparent,
@@ -167,7 +167,7 @@ class _HomeView extends StatelessWidget {
   Widget _buildHeader(BuildContext context, String firstName, String initials) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
 
     return BlocBuilder<ShipmentListBloc, ShipmentListState>(
       builder: (context, state) {
@@ -211,7 +211,7 @@ class _HomeView extends StatelessWidget {
                       height: 44,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [primaryColor, primaryColor.withOpacity(0.65)],
+                          colors: [primaryColor, primaryColor.withValues(alpha: 0.65)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -375,7 +375,7 @@ class _HomeView extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withOpacity(0.2),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -389,7 +389,7 @@ class _HomeView extends StatelessWidget {
             Text(
               'Choose the shipping method that works best for you.',
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 24),
             _ShipOptionTile(
@@ -443,16 +443,16 @@ class _StatPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 16),
@@ -472,7 +472,7 @@ class _StatPill extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: theme.colorScheme.onSurface.withOpacity(0.55),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -512,9 +512,9 @@ class _QuickActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.07),
+          color: color.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.22)),
+          border: Border.all(color: color.withValues(alpha: 0.22)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -522,7 +522,7 @@ class _QuickActionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -539,7 +539,7 @@ class _QuickActionCard extends StatelessWidget {
             Text(
               subtitle,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.55),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 fontSize: 11,
               ),
               maxLines: 2,
@@ -593,9 +593,9 @@ class _CourierModeCardState extends State<_CourierModeCard> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.07),
+          color: color.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.22)),
+          border: Border.all(color: color.withValues(alpha: 0.22)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +606,7 @@ class _CourierModeCardState extends State<_CourierModeCard> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.flight_takeoff_rounded, color: color, size: 20),
@@ -634,7 +634,7 @@ class _CourierModeCardState extends State<_CourierModeCard> {
             Text(
               'Carry packages & earn on your travels',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.55),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 fontSize: 11,
               ),
               maxLines: 2,
@@ -665,7 +665,7 @@ class _ShipmentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.4);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.4);
 
     return RefreshIndicator(
       onRefresh: () async =>
@@ -693,7 +693,7 @@ class _ShipmentList extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: subtitleColor.withOpacity(0.08),
+                      color: subtitleColor.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(emptyIcon, size: 48, color: subtitleColor),
@@ -765,7 +765,7 @@ class _ShipmentCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<AppColorsExtension>();
     final textColor = theme.colorScheme.onSurface;
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
     final primaryColor = theme.colorScheme.primary;
 
     final statusColor = _statusColor(shipment.status, colors, primaryColor);
@@ -780,7 +780,7 @@ class _ShipmentCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -794,7 +794,7 @@ class _ShipmentCard extends StatelessWidget {
                       padding:
                           const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.12),
+                        color: statusColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -840,7 +840,7 @@ class _ShipmentCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                              color: primaryColor.withOpacity(0.4),
+                              color: primaryColor.withValues(alpha: 0.4),
                               blurRadius: 5,
                               spreadRadius: 1),
                         ],
@@ -864,7 +864,7 @@ class _ShipmentCard extends StatelessWidget {
                 child: SizedBox(
                   height: 16,
                   child: VerticalDivider(
-                    color: theme.colorScheme.outline.withOpacity(0.3),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     width: 1,
                     thickness: 1,
                   ),
@@ -882,7 +882,7 @@ class _ShipmentCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                              color: theme.colorScheme.secondary.withOpacity(0.4),
+                              color: theme.colorScheme.secondary.withValues(alpha: 0.4),
                               blurRadius: 5,
                               spreadRadius: 1),
                         ],
@@ -906,7 +906,7 @@ class _ShipmentCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Divider(
-                    color: theme.colorScheme.outline.withOpacity(0.15), height: 1),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.15), height: 1),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
@@ -917,7 +917,7 @@ class _ShipmentCard extends StatelessWidget {
                       padding:
                           const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.outline.withOpacity(0.1),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -1221,9 +1221,9 @@ class _ShipOptionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.06),
+          color: color.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.25)),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
@@ -1231,7 +1231,7 @@ class _ShipOptionTile extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -1250,14 +1250,14 @@ class _ShipOptionTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
               ),
             ),
             Icon(Icons.arrow_forward_ios_rounded,
-                size: 14, color: color.withOpacity(0.6)),
+                size: 14, color: color.withValues(alpha: 0.6)),
           ],
         ),
       ),

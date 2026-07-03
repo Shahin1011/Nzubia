@@ -197,7 +197,7 @@ class _EditManifestScreenState extends State<EditManifestScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownButtonFormField<String>(
-          value: _selectedCategory,
+          initialValue: _selectedCategory,
           decoration: InputDecoration(labelText: l10n.category, border: const OutlineInputBorder()),
           items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
           onChanged: (val) => setState(() => _selectedCategory = val!),

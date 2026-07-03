@@ -152,7 +152,7 @@ class _LoginViewState extends State<LoginView> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.1),
+                      theme.colorScheme.primary.withValues(alpha: 0.1),
                       Colors.transparent,
                     ],
                     begin: Alignment.topCenter,
@@ -197,7 +197,7 @@ class _LoginViewState extends State<LoginView> {
                           state.isOtpRequired ? AppLocalizations.of(context)?.enterOtpSentTo(state.email) ?? "Enter OTP sent to ${state.email}" : AppLocalizations.of(context)?.signInToManageShipments ?? "Sign in to manage your shipments",
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                         const SizedBox(height: 40),

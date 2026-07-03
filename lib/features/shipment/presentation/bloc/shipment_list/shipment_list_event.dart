@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:customer_nzubia_global/features/shipment/domain/entities/shipment_entity.dart';
 
 abstract class ShipmentListEvent extends Equatable {
   const ShipmentListEvent();

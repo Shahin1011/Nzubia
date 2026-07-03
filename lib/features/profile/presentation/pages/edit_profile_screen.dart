@@ -45,8 +45,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // Colors for input fields
-    final inputFillColor = isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100;
-    final inputBorderColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade300;
+    final inputFillColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100;
+    final inputBorderColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey.shade300;
     final iconColor = isDark ? Colors.white70 : Colors.grey.shade600;
     final labelColor = isDark ? Colors.white60 : Colors.grey.shade700;
     final textColor = isDark ? Colors.white : Colors.black87;
@@ -94,9 +94,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.1),
+                              color: Colors.blue.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               children: [
@@ -127,14 +127,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               TextField(
                                 controller: TextEditingController(text: widget.profile.email),
                                 enabled: false,
-                                style: TextStyle(color: textColor.withOpacity(0.6)),
+                                style: TextStyle(color: textColor.withValues(alpha: 0.6)),
                                 decoration: InputDecoration(
                                   labelText: 'Email',
                                   prefixIcon: Icon(Icons.email, color: iconColor),
                                   labelStyle: TextStyle(color: labelColor),
                                   border: OutlineInputBorder(borderSide: BorderSide(color: inputBorderColor)),
                                   enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: inputBorderColor)),
-                                  disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: inputBorderColor.withOpacity(0.5))),
+                                  disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: inputBorderColor.withValues(alpha: 0.5))),
                                 ),
                               ),
                               const SizedBox(height: 16),

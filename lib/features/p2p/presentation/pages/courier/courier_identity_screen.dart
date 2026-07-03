@@ -317,7 +317,7 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: theme.textTheme.bodySmall?.copyWith(
-        color: theme.colorScheme.onSurface.withOpacity(0.55),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),

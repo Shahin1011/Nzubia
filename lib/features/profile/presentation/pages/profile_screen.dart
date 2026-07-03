@@ -112,7 +112,7 @@ class ProfileView extends StatelessWidget {
                       onChanged: (val) {
                         context.read<ThemeCubit>().toggleTheme();
                       },
-                      activeColor: AppTheme.primaryColor,
+                      activeThumbColor: AppTheme.primaryColor,
                     );
                   },
                 ),
@@ -219,7 +219,7 @@ class ProfileView extends StatelessWidget {
     String label;
 
     textColor = _getKycColor(kycStatus);
-    bgColor = textColor.withOpacity(0.15);
+    bgColor = textColor.withValues(alpha: 0.15);
     label = _getKycText(context, kycStatus);
 
     return Container(
@@ -235,8 +235,8 @@ class ProfileView extends StatelessWidget {
   Widget _buildAgentInfoCard(BuildContext context, dynamic profile) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50;
-    final borderColor = isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200;
+    final cardColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade50;
+    final borderColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey.shade200;
     final labelColor = theme.textTheme.bodySmall?.color ?? Colors.grey;
     final valueColor = theme.textTheme.bodyLarge?.color ?? (isDark ? Colors.white : Colors.black87);
 
@@ -257,9 +257,9 @@ class ProfileView extends StatelessWidget {
             trailing: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: _getKycColor(profile.kycStatus).withOpacity(0.12),
+                color: _getKycColor(profile.kycStatus).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: _getKycColor(profile.kycStatus).withOpacity(0.5)),
+                border: Border.all(color: _getKycColor(profile.kycStatus).withValues(alpha: 0.5)),
               ),
               child: Text(
                 _getKycText(context, profile.kycStatus),
@@ -281,7 +281,7 @@ class ProfileView extends StatelessWidget {
                   } else if (profile.rating >= starValue - 0.5) {
                     return const Icon(Icons.star_half, color: Colors.amber, size: 20);
                   } else {
-                    return Icon(Icons.star_border, color: Colors.amber.withOpacity(0.5), size: 20);
+                    return Icon(Icons.star_border, color: Colors.amber.withValues(alpha: 0.5), size: 20);
                   }
                 }),
                 const SizedBox(width: 8),
@@ -325,9 +325,9 @@ class ProfileView extends StatelessWidget {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: AppTheme.primaryColor.withOpacity(0.3)),
+                              border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
                             ),
                             child: Text(region, style: TextStyle(fontSize: 12, color: valueColor)),
                           );
@@ -613,7 +613,7 @@ class _PayoutSettingsDialogState extends State<_PayoutSettingsDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                value: _preferredMethod,
+                initialValue: _preferredMethod,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.payoutMethod,
                   border: const OutlineInputBorder(),
@@ -665,9 +665,9 @@ class _PayoutSettingsDialogState extends State<_PayoutSettingsDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [

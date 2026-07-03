@@ -65,7 +65,7 @@ class _DocumentsViewState extends State<_DocumentsView> {
                   Text(
                     'Documents are encrypted and used only for verification.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                   ),
                   const SizedBox(height: 24),
 
@@ -129,7 +129,7 @@ class _DocumentsViewState extends State<_DocumentsView> {
                         backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
                         disabledBackgroundColor:
-                            theme.colorScheme.outline.withOpacity(0.4),
+                            theme.colorScheme.outline.withValues(alpha: 0.4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -280,11 +280,11 @@ class _UploadCard extends StatelessWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.outline.withOpacity(0.12),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(icon,
-                          color: theme.colorScheme.onSurface.withOpacity(0.55),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                           size: 24),
                     ),
                     const SizedBox(width: 14),
@@ -325,7 +325,7 @@ class _UploadCard extends StatelessWidget {
                             subtitle,
                             style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurface
-                                    .withOpacity(0.55)),
+                                    .withValues(alpha: 0.55)),
                           ),
                         ],
                       ),
@@ -369,7 +369,7 @@ class _FilePreview extends StatelessWidget {
               errorBuilder: (_, __, ___) => Container(
                 width: 64,
                 height: 64,
-                color: theme.colorScheme.outline.withOpacity(0.2),
+                color: theme.colorScheme.outline.withValues(alpha: 0.2),
                 child: const Icon(Icons.broken_image_outlined),
               ),
             ),
@@ -404,7 +404,7 @@ class _FilePreview extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.close, size: 18),
-            color: theme.colorScheme.onSurface.withOpacity(0.45),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
             onPressed: onClear,
           ),
         ],

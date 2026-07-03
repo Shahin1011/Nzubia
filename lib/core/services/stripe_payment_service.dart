@@ -29,6 +29,7 @@ class StripePaymentService implements PaymentService {
 
   /// Use this when the PaymentIntent was already created server-side and you
   /// have its client_secret (e.g. P2P offer acceptance flow).
+  @override
   Future<void> initPaymentSheetWithClientSecret(String clientSecret) async {
     try {
       await Stripe.instance.initPaymentSheet(

@@ -198,7 +198,7 @@ class _AwaitingOffersViewState extends State<_AwaitingOffersView>
                               : "We've notified matched couriers. Offers will appear below.",
                           style: theme.textTheme.bodySmall?.copyWith(
                             color:
-                                theme.colorScheme.onSurface.withOpacity(0.65),
+                                theme.colorScheme.onSurface.withValues(alpha: 0.65),
                             height: 1.45,
                           ),
                         ),
@@ -339,7 +339,7 @@ class _EmptyOffersState extends StatelessWidget {
               'Matched couriers have been notified by email. Pull down to refresh, or check back soon.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.55),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 height: 1.5,
               ),
             ),
@@ -383,7 +383,7 @@ class _OfferCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.45)),
+            color: theme.colorScheme.outline.withValues(alpha: 0.45)),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withAlpha(8),
@@ -439,7 +439,7 @@ class _OfferCard extends StatelessWidget {
                               : 'New',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface
-                                .withOpacity(0.5),
+                                .withValues(alpha: 0.5),
                             fontSize: 11,
                           ),
                         ),
@@ -464,7 +464,7 @@ class _OfferCard extends StatelessWidget {
                     'USD',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color:
-                          theme.colorScheme.onSurface.withOpacity(0.4),
+                          theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 11,
                     ),
                   ),
@@ -483,14 +483,14 @@ class _OfferCard extends StatelessWidget {
                 Icon(
                   Icons.flight_takeoff_outlined,
                   size: 14,
-                  color: theme.colorScheme.onSurface.withOpacity(0.45),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     route.pickupOrigin,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.65),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -501,14 +501,14 @@ class _OfferCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today_outlined,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     departureFmt,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color:
-                          theme.colorScheme.onSurface.withOpacity(0.55),
+                          theme.colorScheme.onSurface.withValues(alpha: 0.55),
                       fontSize: 11,
                     ),
                   ),

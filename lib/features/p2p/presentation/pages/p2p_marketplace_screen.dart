@@ -149,7 +149,7 @@ class _MarketplaceViewState extends State<_MarketplaceView> {
                         child: Text(
                           '${state.routes.length} routes available',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.55),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                           ),
                         ),
                       ),
@@ -268,7 +268,7 @@ class _DestinationFilterBar extends StatelessWidget {
               fontSize: 13,
             ),
             checkmarkColor: Colors.white,
-            backgroundColor: theme.colorScheme.outline.withOpacity(0.12),
+            backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.12),
             side: BorderSide.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -302,7 +302,7 @@ class _RouteCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(13),
@@ -341,7 +341,7 @@ class _RouteCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Icon(Icons.arrow_forward,
                         size: 16,
-                        color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                   ),
                   Expanded(
                     child: Row(
@@ -376,13 +376,13 @@ class _RouteCard extends StatelessWidget {
                     label: '${dateFmt.format(route.departureDate)} • $daysText',
                     color: daysUntil <= 3
                         ? Colors.orange[700]!
-                        : theme.colorScheme.onSurface.withOpacity(0.6),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   const SizedBox(width: 8),
                   _MetaChip(
                     icon: Icons.scale_outlined,
                     label: '${route.capacityKg.toStringAsFixed(1)} kg cap',
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   const Spacer(),
                   if (route.courierProfile != null)
@@ -415,13 +415,13 @@ class _RouteCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.outline.withOpacity(0.12),
+                            color: theme.colorScheme.outline.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             cat.label,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.65),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                               fontSize: 11,
                             ),
                           ),
@@ -519,7 +519,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               'Be the first — become a courier and post your route.',
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -571,7 +571,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

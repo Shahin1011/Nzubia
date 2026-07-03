@@ -109,9 +109,9 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       decoration: BoxDecoration(
-        color: bannerColor.withOpacity(0.08),
+        color: bannerColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: bannerColor.withOpacity(0.25)),
+        border: Border.all(color: bannerColor.withValues(alpha: 0.25)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -126,7 +126,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: bannerColor.withOpacity(0.15),
+                    color: bannerColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: bannerColor, size: 20),
@@ -149,7 +149,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
                         subtitle,
                         style: TextStyle(
                           fontSize: 12,
-                          color: bannerColor.withOpacity(0.85),
+                          color: bannerColor.withValues(alpha: 0.85),
                           height: 1.4,
                         ),
                         maxLines: 2,
@@ -175,7 +175,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
     final theme = Theme.of(context);
     final user = context.select((AuthBloc bloc) => bloc.state.user);
     final primaryColor = theme.colorScheme.primary;
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -247,7 +247,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
     return TabBar(
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: BoxDecoration(
-        color: primaryColor.withOpacity(0.12),
+        color: primaryColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
       indicatorColor: Colors.transparent,
@@ -276,7 +276,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
-          top: BorderSide(color: theme.colorScheme.outline.withOpacity(0.15)),
+          top: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.15)),
         ),
       ),
       child: BottomNavigationBar(
@@ -330,7 +330,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
       builder: (context, state) {
         final theme = Theme.of(context);
         final textColor = theme.colorScheme.onSurface;
-        final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+        final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
         final primaryColor = theme.colorScheme.primary;
         final isLoading = state.status == DashboardStatus.loading;
 
@@ -348,7 +348,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
                       height: 44,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [primaryColor, primaryColor.withOpacity(0.65)],
+                          colors: [primaryColor, primaryColor.withValues(alpha: 0.65)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -409,14 +409,14 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [primaryColor, primaryColor.withOpacity(0.72)],
+                      colors: [primaryColor, primaryColor.withValues(alpha: 0.72)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor.withOpacity(0.28),
+                        color: primaryColor.withValues(alpha: 0.28),
                         blurRadius: 18,
                         offset: const Offset(0, 6),
                       ),
@@ -440,7 +440,7 @@ class _AgentDashboardViewState extends State<_AgentDashboardView> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.18),
+                              color: Colors.white.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -529,7 +529,7 @@ class _ShipmentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.4);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.4);
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -561,7 +561,7 @@ class _ShipmentList extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: subtitleColor.withOpacity(0.08),
+                      color: subtitleColor.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(emptyIcon, size: 48, color: subtitleColor),
@@ -606,7 +606,7 @@ class _AgentShipmentCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<AppColorsExtension>();
     final textColor = theme.colorScheme.onSurface;
-    final subtitleColor = theme.colorScheme.onSurface.withOpacity(0.55);
+    final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
     final primaryColor = theme.colorScheme.primary;
 
     final statusColor = _statusColor(shipment.status, colors);
@@ -622,7 +622,7 @@ class _AgentShipmentCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,7 +636,7 @@ class _AgentShipmentCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.12),
+                        color: statusColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -671,7 +671,7 @@ class _AgentShipmentCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.outline.withOpacity(0.12),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -697,7 +697,7 @@ class _AgentShipmentCard extends StatelessWidget {
                         color: primaryColor,
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(color: primaryColor.withOpacity(0.4), blurRadius: 5, spreadRadius: 1),
+                          BoxShadow(color: primaryColor.withValues(alpha: 0.4), blurRadius: 5, spreadRadius: 1),
                         ],
                       ),
                     ),
@@ -718,7 +718,7 @@ class _AgentShipmentCard extends StatelessWidget {
                 child: SizedBox(
                   height: 16,
                   child: VerticalDivider(
-                    color: theme.colorScheme.outline.withOpacity(0.3),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     width: 1,
                     thickness: 1,
                   ),
@@ -736,7 +736,7 @@ class _AgentShipmentCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: (colors?.neonPurple ?? theme.colorScheme.secondary).withOpacity(0.4),
+                            color: (colors?.neonPurple ?? theme.colorScheme.secondary).withValues(alpha: 0.4),
                             blurRadius: 5,
                             spreadRadius: 1,
                           ),
@@ -782,7 +782,7 @@ class _AgentShipmentCard extends StatelessWidget {
                   .contains(shipment.status.toUpperCase())) ...[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Divider(color: theme.colorScheme.outline.withOpacity(0.15), height: 1),
+                  child: Divider(color: theme.colorScheme.outline.withValues(alpha: 0.15), height: 1),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),

@@ -248,7 +248,7 @@ class _ReviewViewState extends State<_ReviewView> {
                                   'permanent account suspension.',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                         color: theme.colorScheme.onSurface
-                                            .withOpacity(0.8),
+                                            .withValues(alpha: 0.8),
                                         height: 1.5,
                                       ),
                                 ),
@@ -270,7 +270,7 @@ class _ReviewViewState extends State<_ReviewView> {
                             backgroundColor: AppTheme.primaryColor,
                             foregroundColor: Colors.white,
                             disabledBackgroundColor:
-                                theme.colorScheme.outline.withOpacity(0.4),
+                                theme.colorScheme.outline.withValues(alpha: 0.4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -355,7 +355,7 @@ class _SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
@@ -409,7 +409,7 @@ class _SummaryCard extends StatelessWidget {
                                 r.label,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurface
-                                        .withOpacity(0.45)),
+                                        .withValues(alpha: 0.45)),
                               ),
                             ),
                             Expanded(

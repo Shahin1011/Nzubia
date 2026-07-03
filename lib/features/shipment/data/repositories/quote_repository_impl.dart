@@ -64,7 +64,7 @@ class QuoteRepositoryImpl implements QuoteRepository {
       }).whereType<QuoteModel>().toList();
       } catch (e, stackTrace) {
       if (kDebugMode) debugPrint('Error fetching quotes: $e');
-      if (kDebugMode) debugPrint(stackTrace);
+      if (kDebugMode) debugPrint(stackTrace.toString());
       return [];
     }
   }

@@ -30,7 +30,7 @@ class ScaffoldWithNavbar extends StatelessWidget {
           color: theme.colorScheme.surface,
           border: Border(
             top: BorderSide(
-              color: theme.colorScheme.outline.withOpacity(0.15),
+              color: theme.colorScheme.outline.withValues(alpha: 0.15),
             ),
           ),
         ),
@@ -38,7 +38,7 @@ class ScaffoldWithNavbar extends StatelessWidget {
           currentIndex: navigationShell.currentIndex,
           onTap: (index) => _onTap(context, index),
           selectedItemColor: AppTheme.primaryColor,
-          unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.45),
+          unselectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.45),
           backgroundColor: Colors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,

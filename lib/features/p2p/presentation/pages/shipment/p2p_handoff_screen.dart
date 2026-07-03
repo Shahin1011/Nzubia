@@ -179,7 +179,7 @@ class _Body extends StatelessWidget {
             'Share this 6-digit code with your courier '
             'when you meet to hand over the package.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.65),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -227,7 +227,7 @@ class _Body extends StatelessWidget {
                         'Generating code…',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color:
-                              theme.colorScheme.onSurface.withOpacity(0.5),
+                              theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -317,7 +317,7 @@ class _Body extends StatelessWidget {
           Text(
             'Waiting for the courier to confirm receipt…',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.45),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
             ),
             textAlign: TextAlign.center,
           ),

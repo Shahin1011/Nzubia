@@ -181,7 +181,7 @@ class AppTheme {
           backgroundColor: _brandGreen,
           foregroundColor: Colors.white,
           elevation: 0,
-          shadowColor: _brandGreen.withOpacity(0.5),
+          shadowColor: _brandGreen.withValues(alpha: 0.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -239,7 +239,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         
-        hintStyle: TextStyle(color: _brandGray.withOpacity(0.5)),
+        hintStyle: TextStyle(color: _brandGray.withValues(alpha: 0.5)),
         
         // Floating behavior - auto moves label up with proper gap
         floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -406,7 +406,7 @@ class AppTheme {
           backgroundColor: _neonCyan,
           foregroundColor: Colors.black, // Contrast on neon
           elevation: 0,
-          shadowColor: _neonCyan.withOpacity(0.5),
+          shadowColor: _neonCyan.withValues(alpha: 0.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -437,7 +437,7 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _surfaceSlate.withOpacity(0.5),
+        fillColor: _surfaceSlate.withValues(alpha: 0.5),
         
         // Fix label overlap - add proper spacing
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

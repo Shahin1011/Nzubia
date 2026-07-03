@@ -244,7 +244,7 @@ class _RouteViewState extends State<_RouteView> {
                     Text(
                       'Select what you\'re willing to carry.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                     ),
                     const SizedBox(height: 12),
                     Wrap(
@@ -274,7 +274,7 @@ class _RouteViewState extends State<_RouteView> {
                           ),
                           checkmarkColor: Colors.white,
                           backgroundColor:
-                              theme.colorScheme.outline.withOpacity(0.12),
+                              theme.colorScheme.outline.withValues(alpha: 0.12),
                           side: BorderSide.none,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -386,7 +386,7 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: theme.textTheme.bodySmall?.copyWith(
-        color: theme.colorScheme.onSurface.withOpacity(0.55),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),

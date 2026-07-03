@@ -1,4 +1,5 @@
 import 'package:customer_nzubia_global/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:customer_nzubia_global/core/theme/custom_theme_extension.dart';
 import 'package:customer_nzubia_global/core/utils/service_locator.dart';
@@ -192,7 +193,7 @@ class _AgentFinanceScreenState extends State<AgentFinanceScreen> with WidgetsBin
                   const SizedBox(height: 16),
                   TabBar(
                     labelColor: colors?.neonCyan ?? Colors.cyan,
-                    unselectedLabelColor: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                    unselectedLabelColor: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                     indicatorColor: colors?.neonCyan ?? Colors.cyan,
                     tabs: [
                       Tab(text: AppLocalizations.of(context)!.transactions),
@@ -239,7 +240,7 @@ class _AgentFinanceScreenState extends State<AgentFinanceScreen> with WidgetsBin
              Container(
                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                decoration: BoxDecoration(
-                 color: (colors?.neonLime ?? Colors.green).withOpacity(0.2),
+                 color: (colors?.neonLime ?? Colors.green).withValues(alpha: 0.2),
                  borderRadius: BorderRadius.circular(20),
                  border: Border.all(color: colors?.neonLime ?? Colors.green),
                ),
@@ -295,8 +296,8 @@ class _AgentFinanceScreenState extends State<AgentFinanceScreen> with WidgetsBin
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: canReceivePayouts 
-          ? (colors?.neonLime ?? Colors.green).withOpacity(0.1)
-          : Colors.orange.withOpacity(0.1),
+          ? (colors?.neonLime ?? Colors.green).withValues(alpha: 0.1)
+          : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: canReceivePayouts 
@@ -578,7 +579,7 @@ class _PayoutSettingsViewState extends State<_PayoutSettingsView> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: Colors.deepPurple.withOpacity(0.1), shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: Colors.deepPurple.withValues(alpha: 0.1), shape: BoxShape.circle),
                   child: const Icon(Icons.mobile_friendly, color: Colors.deepPurple, size: 28),
                 ),
                 const SizedBox(width: 16),
@@ -589,7 +590,7 @@ class _PayoutSettingsViewState extends State<_PayoutSettingsView> {
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: (colors?.neonLime ?? Colors.green).withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: (colors?.neonLime ?? Colors.green).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4)),
                       child: Text(AppLocalizations.of(context)!.active.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: colors?.neonLime ?? Colors.green)),
                     ),
                   ],
@@ -624,7 +625,7 @@ class _PayoutSettingsViewState extends State<_PayoutSettingsView> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : theme.cardColor,
+          color: isSelected ? color.withValues(alpha: 0.1) : theme.cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? color : theme.dividerColor,
@@ -794,9 +795,9 @@ class _TransactionsView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.receipt_long, size: 64, color: theme.iconTheme.color?.withOpacity(0.24)),
+            Icon(Icons.receipt_long, size: 64, color: theme.iconTheme.color?.withValues(alpha: 0.24)),
             const SizedBox(height: 16),
-            Text(AppLocalizations.of(context)!.noTransactionsYet, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6))),
+            Text(AppLocalizations.of(context)!.noTransactionsYet, style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6))),
           ],
         ),
       );
@@ -836,8 +837,8 @@ class _TransactionsView extends StatelessWidget {
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: isPayout 
-                              ? Colors.orange.withOpacity(0.1)
-                              : (colors?.neonLime ?? Colors.green).withOpacity(0.1),
+                              ? Colors.orange.withValues(alpha: 0.1)
+                              : (colors?.neonLime ?? Colors.green).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

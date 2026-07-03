@@ -6,7 +6,6 @@ import 'package:customer_nzubia_global/core/utils/service_locator.dart';
 import 'package:customer_nzubia_global/features/shipment/presentation/bloc/shipment_list/shipment_list_bloc.dart';
 import 'package:customer_nzubia_global/features/shipment/presentation/bloc/shipment_list/shipment_list_event.dart';
 import 'package:customer_nzubia_global/features/shipment/presentation/bloc/shipment_list/shipment_list_state.dart';
-import 'package:customer_nzubia_global/features/shipment/domain/entities/shipment_entity.dart';
 import 'package:intl/intl.dart';
 
 class AgentShipmentListScreen extends StatelessWidget {

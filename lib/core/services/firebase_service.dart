@@ -97,7 +97,7 @@ class FirebaseService {
             await Firebase.initializeApp(
               options: FirebaseOptions(
                   apiKey: apiKey!.trim(),
-                  appId: appId!.trim(),
+                  appId: appId.trim(),
                   messagingSenderId: messagingSenderId?.trim() ?? '0', // Use '0' as safe fallback if missing
                   projectId: projectId!.trim(),
                   storageBucket: isValid(storageBucket) ? storageBucket!.trim() : null,

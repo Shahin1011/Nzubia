@@ -122,7 +122,7 @@ class _P2pDisputeSheetState extends State<P2pDisputeSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.outline.withOpacity(0.35),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -138,7 +138,7 @@ class _P2pDisputeSheetState extends State<P2pDisputeSheet> {
             Text(
               'Describe the issue. Our team will mediate within 24 hours.',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.55),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 height: 1.4,
               ),
             ),
@@ -154,19 +154,19 @@ class _P2pDisputeSheetState extends State<P2pDisputeSheet> {
                 hintText:
                     'Explain what went wrong (e.g. package damaged, not delivered, wrong item…)',
                 hintStyle: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
                 filled: true,
                 fillColor: theme.colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.4)),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.4)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.4)),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.4)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -184,7 +184,7 @@ class _P2pDisputeSheetState extends State<P2pDisputeSheet> {
             Text(
               'Add Photo Evidence (optional, up to 3)',
               style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 10),
@@ -233,12 +233,12 @@ class _P2pDisputeSheetState extends State<P2pDisputeSheet> {
                         color: theme.colorScheme.outline.withAlpha(15),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: theme.colorScheme.outline.withOpacity(0.4),
+                            color: theme.colorScheme.outline.withValues(alpha: 0.4),
                             style: BorderStyle.solid),
                       ),
                       child: Icon(
                         Icons.add_photo_alternate_outlined,
-                        color: theme.colorScheme.onSurface.withOpacity(0.45),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                         size: 28,
                       ),
                     ),

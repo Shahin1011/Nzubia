@@ -218,7 +218,7 @@ class _TimelineItem extends StatelessWidget {
                      boxShadow: [
                        if (event.isCompleted)
                         BoxShadow(
-                          color: AppTheme.primaryColor.withOpacity(0.4),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.4),
                           blurRadius: 6,
                           spreadRadius: 2,
                         )

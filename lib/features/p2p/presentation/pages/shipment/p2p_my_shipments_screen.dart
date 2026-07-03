@@ -119,7 +119,7 @@ class _ShipmentCard extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
           border:
-              Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+              Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(8),
@@ -159,7 +159,7 @@ class _ShipmentCard extends StatelessWidget {
                         '${shipment.destinationCity}, ${shipment.destinationCountry}',
                         style: theme.textTheme.bodySmall?.copyWith(
                             color:
-                                theme.colorScheme.onSurface.withOpacity(0.55)),
+                                theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                       ),
                     ],
                   ),
@@ -192,28 +192,28 @@ class _ShipmentCard extends StatelessWidget {
               children: [
                 Icon(Icons.scale_outlined,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 const SizedBox(width: 4),
                 Text(
                   '${shipment.weightKg.toStringAsFixed(1)} kg',
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                 ),
                 const SizedBox(width: 14),
                 Icon(Icons.attach_money,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 Text(
                   '\$${shipment.declaredValueUsd.toStringAsFixed(0)} declared',
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                 ),
                 const Spacer(),
                 if (shipment.createdAt != null)
                   Text(
                     dateFmt.format(shipment.createdAt!),
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                         fontSize: 11),
                   ),
               ],
@@ -416,7 +416,7 @@ class _EmptyPanel extends StatelessWidget {
             Text(
               'Send your first package and track everything here.',
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -457,7 +457,7 @@ class _ErrorPanel extends StatelessWidget {
             const SizedBox(height: 16),
             Text(message,
                 style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton.icon(

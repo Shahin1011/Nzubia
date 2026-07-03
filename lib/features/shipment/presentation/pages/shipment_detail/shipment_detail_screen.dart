@@ -259,7 +259,7 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: _getStatusColor(_shipment.status).withOpacity(0.1),
+        color: _getStatusColor(_shipment.status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _getStatusColor(_shipment.status)),
       ),

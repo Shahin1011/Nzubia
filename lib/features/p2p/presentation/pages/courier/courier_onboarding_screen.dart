@@ -154,7 +154,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                             'Fill in a few details to activate your courier account. '
                             'You\'ll upload your ID/passport after.',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppTheme.primaryColor.withOpacity(0.75),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.75),
                               height: 1.4,
                             ),
                           ),
@@ -179,7 +179,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.4)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.4)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -191,7 +191,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
               Text(
                 'Used to suggest pickups near you.',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.45),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                   fontSize: 11,
                 ),
               ),
@@ -217,7 +217,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.4)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.4)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -237,7 +237,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
               Text(
                 'How far from your home location can you collect packages?',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.45),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                   fontSize: 11,
                 ),
               ),
@@ -250,7 +250,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
               Text(
                 'Select all categories you\'re comfortable transporting.',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 ),
               ),
               const SizedBox(height: 12),
@@ -281,11 +281,11 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                     ),
                     checkmarkColor: Colors.white,
                     backgroundColor:
-                        theme.colorScheme.outline.withOpacity(0.1),
+                        theme.colorScheme.outline.withValues(alpha: 0.1),
                     side: BorderSide(
                       color: selected
                           ? Colors.transparent
-                          : theme.colorScheme.outline.withOpacity(0.35),
+                          : theme.colorScheme.outline.withValues(alpha: 0.35),
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
@@ -312,7 +312,7 @@ class _CourierOnboardingScreenState extends State<CourierOnboardingScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.4)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.4)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -402,7 +402,7 @@ class _SectionLabel extends StatelessWidget {
       label,
       style: theme.textTheme.bodySmall?.copyWith(
         fontWeight: FontWeight.w700,
-        color: theme.colorScheme.onSurface.withOpacity(0.6),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         letterSpacing: 0.3,
       ),
     );

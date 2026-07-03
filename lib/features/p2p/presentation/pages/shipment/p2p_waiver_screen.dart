@@ -127,7 +127,7 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                       snap.error.toString(),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -227,13 +227,13 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                                 color: theme.colorScheme.outline
-                                    .withOpacity(0.45)),
+                                    .withValues(alpha: 0.45)),
                           ),
                           child: Text(
                             preview.waiverText,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                               height: 1.55,
                             ),
                           ),
@@ -273,7 +273,7 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                                   color: isChecked
                                       ? AppTheme.primaryColor.withAlpha(80)
                                       : theme.colorScheme.outline
-                                          .withOpacity(0.4),
+                                          .withValues(alpha: 0.4),
                                 ),
                               ),
                               child: Row(
@@ -312,7 +312,7 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                                           style: theme.textTheme.bodySmall
                                               ?.copyWith(
                                             color: theme.colorScheme.onSurface
-                                                .withOpacity(0.6),
+                                                .withValues(alpha: 0.6),
                                             height: 1.4,
                                           ),
                                         ),
@@ -339,7 +339,7 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                   color: theme.colorScheme.surface,
                   border: Border(
                     top: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                   ),
                 ),
                 child: Column(
@@ -351,7 +351,7 @@ class _P2pWaiverScreenState extends State<P2pWaiverScreen> {
                         child: Text(
                           'All items must be acknowledged to continue',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           textAlign: TextAlign.center,
                         ),

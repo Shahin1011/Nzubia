@@ -121,9 +121,9 @@ class AgentOnboardingView extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 24),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,7 +486,7 @@ class _DynamicFieldsState extends State<_DynamicFields> {
         return Column(
           children: [
             DropdownButtonFormField<String>(
-              value: state.idType,
+              initialValue: state.idType,
               decoration: InputDecoration(labelText: AppLocalizations.of(context)!.idType, prefixIcon: const Icon(Icons.badge)),
               items: [
                 DropdownMenuItem(value: 'NATIONAL_ID', child: Text(AppLocalizations.of(context)!.nationalId)),
@@ -591,7 +591,7 @@ class _FileUploadButton extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: isSelected ? AppTheme.primaryColor : const Color(0xFFCCCCCC)), // Sync with brandLightGray
           borderRadius: BorderRadius.circular(12),
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : Colors.white,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.white,
         ),
         child: Row(
           children: [
@@ -667,7 +667,11 @@ class _MultiSelectFieldsState extends State<_MultiSelectFields> {
                          value: selected.contains(opt),
                          onChanged: (val) {
                            setState(() {
-                             if (val == true) selected.add(opt); else selected.remove(opt);
+                             if (val == true) {
+                               selected.add(opt);
+                             } else {
+                               selected.remove(opt);
+                             }
                            });
                          },
                        );

@@ -11,7 +11,7 @@ import 'package:customer_nzubia_global/l10n/app_localizations.dart';
 class BiddingDashboardScreen extends StatefulWidget {
   final String shipmentId;
 
-  const BiddingDashboardScreen({Key? key, required this.shipmentId}) : super(key: key);
+  const BiddingDashboardScreen({super.key, required this.shipmentId});
 
   @override
   State<BiddingDashboardScreen> createState() => _BiddingDashboardScreenState();

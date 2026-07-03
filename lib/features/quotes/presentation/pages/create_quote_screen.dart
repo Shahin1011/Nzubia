@@ -229,7 +229,7 @@ class _CreateQuoteScreenState extends State<CreateQuoteScreen> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<String>(
-                value: _selectedMethod,
+                initialValue: _selectedMethod,
                 decoration: InputDecoration(labelText: l10n.shippingMethod, border: const OutlineInputBorder()),
                 items: [
                   DropdownMenuItem(value: 'AIR', child: Text(l10n.airFreight)),
@@ -241,7 +241,7 @@ class _CreateQuoteScreenState extends State<CreateQuoteScreen> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<String>(
-                value: _selectedPayoutMethod,
+                initialValue: _selectedPayoutMethod,
                 decoration: const InputDecoration(
                   labelText: 'Payout Method', 
                   border: OutlineInputBorder(),
@@ -258,7 +258,7 @@ class _CreateQuoteScreenState extends State<CreateQuoteScreen> {
 
               if (widget.shipment.insuranceRequested) ...[
                 DropdownButtonFormField<String>(
-                  value: _selectedInsuranceType,
+                  initialValue: _selectedInsuranceType,
                   decoration: const InputDecoration(labelText: 'Insurance Provider', border: OutlineInputBorder()),
                   items: [
                     // Always show current selection, or show NZUBIA if enabled

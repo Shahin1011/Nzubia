@@ -9,7 +9,7 @@ import 'package:customer_nzubia_global/features/shipment/presentation/pages/agen
 import 'package:customer_nzubia_global/core/widgets/offline_error_widget.dart';
 
 class AgentOpportunitiesScreen extends StatelessWidget {
-  const AgentOpportunitiesScreen({Key? key}) : super(key: key);
+  const AgentOpportunitiesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

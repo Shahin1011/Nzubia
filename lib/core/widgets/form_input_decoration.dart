@@ -22,7 +22,7 @@ class FormInputDecoration {
       
       // Fix label overlap by adding background color
       filled: true,
-      fillColor: enabled ? Colors.transparent : Colors.grey.withOpacity(0.1),
+      fillColor: enabled ? Colors.transparent : Colors.grey.withValues(alpha: 0.1),
       
       // Proper spacing for floating label
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

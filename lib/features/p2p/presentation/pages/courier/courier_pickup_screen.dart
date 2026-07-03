@@ -221,7 +221,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withOpacity(0.4),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.4),
                   ),
                 ),
                 child: const Center(
@@ -289,7 +289,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
                                   color: _seekerPhone != null
                                       ? AppTheme.primaryColor
                                       : theme.colorScheme.onSurface
-                                          .withOpacity(0.4),
+                                          .withValues(alpha: 0.4),
                                 ),
                                 const SizedBox(width: 5),
                                 Expanded(
@@ -305,7 +305,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
                                       color: _seekerPhone != null
                                           ? AppTheme.primaryColor
                                           : theme.colorScheme.onSurface
-                                              .withOpacity(0.5),
+                                              .withValues(alpha: 0.5),
                                       fontWeight: FontWeight.w600,
                                       decoration: _seekerPhone != null
                                           ? TextDecoration.underline
@@ -320,8 +320,8 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
                           Text(
                             'Meet the seeker here to collect the package.',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.55,
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.55,
                               ),
                             ),
                           ),
@@ -337,7 +337,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
             Text(
               'Enter the 6-digit code shown on the seeker\'s app',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 20),
@@ -352,7 +352,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
             Text(
               'Add 2–3 photos showing the item at pickup (min 2 required)',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 12),
@@ -368,7 +368,7 @@ class _CourierPickupScreenState extends State<CourierPickupScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                  color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -523,7 +523,7 @@ class _PhotoGrid extends StatelessWidget {
                   errorBuilder: (_, __, ___) => Container(
                     width: 90,
                     height: 90,
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: const Icon(Icons.image_outlined),
                   ),
                 ),

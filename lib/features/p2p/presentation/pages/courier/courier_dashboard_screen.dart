@@ -289,7 +289,7 @@ class _ProfileCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(10),
@@ -357,7 +357,7 @@ class _ProfileCard extends StatelessWidget {
                           size: 13,
                           color: profile.homeLatitude != null
                               ? AppTheme.primaryColor
-                              : theme.colorScheme.onSurface.withOpacity(0.45),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.45),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -367,12 +367,12 @@ class _ProfileCard extends StatelessWidget {
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: profile.homeLatitude != null
                                 ? AppTheme.primaryColor
-                                : theme.colorScheme.onSurface.withOpacity(0.45),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.45),
                             fontWeight: FontWeight.w500,
                             decoration: TextDecoration.underline,
                             decorationColor: profile.homeLatitude != null
                                 ? AppTheme.primaryColor
-                                : theme.colorScheme.onSurface.withOpacity(0.45),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.45),
                           ),
                         ),
                       ],
@@ -389,7 +389,7 @@ class _ProfileCard extends StatelessWidget {
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: profile.isActive
                         ? Colors.green[700]
-                        : theme.colorScheme.onSurface.withOpacity(0.45),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.45),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -452,7 +452,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
@@ -475,7 +475,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.45),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                 fontSize: 11),
             textAlign: TextAlign.center,
           ),
@@ -500,7 +500,7 @@ class _ActiveRouteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
@@ -566,13 +566,13 @@ class _EmptyRoute extends StatelessWidget {
         Text(
           'No active route yet.',
           style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.55)),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
         ),
         const SizedBox(height: 6),
         Text(
           'Post your travel route to start receiving shipment requests.',
           style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.45)),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
         ),
       ],
     );
@@ -601,7 +601,7 @@ class _RouteDetails extends StatelessWidget {
               ),
             ),
             Icon(Icons.arrow_forward, size: 16,
-                color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
             Expanded(
               child: _RoutePoint(
                 label: 'To',
@@ -617,21 +617,21 @@ class _RouteDetails extends StatelessWidget {
           children: [
             Icon(Icons.calendar_today_outlined,
                 size: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
             const SizedBox(width: 4),
             Text(
               dateFmt.format(route.departureDate),
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
             ),
             const SizedBox(width: 16),
             Icon(Icons.scale_outlined, size: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
             const SizedBox(width: 4),
             Text(
               '${route.capacityKg.toStringAsFixed(1)} kg capacity',
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
             ),
           ],
         ),
@@ -666,7 +666,7 @@ class _RoutePoint extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.45),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                   fontSize: 10),
             ),
           ],
@@ -680,7 +680,7 @@ class _RoutePoint extends StatelessWidget {
         Text(
           country,
           style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.45)),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
         ),
       ],
     );
@@ -735,7 +735,7 @@ class _IncomingRequestsSection extends StatelessWidget {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
               border:
-                  Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+                  Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
@@ -746,7 +746,7 @@ class _IncomingRequestsSection extends StatelessWidget {
                   child: Text(
                     'No pending requests yet. Post an active route to attract senders.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                   ),
                 ),
               ],
@@ -789,7 +789,7 @@ class _RequestTileState extends State<_RequestTile> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(color: Colors.black.withAlpha(6), blurRadius: 3),
         ],
@@ -829,7 +829,7 @@ class _RequestTileState extends State<_RequestTile> {
                           req.message!,
                           style: theme.textTheme.bodySmall?.copyWith(
                               color:
-                                  theme.colorScheme.onSurface.withOpacity(0.55)),
+                                  theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -841,7 +841,7 @@ class _RequestTileState extends State<_RequestTile> {
                     _expanded
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.onSurface.withOpacity(0.45),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                   ),
                   onPressed: () => setState(() => _expanded = !_expanded),
                   visualDensity: VisualDensity.compact,
@@ -975,7 +975,7 @@ class _VerificationStatusBanner extends StatelessWidget {
                 Text(
                   body,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
@@ -1104,7 +1104,7 @@ class _RouteManageTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(color: Colors.black.withAlpha(6), blurRadius: 3),
         ],
@@ -1147,22 +1147,22 @@ class _RouteManageTile extends StatelessWidget {
             children: [
               Icon(Icons.calendar_today_outlined,
                   size: 13,
-                  color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
               const SizedBox(width: 4),
               Text(
                 dateFmt.format(route.departureDate),
                 style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               ),
               const SizedBox(width: 14),
               Icon(Icons.scale_outlined,
                   size: 13,
-                  color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
               const SizedBox(width: 4),
               Text(
                 '${route.capacityKg.toStringAsFixed(1)} kg',
                 style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               ),
             ],
           ),
@@ -1294,7 +1294,7 @@ class _ErrorPanel extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -1370,7 +1370,7 @@ class _ActiveShipmentsSection extends StatelessWidget {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                  color: theme.colorScheme.outline.withOpacity(0.5)),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
@@ -1381,7 +1381,7 @@ class _ActiveShipmentsSection extends StatelessWidget {
                   child: Text(
                     'No active deliveries. Accepted shipments will appear here.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                   ),
                 ),
               ],
@@ -1422,7 +1422,7 @@ class _ActiveShipmentTile extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.5)),
+              color: theme.colorScheme.outline.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(color: Colors.black.withAlpha(6), blurRadius: 3),
           ],
@@ -1458,7 +1458,7 @@ class _ActiveShipmentTile extends StatelessWidget {
                         shipment.itemDescription,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurface
-                              .withOpacity(0.55),
+                              .withValues(alpha: 0.55),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1490,21 +1490,21 @@ class _ActiveShipmentTile extends StatelessWidget {
               children: [
                 Icon(Icons.scale_outlined,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 const SizedBox(width: 4),
                 Text(
                   '${shipment.weightKg} kg',
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                 ),
                 const SizedBox(width: 14),
                 Icon(Icons.attach_money,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 Text(
                   '\$${shipment.declaredValueUsd.toStringAsFixed(0)} declared',
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
                 ),
               ],
             ),
@@ -1706,7 +1706,7 @@ class _DisputedShipmentTile extends StatelessWidget {
                         shipment.itemDescription,
                         style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface
-                                .withOpacity(0.55)),
+                                .withValues(alpha: 0.55)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1761,7 +1761,7 @@ class _DisputedShipmentTile extends StatelessWidget {
                             '${raisedDate.day}/${raisedDate.month}/${raisedDate.year}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.45),
+                                  .withValues(alpha: 0.45),
                               fontSize: 10,
                             ),
                           ),
@@ -1772,7 +1772,7 @@ class _DisputedShipmentTile extends StatelessWidget {
                     Text(
                       reason,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         height: 1.4,
                       ),
                     ),
@@ -1795,12 +1795,12 @@ class _DisputedShipmentTile extends StatelessWidget {
               children: [
                 Icon(Icons.info_outline,
                     size: 13,
-                    color: theme.colorScheme.onSurface.withOpacity(0.4)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                 const SizedBox(width: 4),
                 Text(
                   'Tap to view shipment details',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontSize: 11,
                   ),
                 ),
@@ -1830,7 +1830,7 @@ class _PayoutSettingsTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.4)),
+          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
@@ -1838,8 +1838,8 @@ class _PayoutSettingsTile extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: payoutReady
-                    ? Colors.green.withOpacity(0.12)
-                    : Colors.orange.withOpacity(0.12),
+                    ? Colors.green.withValues(alpha: 0.12)
+                    : Colors.orange.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(

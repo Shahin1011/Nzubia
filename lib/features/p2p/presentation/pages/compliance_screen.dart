@@ -138,7 +138,7 @@ class _ComplianceBody extends StatelessWidget {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                  color: theme.colorScheme.outline.withOpacity(0.5)),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.5)),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withAlpha(8), blurRadius: 4),
@@ -199,7 +199,7 @@ class _ComplianceBody extends StatelessWidget {
           Text(
             'These categories require special documentation and may be refused by some couriers.',
             style: theme.textTheme.bodySmall
-                ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -239,7 +239,7 @@ class _ComplianceBody extends StatelessWidget {
         Text(
           'The following items cannot be shipped under any circumstances.',
           style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.55)),
+              ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
         ),
         const SizedBox(height: 10),
         if (restrictedItems.isEmpty)
@@ -249,7 +249,7 @@ class _ComplianceBody extends StatelessWidget {
               'No prohibited items configured.',
               style: theme.textTheme.bodySmall
                   ?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
             ),
           )
         else
@@ -258,7 +258,7 @@ class _ComplianceBody extends StatelessWidget {
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                  color: theme.colorScheme.outline.withOpacity(0.5)),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.5)),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withAlpha(6), blurRadius: 3),
@@ -315,13 +315,13 @@ class _ComplianceBody extends StatelessWidget {
                       Text('•  ',
                           style: TextStyle(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.45))),
+                                  .withValues(alpha: 0.45))),
                       Expanded(
                         child: Text(
                           w,
                           style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.8)),
+                                  .withValues(alpha: 0.8)),
                         ),
                       ),
                     ],
@@ -394,7 +394,7 @@ class _WaiverPreviewViewState extends State<_WaiverPreviewView> {
                   'Version ${widget.preview.termsVersion} · '
                   'Shipment ${widget.preview.shipmentId.substring(0, widget.preview.shipmentId.length.clamp(0, 8))}',
                   style: theme.textTheme.bodySmall
-                      ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                      ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 ),
                 const SizedBox(height: 16),
                 Container(
@@ -407,7 +407,7 @@ class _WaiverPreviewViewState extends State<_WaiverPreviewView> {
                   child: Text(
                     widget.preview.waiverText,
                     style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         height: 1.5),
                   ),
                 ),
@@ -439,7 +439,7 @@ class _WaiverPreviewViewState extends State<_WaiverPreviewView> {
                     subtitle: Text(
                       rule.description,
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.55),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                           height: 1.4),
                     ),
                   ),
@@ -485,7 +485,7 @@ class _WaiverPreviewViewState extends State<_WaiverPreviewView> {
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
                     disabledBackgroundColor:
-                        theme.colorScheme.outline.withOpacity(0.4),
+                        theme.colorScheme.outline.withValues(alpha: 0.4),
                   ),
                   child: const Text('Accept Waiver'),
                 ),
@@ -517,7 +517,7 @@ class _RuleRow extends StatelessWidget {
             child: Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
             ),
           ),
           Text(
@@ -554,7 +554,7 @@ class _ProhibitedTile extends StatelessWidget {
                 child: Text(
                   label,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -569,7 +569,7 @@ class _ProhibitedTile extends StatelessWidget {
               height: 1,
               indent: 16,
               endIndent: 16,
-              color: theme.colorScheme.outline.withOpacity(0.4)),
+              color: theme.colorScheme.outline.withValues(alpha: 0.4)),
       ],
     );
   }
@@ -601,7 +601,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

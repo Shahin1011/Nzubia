@@ -98,9 +98,9 @@ class _PaymentCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: color.withOpacity(0.5)),
+                      border: Border.all(color: color.withValues(alpha: 0.5)),
                     ),
                     child: Text(
                       payment.status,
@@ -112,12 +112,12 @@ class _PaymentCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Shipment: ${payment.shipment?.id.substring(0, 8).toUpperCase() ?? "N/A"}', // Fallback if no shipment logic needs improvement
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 4),
               Text(
                 dateFormat.format(payment.createdAt),
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 12),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
               ),
             ],
           ),

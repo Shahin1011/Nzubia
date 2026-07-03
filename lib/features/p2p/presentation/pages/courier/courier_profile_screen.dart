@@ -211,12 +211,12 @@ class _ProfileBody extends StatelessWidget {
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.5)),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.5)),
                     ),
                     child: Text(
                       profile.reputationSummary!,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.65),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                           height: 1.5),
                     ),
                   ),
@@ -268,7 +268,7 @@ class _ProfileBody extends StatelessWidget {
                     child: Text(
                       'No reviews yet.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                     ),
                   )
                 else
@@ -385,7 +385,7 @@ class _StatBox extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border:
-            Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+            Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(color: Colors.black.withAlpha(8), blurRadius: 3),
         ],
@@ -404,7 +404,7 @@ class _StatBox extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.45),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                 fontSize: 11),
           ),
         ],
@@ -428,7 +428,7 @@ class _ReviewCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border:
-            Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+            Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(color: Colors.black.withAlpha(6), blurRadius: 3),
         ],
@@ -453,7 +453,7 @@ class _ReviewCard extends StatelessWidget {
                 Text(
                   dateFmt.format(review.createdAt!),
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.45),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                       fontSize: 11),
                 ),
             ],
@@ -463,7 +463,7 @@ class _ReviewCard extends StatelessWidget {
             Text(
               review.comment!,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.65),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                   height: 1.4),
             ),
           ],
@@ -499,7 +499,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

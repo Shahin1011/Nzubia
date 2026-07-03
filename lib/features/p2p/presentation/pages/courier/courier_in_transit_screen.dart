@@ -275,7 +275,7 @@ class _CourierInTransitScreenState extends State<CourierInTransitScreen> {
               Text(
                 'Add 2–3 photos at the delivery point (min 2 required)',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: 12),
@@ -332,9 +332,9 @@ class _CourierInTransitScreenState extends State<CourierInTransitScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: const [
@@ -447,7 +447,7 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -532,7 +532,7 @@ class _PhotoRow extends StatelessWidget {
                       errorBuilder: (_, __, ___) => Container(
                         width: 90,
                         height: 90,
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         child: const Icon(Icons.image_outlined),
                       ),
                     ),

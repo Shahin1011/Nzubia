@@ -131,14 +131,14 @@ class _CourierOfferSheetState extends State<CourierOfferSheet> {
             Text(
               '${widget.shipment.itemCategory.label} → ${widget.shipment.destinationCity}, ${widget.shipment.destinationCountry}',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -195,7 +195,7 @@ class _CourierOfferSheetState extends State<CourierOfferSheet> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                  color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
@@ -207,7 +207,7 @@ class _CourierOfferSheetState extends State<CourierOfferSheet> {
               Text('Route', style: theme.textTheme.labelLarge),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedRouteId,
+                initialValue: _selectedRouteId,
                 isExpanded: true,
                 decoration: const InputDecoration(border: OutlineInputBorder()),
                 items: _publishedRoutes.map((r) {
@@ -268,7 +268,7 @@ class _Stat extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 2),

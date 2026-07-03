@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_repository.dart';
 import 'package:customer_nzubia_global/core/utils/service_locator.dart';
-import 'package:customer_nzubia_global/core/services/biometric_service.dart';
 import 'package:customer_nzubia_global/features/messaging/domain/repositories/messaging_repository.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'login_event.dart';

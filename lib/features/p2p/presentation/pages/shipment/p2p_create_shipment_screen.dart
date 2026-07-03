@@ -152,7 +152,7 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                                 'Please check compliance guidelines before proceeding.',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurface
-                                      .withOpacity(0.8),
+                                      .withValues(alpha: 0.8),
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -191,7 +191,7 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                 Text(
                   'Category',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.55),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -214,8 +214,8 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                         fontSize: 13,
                       ),
                       checkmarkColor: Colors.white,
-                      backgroundColor: theme.colorScheme.outline.withOpacity(
-                        0.12,
+                      backgroundColor: theme.colorScheme.outline.withValues(
+                        alpha: 0.12,
                       ),
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
@@ -603,7 +603,7 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: theme.textTheme.bodySmall?.copyWith(
-        color: theme.colorScheme.onSurface.withOpacity(0.55),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
@@ -640,7 +640,7 @@ class _PhotoGrid extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: theme.colorScheme.outline.withOpacity(0.12),
+                color: theme.colorScheme.outline.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: theme.colorScheme.outline,
@@ -652,14 +652,14 @@ class _PhotoGrid extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.add_photo_alternate_outlined,
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     size: 28,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Add',
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.45),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
                       fontSize: 11,
                     ),
                   ),

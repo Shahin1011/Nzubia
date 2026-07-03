@@ -36,7 +36,7 @@ class _DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<_DashboardView> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -187,9 +187,9 @@ class _ShipmentCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(shipment.status).withOpacity(0.1),
+                      color: _getStatusColor(shipment.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: _getStatusColor(shipment.status).withOpacity(0.5)),
+                      border: Border.all(color: _getStatusColor(shipment.status).withValues(alpha: 0.5)),
                     ),
                     child: Text(
                       shipment.status.toUpperCase(),

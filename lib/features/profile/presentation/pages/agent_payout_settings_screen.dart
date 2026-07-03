@@ -192,14 +192,14 @@ class _AgentPayoutSettingsScreenState extends State<AgentPayoutSettingsScreen> {
             color: isSelected ? AppTheme.primaryColor : theme.dividerColor,
             width: isSelected ? 2 : 1,
           ),
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.05) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.05) : Colors.transparent,
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryColor : theme.dividerColor.withOpacity(0.1),
+                color: isSelected ? AppTheme.primaryColor : theme.dividerColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: isSelected ? Colors.white : theme.iconTheme.color),

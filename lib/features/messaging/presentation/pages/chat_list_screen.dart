@@ -105,7 +105,7 @@ class ChatListView extends StatelessWidget {
                     Text(
                       'Chat with agents about your shipments here',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -116,7 +116,7 @@ class ChatListView extends StatelessWidget {
             return ListView.separated(
               itemCount: state.chats.length,
               separatorBuilder: (context, index) => Divider(
-                color: theme.colorScheme.onSurface.withOpacity(0.1),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                 height: 1,
               ),
               itemBuilder: (context, index) {
@@ -157,7 +157,7 @@ class _ChatListItem extends StatelessWidget {
         chat.lastMessage,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
       ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -167,7 +167,7 @@ class _ChatListItem extends StatelessWidget {
             DateFormat('HH:mm').format(chat.lastMessageTime),
             style: TextStyle(
               fontSize: 12,
-              color: theme.colorScheme.onSurface.withOpacity(0.38),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
             ),
           ),
           if (chat.unreadCount > 0)

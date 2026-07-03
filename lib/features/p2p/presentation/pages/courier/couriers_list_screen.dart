@@ -135,7 +135,7 @@ class _CouriersListViewState extends State<_CouriersListView> {
                     : null,
                 isDense: true,
                 filled: true,
-                fillColor: theme.colorScheme.outline.withOpacity(0.12),
+                fillColor: theme.colorScheme.outline.withValues(alpha: 0.12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
@@ -185,10 +185,10 @@ class _CouriersListViewState extends State<_CouriersListView> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withOpacity(0.08),
+                            color: AppTheme.primaryColor.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: AppTheme.primaryColor.withOpacity(0.25),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.25),
                             ),
                           ),
                           child: Row(
@@ -213,7 +213,7 @@ class _CouriersListViewState extends State<_CouriersListView> {
                       child: Text(
                         '${filtered.length} courier${filtered.length == 1 ? '' : 's'} found',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.55),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                         ),
                       ),
                     ),
@@ -282,7 +282,7 @@ class _CourierListCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(10),
@@ -340,7 +340,7 @@ class _CourierListCard extends StatelessWidget {
                           '${route.pickupOrigin} → ${route.destinationCity}, ${route.destinationCountry}',
                           style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.45)),
+                                  .withValues(alpha: 0.45)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -353,7 +353,7 @@ class _CourierListCard extends StatelessWidget {
                               color: daysUntil <= 3
                                   ? Colors.orange[600]!
                                   : theme.colorScheme.onSurface
-                                      .withOpacity(0.55),
+                                      .withValues(alpha: 0.55),
                             ),
                             const SizedBox(width: 8),
                             _Tag(
@@ -361,7 +361,7 @@ class _CourierListCard extends StatelessWidget {
                               label:
                                   '${route.capacityKg.toStringAsFixed(0)} kg',
                               color:
-                                  theme.colorScheme.onSurface.withOpacity(0.55),
+                                  theme.colorScheme.onSurface.withValues(alpha: 0.55),
                             ),
                           ],
                         ),
@@ -370,7 +370,7 @@ class _CourierListCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Icon(Icons.chevron_right,
-                      color: theme.colorScheme.onSurface.withOpacity(0.45)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
                 ],
               ),
             ),
@@ -380,7 +380,7 @@ class _CourierListCard extends StatelessWidget {
           if (hasShipment) ...[
             Divider(
                 height: 1,
-                color: theme.colorScheme.outline.withOpacity(0.2)),
+                color: theme.colorScheme.outline.withValues(alpha: 0.2)),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -509,7 +509,7 @@ class _SendRequestSheetState extends State<_SendRequestSheet> {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.outline.withOpacity(0.35),
+                color: theme.colorScheme.outline.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -525,7 +525,7 @@ class _SendRequestSheetState extends State<_SendRequestSheet> {
           Text(
             'They\'ll get notified and can accept or decline your request.',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.55),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
             ),
           ),
           const SizedBox(height: 20),
@@ -543,7 +543,7 @@ class _SendRequestSheetState extends State<_SendRequestSheet> {
                 borderRadius: BorderRadius.circular(10),
               ),
               filled: true,
-              fillColor: theme.colorScheme.outline.withOpacity(0.06),
+              fillColor: theme.colorScheme.outline.withValues(alpha: 0.06),
             ),
           ),
 
@@ -553,7 +553,7 @@ class _SendRequestSheetState extends State<_SendRequestSheet> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.error.withOpacity(0.1),
+                color: theme.colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -695,7 +695,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               'Post a shipment request — couriers will reach out to you.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -740,7 +740,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

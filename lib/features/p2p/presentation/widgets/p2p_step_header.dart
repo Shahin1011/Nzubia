@@ -40,7 +40,7 @@ class P2pStepHeader extends StatelessWidget {
               Text(
                 'Step $currentStep of $totalSteps — $label',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.55),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -60,7 +60,7 @@ class P2pStepHeader extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 6,
-              backgroundColor: theme.colorScheme.outline.withOpacity(0.4),
+              backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.4),
               color: AppTheme.primaryColor,
             ),
           ),

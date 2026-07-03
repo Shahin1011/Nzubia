@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class OfflineErrorWidget extends StatelessWidget {
@@ -5,10 +6,10 @@ class OfflineErrorWidget extends StatelessWidget {
   final VoidCallback onRetry;
 
   const OfflineErrorWidget({
-    Key? key,
+    super.key,
     required this.errorMessage,
     required this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class OfflineErrorWidget extends StatelessWidget {
                   errorMessage,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -75,7 +76,7 @@ class OfflineErrorWidget extends StatelessWidget {
               Icon(
                 Icons.signal_wifi_off,
                 size: 56,
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 16),
               Text(
@@ -90,7 +91,7 @@ class OfflineErrorWidget extends StatelessWidget {
                 'Please check your network settings and try again.',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),

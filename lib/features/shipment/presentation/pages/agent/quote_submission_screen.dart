@@ -11,8 +11,7 @@ import 'package:customer_nzubia_global/l10n/app_localizations.dart';
 class QuoteSubmissionScreen extends StatefulWidget {
   final ShipmentEntity shipment;
 
-  const QuoteSubmissionScreen({Key? key, required this.shipment})
-    : super(key: key);
+  const QuoteSubmissionScreen({super.key, required this.shipment});
 
   @override
   State<QuoteSubmissionScreen> createState() => _QuoteSubmissionScreenState();
@@ -159,7 +158,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
 
               // Shipping Method
               DropdownButtonFormField<String>(
-                value: _shippingMethod,
+                initialValue: _shippingMethod,
                 decoration: const InputDecoration(labelText: 'Shipping Method', border: OutlineInputBorder()),
                 items: ['AIR', 'SEA', 'LAND']
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -170,7 +169,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
 
               // Currency
               DropdownButtonFormField<String>(
-                value: _currency,
+                initialValue: _currency,
                 decoration: const InputDecoration(labelText: 'Currency', border: OutlineInputBorder()),
                 items: ['USD', 'EUR', 'GBP']
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -181,7 +180,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
 
               // Payout Method
               DropdownButtonFormField<String>(
-                value: _payoutMethod,
+                initialValue: _payoutMethod,
                 decoration: const InputDecoration(
                   labelText: 'Payout Method', 
                   border: OutlineInputBorder(),
@@ -305,7 +304,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
                 // Insurance Type Toggle
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _insuranceType,
+                  initialValue: _insuranceType,
                   decoration: const InputDecoration(
                     labelText: 'Insurance Provider',
                     helperText: 'Select who provides insurance coverage',
@@ -359,7 +358,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
                   decoration: InputDecoration(
                     labelText: 'Insurance Fee',
                     helperText: _insuranceType == 'NZUBIA'
-                        ? 'Nzubia\'s insurance cost (${_nzubiaInsurancePercentage}%)'
+                        ? 'Nzubia\'s insurance cost ($_nzubiaInsurancePercentage%)'
                         : 'Your insurance cost',
                     border: const OutlineInputBorder(),
                   ),
@@ -535,7 +534,7 @@ class _QuoteSubmissionScreenState extends State<QuoteSubmissionScreen> {
                       ),
                     ),
                   )
-                  .toList(),
+                  ,
 
               const SizedBox(height: 32),
               Row(

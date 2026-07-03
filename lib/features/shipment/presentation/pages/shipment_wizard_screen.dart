@@ -172,7 +172,7 @@ class ShipmentWizardView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        border: Border(bottom: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
       ),
       child: Row(
         children: [
@@ -776,7 +776,7 @@ class _CargoStepState extends State<_CargoStep> {
                        final item = state.cargoItems[index];
                        final isEditingThis = index == _editingIndex;
                        return Container(
-                         color: isEditingThis ? Colors.blue.withOpacity(0.1) : null,
+                         color: isEditingThis ? Colors.blue.withValues(alpha: 0.1) : null,
                          child: ListTile(
                            leading: item.imageUrls.isNotEmpty
                               ? Image.file(File(item.imageUrls.first), width: 40, height: 40, fit: BoxFit.cover)
@@ -819,7 +819,7 @@ class _CargoStepState extends State<_CargoStep> {
 
                  // Category Dropdown
                  DropdownButtonFormField<String>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: InputDecoration(labelText: AppLocalizations.of(context)!.category, border: const OutlineInputBorder()),
                    items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                    onChanged: (val) => setState(() => _selectedCategory = val!),
@@ -1404,7 +1404,7 @@ class _AgentStep extends StatelessWidget {
                         runSpacing: 8,
                         children: agent.specialization!.map((s) => Chip(
                           label: Text(s),
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                           labelStyle: TextStyle(color: AppTheme.primaryColor),
                         )).toList(),
                       ),
@@ -1483,7 +1483,7 @@ class _AgentStep extends StatelessWidget {
         final nameToShow = displayName.isEmpty ? agent.email : displayName;
 
         return Card(
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : null,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : null,
           shape: isSelected ? RoundedRectangleBorder(side: BorderSide(color: AppTheme.primaryColor, width: 2), borderRadius: BorderRadius.circular(8)) : null,
           child: ListTile(
             leading: Stack(

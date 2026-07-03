@@ -77,7 +77,7 @@ class _ParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(progress.clamp(0.0, 0.8)),
+                  Colors.black.withValues(alpha: progress.clamp(0.0, 0.8)),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -109,7 +109,7 @@ class _ParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                 ),
               ),
             ),

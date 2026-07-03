@@ -24,7 +24,7 @@ class UpdateStatusButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor.withOpacity(0.15),
+          backgroundColor: primaryColor.withValues(alpha: 0.15),
           foregroundColor: primaryColor,
           side: BorderSide(color: primaryColor),
           padding: const EdgeInsets.symmetric(vertical: 16),

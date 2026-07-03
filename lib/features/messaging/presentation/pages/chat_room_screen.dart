@@ -14,10 +14,10 @@ class ChatRoomScreen extends StatefulWidget {
   final String agentName;
 
   const ChatRoomScreen({
-    Key? key,
+    super.key,
     required this.chatId,
     required this.agentName,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -151,7 +151,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   return Center(
                     child: Text(
                       'No messages yet',
-                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.54)),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
                     ),
                   );
                 }
@@ -177,9 +177,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor.withOpacity(0.95),
+              color: theme.scaffoldBackgroundColor.withValues(alpha: 0.95),
               border: Border(
-                top: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+                top: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
               ),
             ),
             child: SafeArea(
@@ -191,7 +191,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       padding: const EdgeInsets.all(8),
                       margin: const EdgeInsets.only(bottom: 8),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -229,13 +229,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           style: TextStyle(color: theme.colorScheme.onSurface),
                           decoration: InputDecoration(
                             hintText: 'Type a message...',
-                            hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.38)),
+                            hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.38)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: theme.colorScheme.onSurface.withOpacity(0.05),
+                            fillColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                           ),
                           textCapitalization: TextCapitalization.sentences,
@@ -285,8 +285,8 @@ class _MessageBubble extends StatelessWidget {
 
     final textColor = isOwn ? Colors.white : theme.colorScheme.onSurface;
     final timeColor = isOwn
-        ? Colors.white.withOpacity(0.7)
-        : theme.colorScheme.onSurface.withOpacity(0.5);
+        ? Colors.white.withValues(alpha: 0.7)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     final radius = BorderRadius.only(
       topLeft: const Radius.circular(18),
@@ -319,7 +319,7 @@ class _MessageBubble extends StatelessWidget {
               if (!isOwn) ...[
                 CircleAvatar(
                   radius: 14,
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.15),
+                  backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.15),
                   child: Text(
                     otherName.isNotEmpty ? otherName[0].toUpperCase() : '?',
                     style: const TextStyle(
@@ -400,7 +400,7 @@ class _MessageBubble extends StatelessWidget {
           onTap: () {
             showGeneralDialog(
               context: context,
-              barrierColor: Colors.black.withOpacity(0.9),
+              barrierColor: Colors.black.withValues(alpha: 0.9),
               barrierDismissible: true,
               barrierLabel: 'Dismiss',
               transitionDuration: const Duration(milliseconds: 250),
@@ -440,9 +440,9 @@ class _MessageBubble extends StatelessWidget {
               errorBuilder: (_, __, ___) => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.broken_image, color: textColor.withOpacity(0.7)),
+                  Icon(Icons.broken_image, color: textColor.withValues(alpha: 0.7)),
                   const SizedBox(width: 6),
-                  Text('Image unavailable', style: TextStyle(color: textColor.withOpacity(0.7))),
+                  Text('Image unavailable', style: TextStyle(color: textColor.withValues(alpha: 0.7))),
                 ],
               ),
             ),
@@ -455,13 +455,13 @@ class _MessageBubble extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.insert_drive_file, color: textColor.withOpacity(0.85), size: 18),
+              Icon(Icons.insert_drive_file, color: textColor.withValues(alpha: 0.85), size: 18),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(

@@ -38,9 +38,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         'phone': profile.phoneNumber,
       };
       
-      if (profile.profileImageUrl != null) {
-          basicData['profile_image_url'] = profile.profileImageUrl;
-      }
+        basicData['profile_image_url'] = profile.profileImageUrl;
       
       await _dioClient.dio.patch(ApiConstants.profile, data: basicData);
       
