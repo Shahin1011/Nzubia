@@ -27,8 +27,18 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
-  Stripe.publishableKey = ApiConstants.stripePublishableKey;
-  await Stripe.instance.applySettings();
+  final stripeKey = ApiConstants.stripePublishableKey;
+  if (stripeKey.isNotEmpty) {
+    Stripe.publishableKey = stripeKey;
+    await Stripe.instance.applySettings();
+  } else {
+    // Without --dart-define=STRIPE_PUBLISHABLE_KEY the native Stripe SDK
+    // fatally crashes on an empty key; skip init so the app can still run.
+    debugPrint(
+      'STRIPE_PUBLISHABLE_KEY not provided — Stripe payments are disabled '
+      'for this build.',
+    );
+  }
   await setupServiceLocator();
 
   // Initialize Hive
