@@ -148,15 +148,27 @@ class _VerifyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OtpBloc, OtpState>(
       builder: (context, state) {
-        return state.status == OtpStatus.loading
-            ? const Center(child: CircularProgressIndicator())
-            : ElevatedButton(
-                key: const Key('otpForm_verify_raisedButton'),
-                onPressed: () {
+        return ElevatedButton(
+          key: const Key('otpForm_verify_raisedButton'),
+          onPressed: state.status == OtpStatus.loading
+              ? null
+              : () {
                   context.read<OtpBloc>().add(const OtpSubmitted());
                 },
-                child: const Text('Verify'),
-              );
+          style: ElevatedButton.styleFrom(
+            disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          child: state.status == OtpStatus.loading
+              ? SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                )
+              : const Text('Verify'),
+        );
       },
     );
   }

@@ -34,6 +34,9 @@ import 'package:customer_nzubia_global/features/auth/presentation/pages/splash_s
 import 'package:customer_nzubia_global/features/onboarding/presentation/pages/onboarding_screen.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/pages/login_screen.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/pages/register_screen.dart';
+import 'package:customer_nzubia_global/features/auth/presentation/pages/forgot_password_screen.dart';
+import 'package:customer_nzubia_global/features/auth/presentation/pages/forgot_password_otp_screen.dart';
+import 'package:customer_nzubia_global/features/auth/presentation/pages/new_password_screen.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/pages/otp_verification_screen.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/pages/profile_setup_screen.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/pages/agent_onboarding_screen.dart';
@@ -46,6 +49,7 @@ import 'package:customer_nzubia_global/features/messaging/presentation/pages/cha
 import 'package:customer_nzubia_global/features/profile/presentation/pages/profile_screen.dart';
 import 'package:customer_nzubia_global/features/profile/presentation/pages/agent_payout_settings_screen.dart';
 import 'package:customer_nzubia_global/features/profile/presentation/pages/edit_profile_screen.dart';
+import 'package:customer_nzubia_global/features/profile/presentation/pages/change_password_screen.dart';
 import 'package:customer_nzubia_global/features/profile/domain/entities/user_profile_entity.dart';
 import 'package:customer_nzubia_global/features/shipment/presentation/pages/shipment_wizard_screen.dart';
 import 'package:customer_nzubia_global/features/shipment/presentation/pages/quote_list_screen.dart';
@@ -85,6 +89,21 @@ class AppRouter {
       GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
+      GoRoute(
+        path: '/forgot-password/otp',
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return ForgotPasswordOtpScreen(email: email);
+        },
+      ),
+      GoRoute(
+        path: '/new-password',
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return NewPasswordScreen(email: email);
+        },
+      ),
       GoRoute(path: '/otp', builder: (context, state) => const OtpVerificationScreen()),
       GoRoute(path: '/profile-setup', builder: (context, state) => const ProfileSetupScreen()),
       GoRoute(path: '/agent-onboarding', builder: (context, state) => const AgentOnboardingScreen()),
@@ -436,10 +455,16 @@ class AppRouter {
       ),
       GoRoute(
         path: '/profile/edit',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final profile = state.extra as UserProfileEntity;
           return EditProfileScreen(profile: profile);
         },
+      ),
+      GoRoute(
+        path: '/profile/change-password',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ChangePasswordScreen(),
       ),
       GoRoute(
         path: '/profile/payout-settings',

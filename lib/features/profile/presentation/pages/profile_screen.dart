@@ -169,18 +169,21 @@ class ProfileView extends StatelessWidget {
                 //   title: AppLocalizations.of(context)!.paymentHistory,
                 //   onTap: () => context.push('/payment-history'),
                 // ),
-                if (isAgent)
-                  // _buildSettingsItem(
-                  //   context,
-                  //   icon: Icons.account_balance_wallet_outlined,
-                  //   title: AppLocalizations.of(context)!.zelleSettings,
-                  //   onTap: () => context.push('/profile/payout-settings', extra: profile),
-                  // ),
+                // if (isAgent)
+                //   _buildSettingsItem(
+                //     context,
+                //     icon: Icons.account_balance_wallet_outlined,
+                //     title: AppLocalizations.of(context)!.zelleSettings,
+                //     onTap: () => context.push('/profile/payout-settings', extra: profile),
+                //   ),
+
                 _buildSettingsItem(
                   context,
                   icon: Icons.security,
                   title: AppLocalizations.of(context)!.security,
-                  onTap: () => _showSecuritySettings(context),
+                  onTap: () {
+                    context.push('/profile/change-password');
+                  },
                 ),
                 _buildSettingsItem(
                   context,
@@ -582,7 +585,7 @@ class _PayoutSettingsDialogState extends State<_PayoutSettingsDialog> {
       if (mounted) {
         // Refresh profile in Bloc
         context.read<UserProfileBloc>().add(LoadUserProfile());
-                      context.read<AuthBloc>().add(UserRefreshRequested());
+        context.read<AuthBloc>().add(UserRefreshRequested());
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.payoutInfoUpdated)),
@@ -805,10 +808,7 @@ class _SecuritySettingsDialogState extends State<_SecuritySettingsDialog> {
             title: const Text('Change Password'),
             onTap: () {
               Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (ctx) => _ChangePasswordDialog(),
-              );
+              context.push('/profile/change-password');
             },
           ),
         ],
@@ -817,132 +817,6 @@ class _SecuritySettingsDialogState extends State<_SecuritySettingsDialog> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Close'),
-        ),
-      ],
-    );
-  }
-}
-
-class _ChangePasswordDialog extends StatefulWidget {
-  @override
-  State<_ChangePasswordDialog> createState() => _ChangePasswordDialogState();
-}
-
-class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _oldPasswordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _isLoading = false;
-  bool _obscureOld = true;
-  bool _obscureNew = true;
-  bool _obscureConfirm = true;
-
-  @override
-  void dispose() {
-    _oldPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      await sl<AuthRepository>().changePassword(
-        _oldPasswordController.text,
-        _newPasswordController.text,
-      );
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password changed successfully!')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', ''), style: const TextStyle(color: Colors.white)), 
-            backgroundColor: Colors.red
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Change Password'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _oldPasswordController,
-              obscureText: _obscureOld,
-              decoration: InputDecoration(
-                labelText: 'Current Password',
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureOld ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscureOld = !_obscureOld),
-                ),
-              ),
-              validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _newPasswordController,
-              obscureText: _obscureNew,
-              decoration: InputDecoration(
-                labelText: 'New Password',
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureNew ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscureNew = !_obscureNew),
-                ),
-              ),
-              validator: (val) {
-                if (val == null || val.isEmpty) return 'Required';
-                if (val.length < 6) return 'Min 6 characters';
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _confirmPasswordController,
-              obscureText: _obscureConfirm,
-              decoration: InputDecoration(
-                labelText: 'Confirm New Password',
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureConfirm ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                ),
-              ),
-              validator: (val) {
-                if (val != _newPasswordController.text) return 'Passwords do not match';
-                return null;
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _submit,
-          child: _isLoading
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('Change'),
         ),
       ],
     );

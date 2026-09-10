@@ -10,6 +10,7 @@ class ApiConstants {
   static const String verifyOtp = '/auth/verify-otp';
   
   // Users
+
   static const String users = '/users';
   static const String profile = '/users/profile';
   

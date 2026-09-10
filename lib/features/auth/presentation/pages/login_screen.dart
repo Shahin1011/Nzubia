@@ -10,6 +10,7 @@ import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_event.dart';
 
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/custom_theme_extension.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -212,6 +213,15 @@ class _LoginViewState extends State<LoginView> {
                             controller: _passwordController,
                             enabled: state.status != LoginStatus.loading,
                           ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                context.push('/forgot-password');
+                              },
+                              child: const Text('Forgot Password?'),
+                            ),
+                          ),
                         ] else ...[
                           _OtpInput(
                             controller: _otpController,
@@ -238,9 +248,46 @@ class _LoginViewState extends State<LoginView> {
                         const SizedBox(height: 16),
 
                         if (!state.isOtpRequired)
-                          TextButton(
-                            onPressed: () => context.push('/register'),
-                            child: Text(AppLocalizations.of(context)?.dontHaveAccountSignUp ?? "Sign Up as a customer"),
+                          Column(
+                            children: [
+                              TextButton(
+                                onPressed: () => context.push('/register'),
+                                child: Text(AppLocalizations.of(context)?.dontHaveAccountSignUp ?? "Sign Up as a customer"),
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  final url = Uri.parse('http://nzubia.com');
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(url);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                      children: [
+                                        const TextSpan(text: 'Want to be an Agent? Visit '),
+                                        TextSpan(
+                                          text: 'Nzubia.com',
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                        ),
+                                        const TextSpan(text: ' and sign up'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           )
                         else
                           TextButton(
@@ -391,36 +438,48 @@ class _LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
         final canSubmit = state.isOtpRequired
             ? otp.trim().length >= 4
             : email.trim().isNotEmpty && password.trim().isNotEmpty;
 
-        return state.status == LoginStatus.loading
-            ? const Center(child: CircularProgressIndicator())
-            : ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                onPressed: !canSubmit
-                    ? null
-                    : () {
+        return ElevatedButton(
+          key: const Key('loginForm_continue_raisedButton'),
+          onPressed: (!canSubmit || state.status == LoginStatus.loading)
+              ? null
+              : () {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   if (state.isOtpRequired) {
                     context.read<LoginBloc>().add(const LoginVerifyOtpSubmitted());
                   } else {
                     context.read<LoginBloc>().add(const LoginSubmitted());
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBackgroundColor: state.status == LoginStatus.loading ? theme.colorScheme.primary : null,
+          ),
+          child: state.status == LoginStatus.loading
+              ? SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: theme.colorScheme.onPrimary,
                   ),
-                ),
-                child: Text(
-                  state.isOtpRequired ? (AppLocalizations.of(context)?.verifyOtp ?? "Verify OTP") : (AppLocalizations.of(context)?.login ?? "Login"),
+                )
+              : Text(
+                  state.isOtpRequired
+                      ? (AppLocalizations.of(context)?.verifyOtp ?? "Verify OTP")
+                      : (AppLocalizations.of(context)?.login ?? "Login"),
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              );
+        );
       },
     );
   }

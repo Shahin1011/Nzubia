@@ -223,8 +223,10 @@ class _PhoneInput extends StatelessWidget {
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('Could not launch $url: $e');
     }
   }
 
@@ -361,19 +363,44 @@ class _RegisterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<RegisterBloc, RegisterState>(
       builder: (context, state) {
-        return state.status == RegisterStatus.loading
-            ? const Center(child: CircularProgressIndicator())
-            : ElevatedButton(
-                key: const Key('registerForm_continue_raisedButton'),
-                onPressed: smsConsent
-                    ? () {
-                        context.read<RegisterBloc>().add(const RegisterSubmitted());
-                      }
-                    : null,
-                child: Text(AppLocalizations.of(context)!.signUp),
-              );
+        final canSubmit = state.email.trim().isNotEmpty &&
+                          state.phone.trim().isNotEmpty &&
+                          state.password.trim().isNotEmpty &&
+                          smsConsent;
+
+        return ElevatedButton(
+          key: const Key('registerForm_continue_raisedButton'),
+          onPressed: canSubmit && state.status != RegisterStatus.loading
+              ? () {
+                  context.read<RegisterBloc>().add(const RegisterSubmitted());
+                }
+              : null,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBackgroundColor: state.status == RegisterStatus.loading 
+                ? theme.colorScheme.primary 
+                : null,
+          ),
+          child: state.status == RegisterStatus.loading
+              ? SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                )
+              : Text(
+                  AppLocalizations.of(context)!.signUp,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+        );
       },
     );
   }

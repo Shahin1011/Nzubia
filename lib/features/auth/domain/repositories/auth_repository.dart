@@ -6,6 +6,9 @@ abstract class AuthRepository {
   Future<UserEntity> register(String email, String phone, String password, {String role = 'CUSTOMER', String? businessName});
   Future<bool> verifyOtp(String code);
   Future<void> resendOtp();
+  Future<void> forgotPassword(String email);
+  Future<void> resetPassword(String email, String otp);
+  Future<void> changePasswordWithEmail(String email, String newPassword);
   Future<void> updateProfile({required String fullName, String? companyName, String? ein, bool isBusiness = false});
   Future<void> submitAgentKYC({
     required String agentType, // 'INDIVIDUAL' or 'BUSINESS'

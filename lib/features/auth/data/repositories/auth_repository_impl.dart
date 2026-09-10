@@ -29,6 +29,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> login(String email, String password) async {
     try {
+      if (kDebugMode) debugPrint('=== LOGIN ATTEMPT === Email: $email, Password: $password');
       final response = await _dioClient.dio.post(ApiConstants.login, data: {
         'email': email,
         'password': password,
@@ -109,7 +110,14 @@ class AuthRepositoryImpl implements AuthRepository {
       _pendingEmail = email;
       return UserEntity(id: '', email: email, role: role, isVerified: false);
 
-    } on DioException {
+    } on DioException catch (e) {
+      if (e.response?.data is Map && e.response!.data['message'] != null) {
+        final msg = e.response!.data['message'];
+        if (msg is List) {
+          throw Exception(msg.join('\n'));
+        }
+        throw Exception(msg.toString());
+      }
       rethrow;
     } catch (e) {
       throw Exception('Registration failed: $e');
@@ -158,6 +166,47 @@ class AuthRepositoryImpl implements AuthRepository {
       rethrow;
     } catch (e) {
       throw Exception('Resend OTP failed: $e');
+    }
+  }
+
+  @override
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _dioClient.dio.post(ApiConstants.forgotPassword, data: {
+        'email': email,
+      });
+    } on DioException catch (e) {
+      final message = e.response?.data?['message'] ?? 'Failed to send reset code';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<void> resetPassword(String email, String otp) async {
+    try {
+      await _dioClient.dio.post(ApiConstants.resetPassword, data: {
+        'email': email,
+        'otp': otp,
+      });
+    } on DioException catch (e) {
+      final message = e.response?.data?['message'] ?? 'Invalid password reset code';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<void> changePasswordWithEmail(String email, String newPassword) async {
+    try {
+      await _dioClient.dio.post(
+        ApiConstants.changePassword,
+        data: {
+          'email': email,
+          'newPassword': newPassword,
+        },
+      );
+    } on DioException catch (e) {
+      final message = e.response?.data?['message'] ?? 'Password change failed';
+      throw Exception(message);
     }
   }
 
@@ -295,7 +344,16 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         // Try fetching fresh profile from API
         final response = await _dioClient.dio.get(ApiConstants.profile);
-        final userModel = UserModel.fromJson(response.data);
+        
+        if (response.data == null || response.data == '') {
+          throw Exception('Backend returned an empty response for profile.');
+        }
+        
+        if (response.data is! Map<String, dynamic>) {
+           throw Exception('Unexpected response format from profile endpoint: ${response.data}');
+        }
+
+        final userModel = UserModel.fromJson(response.data as Map<String, dynamic>);
         _currentUser = userModel;
         await _cacheUser(userModel); // Update cache
         return _currentUser;
@@ -496,4 +554,5 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception('Update agent profile failed: $e');
     }
   }
+
 }

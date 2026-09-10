@@ -1,7 +1,7 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.nzubia.com/api/v1',
+    defaultValue: 'https://recipients-gym-cartoon-encouraged.trycloudflare.com/api/v1',
   );
 
   static String get stripePublishableKey => const String.fromEnvironment(
@@ -38,6 +38,8 @@ class ApiConstants {
   static const String register = '/auth/register';
   static const String verifyOtp = '/auth/verify-otp';
   static const String resendOtp = '/auth/resend-otp';
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String resetPassword = '/auth/reset-password';
   static const String profile = '/users/profile';
   static const String agentOnboarding = '/users/agent/onboarding';
 

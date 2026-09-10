@@ -31,10 +31,14 @@ class AuthInterceptor extends Interceptor {
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      await _storage.delete(key: 'accessToken');
-      final context = AppRouter.navigatorKey.currentContext;
-      if (context != null && context.mounted) {
-        GoRouter.of(context).go('/login');
+      final path = err.requestOptions.path;
+      // Do not force logout on specific auth routes that might return 401 on purpose (e.g. invalid OTP)
+      if (!path.contains('/auth/verify-otp') && !path.contains('/auth/reset-password')) {
+        await _storage.delete(key: 'accessToken');
+        final context = AppRouter.navigatorKey.currentContext;
+        if (context != null && context.mounted) {
+          GoRouter.of(context).go('/login');
+        }
       }
     }
     super.onError(err, handler);
