@@ -9,9 +9,9 @@ import 'package:customer_nzubia_global/features/auth/presentation/bloc/login/log
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_event.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/custom_theme_extension.dart';
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -262,22 +262,22 @@ class _LoginViewState extends State<LoginView> {
                                   }
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                                   child: RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
                                       style: TextStyle(
                                         color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
-                                        fontSize: 14,
+                                        fontSize: 14.5, 
                                       ),
                                       children: [
                                         const TextSpan(text: 'Want to be an Agent? Visit '),
                                         TextSpan(
-                                          text: 'Nzubia.com',
+                                          text: 'nzubia.com',
                                           style: TextStyle(
                                             color: Theme.of(context).colorScheme.primary,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 15,
+                                            fontSize: 15.5,
                                             decoration: TextDecoration.underline,
                                           ),
                                         ),

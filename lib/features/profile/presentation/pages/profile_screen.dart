@@ -74,11 +74,12 @@ class ProfileView extends StatelessWidget {
                   name: profile.fullName,
                   radius: 50,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Text(
-                  profile.fullName,
+                  profile.fullName.isNotEmpty ? profile.fullName : 'N/A',
                   style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 5),
                 Text(profile.email, style: TextStyle(color: theme.textTheme.bodySmall?.color)),
                 if (profile.phoneNumber.isNotEmpty) ...[
                   const SizedBox(height: 4),

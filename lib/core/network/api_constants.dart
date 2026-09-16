@@ -1,7 +1,7 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.nzubia.com/api/v1',
+    defaultValue: 'https://route-agreements-communication-among.trycloudflare.com/api/v1',
   );
   
   // Auth
@@ -10,7 +10,6 @@ class ApiConstants {
   static const String verifyOtp = '/auth/verify-otp';
   
   // Users
-
   static const String users = '/users';
   static const String profile = '/users/profile';
   

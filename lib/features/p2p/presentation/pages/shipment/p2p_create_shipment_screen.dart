@@ -41,6 +41,8 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
   // Restricted categories that trigger a warning (backend canonical set).
   static final _restrictedCategories = ItemCategory.restricted;
 
+  String _weightUnit = 'kg';
+
   late TextEditingController _pickupController;
   late TextEditingController _deliveryController;
   String _deliveryCity = '';
@@ -228,22 +230,37 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                 const SizedBox(height: 20),
 
                 // ── Weight & dimensions ─────────────────────────────
-                _SectionLabel('Weight & Dimensions'),
+                _SectionLabel('Weight & Dimensions (optional)'),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
                       child: FormBuilderTextField(
-                        name: 'weight_kg',
-                        decoration: const InputDecoration(
+                        name: 'weight',
+                        decoration: InputDecoration(
                           labelText: 'Weight',
-                          suffixText: 'kg',
-                          prefixIcon: Icon(Icons.scale_outlined),
+                          prefixIcon: const Icon(Icons.scale_outlined),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _weightUnit,
+                                items: const [
+                                  DropdownMenuItem(value: 'kg', child: Text('kg')),
+                                  DropdownMenuItem(value: 'lbs', child: Text('lbs')),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() => _weightUnit = value);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        validator: _positiveNumber,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -258,7 +275,6 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        validator: _positiveNumber,
                       ),
                     ),
                   ],
@@ -305,6 +321,39 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Recipient Details ───────────────────────────────
+                _SectionLabel('Recipient Details'),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'recipient_name',
+                  decoration: const InputDecoration(
+                    labelText: 'Recipient Name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: _required,
+                ),
+                const SizedBox(height: 12),
+                FormBuilderTextField(
+                  name: 'recipient_phone',
+                  decoration: const InputDecoration(
+                    labelText: 'Recipient Phone',
+                    prefixIcon: Icon(Icons.phone_outlined),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  validator: _required,
+                ),
+                const SizedBox(height: 12),
+                FormBuilderTextField(
+                  name: 'recipient_address',
+                  decoration: const InputDecoration(
+                    labelText: 'Recipient Address',
+                    prefixIcon: Icon(Icons.location_on_outlined),
+                  ),
+                  validator: _required,
                 ),
 
                 const SizedBox(height: 20),
@@ -518,13 +567,39 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
       ).showSnackBar(const SnackBar(content: Text('Maximum 4 photos allowed')));
       return;
     }
-    final picked = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-      maxWidth: 1080,
+
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Take a Photo'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from Gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
     );
-    if (picked != null) {
-      setState(() => _photoPaths.add(picked.path));
+
+    if (source != null) {
+      final picked = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1080,
+      );
+      if (picked != null) {
+        setState(() => _photoPaths.add(picked.path));
+      }
     }
   }
 
@@ -577,7 +652,11 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
       P2pShipmentCreateRequested({
         'itemDescription': v['item_description'],
         'itemCategory': _selectedCategory!.toJson(),
-        'weightKg': double.tryParse(v['weight_kg']?.toString() ?? '') ?? 0,
+        'weightKg': double.tryParse(v['weight']?.toString() ?? '') ?? 0,
+        'weightUnit': _weightUnit,
+        'recipientName': v['recipient_name'],
+        'recipientPhone': v['recipient_phone'],
+        'recipientAddress': v['recipient_address'],
         'declaredValueUsd':
             double.tryParse(v['declared_value_usd']?.toString() ?? '') ?? 0,
         'originAddress': _pickupController.text,

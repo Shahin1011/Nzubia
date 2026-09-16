@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:customer_nzubia_global/features/profile/domain/entities/user_pro
 import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_profile/user_profile_bloc.dart';
 import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_profile/user_profile_event.dart';
 import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_profile/user_profile_state.dart';
+import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserProfileEntity profile;
@@ -22,6 +25,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _phoneController;
   late TextEditingController _companyController;
 
+  final ImagePicker _picker = ImagePicker();
+  String? _selectedImagePath;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +42,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _phoneController.dispose();
     _companyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Take a Photo'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from Gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source != null) {
+      final picked = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1080,
+      );
+      if (picked != null) {
+        setState(() => _selectedImagePath = picked.path);
+      }
+    }
   }
 
   @override
@@ -123,6 +165,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                           child: Column(
                             children: [
+                              // Profile Photo Upload
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  if (_selectedImagePath != null)
+                                    CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage: FileImage(File(_selectedImagePath!)),
+                                    )
+                                  else
+                                    UserAvatar(
+                                      imageUrl: widget.profile.profileImageUrl,
+                                      name: widget.profile.fullName.isNotEmpty ? widget.profile.fullName : 'U',
+                                      radius: 40,
+                                    ),
+                                  GestureDetector(
+                                    onTap: _pickImage,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: const BoxDecoration(
+                                        color: AppTheme.primaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+
                               // Email (read-only)
                               TextField(
                                 controller: TextEditingController(text: widget.profile.email),

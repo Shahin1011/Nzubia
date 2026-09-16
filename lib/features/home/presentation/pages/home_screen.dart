@@ -60,7 +60,8 @@ class _HomeView extends StatelessWidget {
         }
 
         final user = authState.user!;
-        final firstName = user.firstName ?? 'User';
+        final displayName = user.fullName.isNotEmpty ? user.fullName : (user.firstName?.isNotEmpty == true ? user.firstName! : '');
+        final greetingText = displayName.isNotEmpty ? 'Welcome, $displayName! 👋' : 'Welcome! 👋';
         final initials = _initials(user.firstName, user.lastName);
 
         return DefaultTabController(
@@ -70,7 +71,7 @@ class _HomeView extends StatelessWidget {
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
-                  _buildHeader(context, firstName, initials),
+                  _buildHeader(context, greetingText, initials),
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _SliverTabBarDelegate(
@@ -164,7 +165,7 @@ class _HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, String firstName, String initials) {
+  Widget _buildHeader(BuildContext context, String greetingText, String initials) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
@@ -234,7 +235,7 @@ class _HomeView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hey, $firstName! 👋',
+                            greetingText,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: theme.colorScheme.onSurface,
