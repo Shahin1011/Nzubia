@@ -664,7 +664,7 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
       child: ListTile(
         leading: const Icon(Icons.inventory_2),
         title: Text(item.description),
-        subtitle: Text('${item.weight} lbs • ${item.quantity} units'),
+        subtitle: Text('${item.weight.toStringAsFixed(2)} lbs / ${(item.weight * 0.453592).toStringAsFixed(1)} kg • ${item.quantity} units'),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CargoItemDetailScreen(item: item, shipment: _shipment))),
       ),
     );

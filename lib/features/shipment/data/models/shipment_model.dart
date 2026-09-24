@@ -69,8 +69,8 @@ class ShipmentModel extends ShipmentEntity {
       id: json['id'] ?? '',
       customerId: (json['customer'] is Map) ? (json['customer']['id'] ?? '') : (json['customer_id'] ?? ''),
       originAddress: parseAddress(json['origin']),
-      destinationAddress: parseAddress(json['destination'] ?? json['destination_meta']) != '' 
-          ? parseAddress(json['destination'] ?? json['destination_meta']) 
+      destinationAddress: parseAddress(json['destination_address'] ?? json['destination'] ?? json['destination_meta']) != '' 
+          ? parseAddress(json['destination_address'] ?? json['destination'] ?? json['destination_meta']) 
           : (json['destination_country'] ?? 'Unknown Destination'),
       cargoItems: parseCargo(json),
       serviceLevel: json['service_level'] ?? '',
@@ -101,7 +101,7 @@ class ShipmentModel extends ShipmentEntity {
       documents: (json['documents'] as List?)?.map((e) => Map<String, dynamic>.from(e)).toList() ?? [],
       recipientInviteSentAt: json['recipient_invite_sent_at'] != null ? DateTime.tryParse(json['recipient_invite_sent_at']) : null,
       recipientAddressVerified: json['recipient_address_verified'] ?? false,
-      recipient: json['recipient_email'] != null
+      recipient: (json['recipient_name'] != null || json['recipient_phone'] != null || json['recipient_email'] != null)
           ? RecipientEntity(
               name: json['recipient_name'] ?? '',
               email: json['recipient_email'] ?? '',

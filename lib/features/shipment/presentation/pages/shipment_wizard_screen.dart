@@ -782,7 +782,7 @@ class _CargoStepState extends State<_CargoStep> {
                               ? Image.file(File(item.imageUrls.first), width: 40, height: 40, fit: BoxFit.cover)
                               : const Icon(Icons.inventory_2),
                            title: Text(item.description),
-                           subtitle: Text('${item.category} • ${item.weight} lbs / ${(item.weight * 0.453592).toStringAsFixed(1)} kg'),
+                           subtitle: Text('${item.category} • ${item.weight.toStringAsFixed(2)} lbs / ${(item.weight * 0.453592).toStringAsFixed(1)} kg'),
                            trailing: Row(
                              mainAxisSize: MainAxisSize.min,
                              children: [

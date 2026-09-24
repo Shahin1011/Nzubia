@@ -156,7 +156,7 @@ class _ShipmentCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${shipment.destinationCity}, ${shipment.destinationCountry}',
+                        shipment.displayDestination,
                         style: theme.textTheme.bodySmall?.copyWith(
                             color:
                                 theme.colorScheme.onSurface.withValues(alpha: 0.55)),

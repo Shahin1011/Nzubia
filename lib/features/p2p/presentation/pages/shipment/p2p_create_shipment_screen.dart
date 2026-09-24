@@ -515,6 +515,8 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryColor,
                           foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppTheme.primaryColor,
+                          disabledForegroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -662,8 +664,11 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
         'originAddress': _pickupController.text,
         if (_pickupLat != null) 'originLatitude': _pickupLat,
         if (_pickupLng != null) 'originLongitude': _pickupLng,
+        'destinationAddress': _deliveryController.text,
         'destinationCountry': deliveryCountry,
         'destinationCity': deliveryCity,
+        if (v['needed_by_date'] != null)
+          'neededByDate': (v['needed_by_date'] as DateTime).toIso8601String(),
         if (hasDims)
           'dimensionsCm': {'length': length, 'width': width, 'height': height},
         if (_photoPaths.isNotEmpty) 'photoUrls': _photoPaths,

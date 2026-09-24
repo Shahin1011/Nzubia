@@ -793,7 +793,7 @@ class _ShipmentCard extends StatelessWidget {
                   children: [
                     Container(
                       padding:
-                          const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
@@ -895,8 +895,7 @@ class _ShipmentCard extends StatelessWidget {
                         shipment.destinationAddress,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: textColor, fontSize: 14, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],

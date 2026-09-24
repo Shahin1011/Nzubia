@@ -11,6 +11,10 @@ class P2pShipmentRequest extends Equatable {
   final double? originLongitude;
   final String destinationCountry;
   final String destinationCity;
+  final String? destinationAddress;
+  final String? recipientName;
+  final String? recipientPhone;
+  final String? recipientAddress;
   final ItemCategory itemCategory;
   final String itemDescription;
 
@@ -42,6 +46,10 @@ class P2pShipmentRequest extends Equatable {
     this.originLongitude,
     required this.destinationCountry,
     required this.destinationCity,
+    this.destinationAddress,
+    this.recipientName,
+    this.recipientPhone,
+    this.recipientAddress,
     required this.itemCategory,
     required this.itemDescription,
     this.dimensionsCm = const {},
@@ -69,21 +77,33 @@ class P2pShipmentRequest extends Equatable {
     }
 
     return P2pShipmentRequest(
-      id: json['id'] as String,
-      seekerUserId: json['seeker_user_id'] as String,
+      id: json['id'] as String? ?? '',
+      seekerUserId: json['seeker_user_id'] as String? ?? '',
       seeker: json['seeker'] is Map<String, dynamic>
           ? P2pUserSummary.fromJson(json['seeker'] as Map<String, dynamic>)
           : null,
       originAddress: json['origin_address'] as String? ?? '',
-      originLatitude: (json['origin_latitude'] as num?)?.toDouble(),
-      originLongitude: (json['origin_longitude'] as num?)?.toDouble(),
-      destinationCountry: json['destination_country'] as String,
-      destinationCity: json['destination_city'] as String,
+      originLatitude: json['origin_latitude'] != null 
+          ? double.tryParse(json['origin_latitude'].toString()) 
+          : null,
+      originLongitude: json['origin_longitude'] != null 
+          ? double.tryParse(json['origin_longitude'].toString()) 
+          : null,
+      destinationCountry: json['destination_country'] as String? ?? '',
+      destinationCity: json['destination_city'] as String? ?? '',
+      destinationAddress: json['destination_address'] as String?,
+      recipientName: json['recipient_name'] as String?,
+      recipientPhone: json['recipient_phone'] as String?,
+      recipientAddress: json['recipient_address'] as String?,
       itemCategory: ItemCategory.fromJson(json['item_category'] as String?),
       itemDescription: json['item_description'] as String? ?? '',
       dimensionsCm: parsedDims,
-      weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 0.0,
-      declaredValueUsd: (json['declared_value_usd'] as num?)?.toDouble() ?? 0.0,
+      weightKg: json['weight_kg'] != null 
+          ? double.tryParse(json['weight_kg'].toString()) ?? 0.0 
+          : 0.0,
+      declaredValueUsd: json['declared_value_usd'] != null 
+          ? double.tryParse(json['declared_value_usd'].toString()) ?? 0.0 
+          : 0.0,
       photoUrls: (json['photo_urls'] as List? ?? const [])
           .map((e) => e.toString())
           .toList(),
@@ -112,6 +132,10 @@ class P2pShipmentRequest extends Equatable {
     originLongitude,
     destinationCountry,
     destinationCity,
+    destinationAddress,
+    recipientName,
+    recipientPhone,
+    recipientAddress,
     itemCategory,
     itemDescription,
     dimensionsCm,
@@ -125,4 +149,23 @@ class P2pShipmentRequest extends Equatable {
     createdAt,
     updatedAt,
   ];
+
+  String get displayDestination {
+    if (destinationAddress != null &&
+        destinationAddress!.isNotEmpty &&
+        destinationAddress != 'null') {
+      return destinationAddress!;
+    }
+    final city =
+        destinationCity.isNotEmpty ? destinationCity : 'Not Specified';
+    final country =
+        destinationCountry.isNotEmpty ? destinationCountry : 'Not Specified';
+
+    if (city == 'Not Specified' && country == 'Not Specified') {
+      return 'Not Specified';
+    }
+    if (city == 'Not Specified') return country;
+    if (country == 'Not Specified') return city;
+    return '$city, $country';
+  }
 }

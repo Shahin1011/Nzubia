@@ -101,9 +101,14 @@ class _CargoItemDetailScreenState extends State<CargoItemDetailScreen> {
             Chip(label: Text(widget.item.category)),
             
             const SizedBox(height: 24),
-            _buildDetailRow(l10n.weight, '${widget.item.weight} ${l10n.lbsLabel} / ${(widget.item.weight * 0.453592).toStringAsFixed(1)} ${l10n.kgLabel}'),
+            _buildDetailRow(l10n.weight, '${widget.item.weight.toStringAsFixed(2)} ${l10n.lbsLabel} / ${(widget.item.weight * 0.453592).toStringAsFixed(1)} ${l10n.kgLabel}'),
             _buildDetailRow(l10n.quantity, '${widget.item.quantity}'),
-            _buildDetailRow(l10n.dimensions, '${widget.item.length} x ${widget.item.width} x ${widget.item.height} ${widget.item.dimensionUnit}'),
+            _buildDetailRow(
+              l10n.dimensions, 
+              (widget.item.length > 0 || widget.item.width > 0 || widget.item.height > 0)
+                  ? '${widget.item.length} x ${widget.item.width} x ${widget.item.height} ${widget.item.dimensionUnit}'
+                  : 'Not specified',
+            ),
             const SizedBox(height: 16),
              Row(
                 children: [

@@ -18,6 +18,9 @@ class P2pShipmentRepositoryImpl implements P2pShipmentRepository {
   Future<P2pShipmentRequest> createRequest(
       Map<String, dynamic> requestData) async {
     try {
+      print('--- POST /shipments BODY ---');
+      print(requestData);
+      print('----------------------------');
       final response = await _client.dio
           .post(ApiConstants.p2pShipments, data: requestData);
       return P2pShipmentRequest.fromJson(
@@ -32,6 +35,10 @@ class P2pShipmentRepositoryImpl implements P2pShipmentRepository {
   Future<List<P2pShipmentRequest>> listRequests() async {
     try {
       final response = await _client.dio.get(ApiConstants.p2pShipments);
+      print('--- GET /shipments FULL RESPONSE ---');
+      print(response.data);
+      print('------------------------------------');
+      
       final list = response.data as List;
       return list
           .map((e) =>
@@ -47,6 +54,11 @@ class P2pShipmentRepositoryImpl implements P2pShipmentRepository {
     try {
       final response =
           await _client.dio.get(ApiConstants.p2pShipmentById(requestId));
+          
+      print('--- GET /shipment/$requestId FULL RESPONSE ---');
+      print(response.data);
+      print('------------------------------------');
+      
       return P2pShipmentRequest.fromJson(
         response.data as Map<String, dynamic>,
       );

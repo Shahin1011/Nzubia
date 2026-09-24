@@ -48,7 +48,9 @@ class P2pOffer extends Equatable {
       route: json['route'] is Map<String, dynamic>
           ? P2pRoute.fromJson(json['route'] as Map<String, dynamic>)
           : null,
-      offerAmountUsd: (json['offer_amount_usd'] as num?)?.toDouble(),
+      offerAmountUsd: json['offer_amount_usd'] != null 
+          ? double.tryParse(json['offer_amount_usd'].toString()) 
+          : null,
       status: OfferStatus.fromJson(json['status'] as String?),
       acceptedAt: parseDate(json['accepted_at']),
       rejectedAt: parseDate(json['rejected_at']),

@@ -225,8 +225,18 @@ class _ShipmentBody extends StatelessWidget {
                   _DetailRow(
                     label: 'Delivery',
                     value:
-                        '${shipment.destinationCity}, ${shipment.destinationCountry}',
+                        shipment.displayDestination,
                   ),
+                  if (shipment.recipientName != null && shipment.recipientName!.isNotEmpty)
+                    _DetailRow(
+                      label: 'Recipient',
+                      value: shipment.recipientName!,
+                    ),
+                  if (shipment.recipientPhone != null && shipment.recipientPhone!.isNotEmpty)
+                    _DetailRow(
+                      label: 'Phone',
+                      value: shipment.recipientPhone!,
+                    ),
                   if (shipment.createdAt != null)
                     _DetailRow(
                       label: 'Created',

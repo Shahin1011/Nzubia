@@ -168,7 +168,7 @@ class _EditManifestScreenState extends State<EditManifestScreen> {
                           ? Image.file(File(item.imageUrls.first), width: 40, height: 40, fit: BoxFit.cover, errorBuilder: (_,__,___) => const Icon(Icons.inventory_2))
                           : const Icon(Icons.inventory_2),
                        title: Text(item.description),
-                       subtitle: Text('${item.category} • ${item.weight} ${l10n.lbsLabel} / ${(item.weight * 0.453592).toStringAsFixed(1)} ${l10n.kgLabel}'),
+                       subtitle: Text('${item.category} • ${item.weight.toStringAsFixed(2)} ${l10n.lbsLabel} / ${(item.weight * 0.453592).toStringAsFixed(1)} ${l10n.kgLabel}'),
                        trailing: IconButton(
                          icon: const Icon(Icons.delete, color: Colors.red),
                          onPressed: () => _removeItem(index),
