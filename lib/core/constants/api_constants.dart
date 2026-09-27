@@ -1,7 +1,7 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://writer-hans-developed-clinics.trycloudflare.com/api/v1',
+    defaultValue: 'https://deaf-forget-symptoms-incorporate.trycloudflare.com/api/v1',
   );
 
   static String get stripePublishableKey => const String.fromEnvironment(

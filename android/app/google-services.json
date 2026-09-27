@@ -1,0 +1,155 @@
+{
+  "project_info": {
+    "project_number": "773977151103",
+    "project_id": "nzubia-3b572",
+    "storage_bucket": "nzubia-3b572.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773977151103:android:343e4e3bc19668618c914a",
+        "android_client_info": {
+          "package_name": "com.nzubia.delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Ri0M6NCGqDU1zQ_b47rpFYGKeW-60uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773977151103:android:0c761e5e0ab256448c914a",
+        "android_client_info": {
+          "package_name": "com.nzubia.global.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Ri0M6NCGqDU1zQ_b47rpFYGKeW-60uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773977151103:android:fbee325c69f1f98b8c914a",
+        "android_client_info": {
+          "package_name": "com.nzubia.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Ri0M6NCGqDU1zQ_b47rpFYGKeW-60uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773977151103:android:50370e136ccb39588c914a",
+        "android_client_info": {
+          "package_name": "com.nzubia.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Ri0M6NCGqDU1zQ_b47rpFYGKeW-60uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773977151103:android:5a3f2f334a44cfa58c914a",
+        "android_client_info": {
+          "package_name": "com.nzubiaglobalcustomer.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Ri0M6NCGqDU1zQ_b47rpFYGKeW-60uQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773977151103-ppi6jl0vg0k87n1l3nbp6p8pgg55lqd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
