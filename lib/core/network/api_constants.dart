@@ -1,7 +1,7 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://deaf-forget-symptoms-incorporate.trycloudflare.com/api/v1',
+    defaultValue: 'http://165.232.40.77:3000/api/v1',
   );
   
   // Auth

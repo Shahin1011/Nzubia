@@ -42,10 +42,17 @@ class UserProfileModel extends UserProfileEntity {
       }
     }
 
+    String parsedFullName = json['full_name'] ?? json['fullName'] ?? '';
+    if (parsedFullName.isEmpty) {
+      final fName = json['first_name'] ?? '';
+      final lName = json['last_name'] ?? '';
+      parsedFullName = '$fName $lName'.trim();
+    }
+
     return UserProfileModel(
       id: json['id'] ?? '',
       email: json['email'] ?? '',
-      fullName: json['full_name'] ?? json['fullName'] ?? '',
+      fullName: parsedFullName,
       phoneNumber: json['phone'] ?? '',
       role: json['role'] ?? 'CUSTOMER',
       companyName: agentProfile?['company_name'],

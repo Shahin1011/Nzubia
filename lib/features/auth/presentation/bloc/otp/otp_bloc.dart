@@ -56,7 +56,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
 
     try {
       await _authRepository.resendOtp();
-      emit(state.copyWith(resendCountdown: 30, isResendEnabled: false));
+      emit(state.copyWith(resendCountdown: 180, isResendEnabled: false));
       _startTimer();
     } catch (e) {
       emit(state.copyWith(errorMessage: 'Failed to resend OTP'));

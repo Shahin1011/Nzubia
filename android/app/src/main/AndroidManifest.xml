@@ -6,7 +6,8 @@
     <application
         android:label="Nzubia"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:usesCleartextTraffic="true">
 
         <!-- Google Maps API Key — set GOOGLE_MAPS_API_KEY in android/local.properties or CI env -->
         <meta-data

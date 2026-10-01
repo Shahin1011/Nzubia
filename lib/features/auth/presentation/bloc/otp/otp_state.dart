@@ -14,7 +14,7 @@ class OtpState extends Equatable {
     this.code = '',
     this.errorMessage,
     this.isResendEnabled = false,
-    this.resendCountdown = 30,
+    this.resendCountdown = 180,
   });
 
   OtpState copyWith({

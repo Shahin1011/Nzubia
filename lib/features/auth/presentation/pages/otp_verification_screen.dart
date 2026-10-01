@@ -187,8 +187,10 @@ class _ResendButton extends StatelessWidget {
             child: const Text('Resend Code'),
           );
         } else {
+          final minutes = (state.resendCountdown ~/ 60).toString().padLeft(2, '0');
+          final seconds = (state.resendCountdown % 60).toString().padLeft(2, '0');
           return  Text(
-            'Resend code in ${state.resendCountdown}s',
+            'Resend code in $minutes:$seconds',
             textAlign: TextAlign.center,
              style: const TextStyle(color: AppTheme.darkGray),
           );
