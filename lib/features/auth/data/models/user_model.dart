@@ -68,8 +68,8 @@ class UserModel extends UserEntity {
     String? fName = json['first_name'];
     String? lName = json['last_name'];
 
-    if (fName == null && json['full_name'] != null) {
-      final fullName = json['full_name'] as String;
+    if (fName == null && (json['full_name'] != null || json['fullName'] != null)) {
+      final fullName = (json['full_name'] ?? json['fullName']) as String;
       final parts = fullName.trim().split(' ');
       if (parts.isNotEmpty) {
         fName = parts.first;
