@@ -7,18 +7,56 @@ import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_courier_re
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/data/exceptions/p2p_exception.dart';
 
+import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_repository.dart';
+
 class P2pCourierRepositoryImpl implements P2pCourierRepository {
   final DioClient _client;
+  final AuthRepository? _authRepository;
 
-  P2pCourierRepositoryImpl({required DioClient client}) : _client = client;
+  P2pCourierRepositoryImpl({
+    required DioClient client,
+    AuthRepository? authRepository,
+  })  : _client = client,
+        _authRepository = authRepository;
 
   @override
   Future<P2pCourierProfile?> getMyProfile() async {
     try {
       final response = await _client.dio.get(ApiConstants.p2pCourierMe);
-      return P2pCourierProfile.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      if (response.data == null) return null;
+      if (response.data is! Map<String, dynamic>) return null;
+
+      final data = response.data as Map<String, dynamic>;
+
+      // Check if backend wrapped courier profile inside 'courier' or 'profile'
+      final hasCourierWrapper =
+          data['courier'] is Map<String, dynamic> || data['profile'] is Map<String, dynamic>;
+
+      // Check if there are courier-specific attributes in the payload
+      final hasCourierSpecificField = data['courier_id'] != null ||
+          data['courierId'] != null ||
+          data['service_radius_km'] != null ||
+          data['serviceRadiusKm'] != null ||
+          data['accepted_categories'] != null ||
+          data['acceptedCategories'] != null;
+
+      // Check role from API data or current auth session
+      final rawRole = (data['role'] ??
+              data['user']?['role'] ??
+              _authRepository?.currentUser?.role)
+          ?.toString()
+          .toUpperCase()
+          .trim();
+
+      // If it's a standard User entity with role != 'COURIER' (e.g. CUSTOMER, AGENT, ADMIN)
+      // and lacks any courier profile/fields, this user is NOT a courier.
+      if (!hasCourierWrapper && !hasCourierSpecificField) {
+        if (rawRole != null && rawRole != 'COURIER') {
+          return null;
+        }
+      }
+
+      return P2pCourierProfile.fromJson(data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) return null;
       _handleDioError(e);
@@ -98,17 +136,50 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
 
   @override
   Future<P2pCourierProfile> setAvailability({required bool isActive}) async {
+    Response? response;
+    // Sync with backend courier location & availability endpoint
     try {
-      final response = await _client.dio.patch(
-        ApiConstants.p2pCourierMeAvailability,
-        data: {'isActive': isActive},
+      await _client.dio.patch(
+        ApiConstants.courierLocation,
+        data: {'is_available': isActive},
       );
-      return P2pCourierProfile.fromJson(
-        response.data as Map<String, dynamic>,
+    } catch (_) {}
+
+    try {
+      response = await _client.dio.patch(
+        ApiConstants.p2pCourierMe,
+        data: {'is_available': isActive},
       );
     } on DioException catch (e) {
-      _handleDioError(e);
+      if (e.response?.statusCode == 404) {
+        // Fallback to /users/profile
+        try {
+          response = await _client.dio.patch(
+            ApiConstants.profile,
+            data: {'is_available': isActive},
+          );
+        } on DioException catch (e2) {
+          _handleDioError(e2);
+        }
+      } else {
+        _handleDioError(e);
+      }
     }
+
+    if (response.data is Map<String, dynamic>) {
+      final resData = response.data as Map<String, dynamic>;
+      return P2pCourierProfile.fromJson(resData);
+    }
+
+    final current = await getMyProfile();
+    if (current != null) {
+      return current.copyWith(isActive: isActive);
+    }
+
+    throw const P2pException(
+      statusCode: 500,
+      message: 'Failed to update courier availability',
+    );
   }
 
   @override
@@ -159,6 +230,26 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
         response.data as Map<String, dynamic>,
       );
     } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        // Fallback 1: Query user endpoint: GET /users/$courierId
+        try {
+          final userRes = await _client.dio.get('/users/$courierId');
+          if (userRes.data is Map) {
+            return P2pCourierProfile.fromJson(
+              Map<String, dynamic>.from(userRes.data as Map),
+            );
+          }
+        } catch (_) {}
+
+        // Fallback 2: Check listPublicCouriers
+        try {
+          final couriers = await listPublicCouriers();
+          final found = couriers.firstWhere(
+            (c) => c.id == courierId || c.userId == courierId,
+          );
+          return found;
+        } catch (_) {}
+      }
       _handleDioError(e);
     }
   }
@@ -172,6 +263,13 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
         response.data as Map<String, dynamic>,
       );
     } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return const P2pCourierReputation(
+          averageRating: 0.0,
+          reviewCount: 0,
+          recentReviews: [],
+        );
+      }
       _handleDioError(e);
     }
   }

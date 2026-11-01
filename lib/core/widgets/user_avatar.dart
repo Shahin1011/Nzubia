@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:customer_nzubia_global/core/theme/custom_theme_extension.dart';
 
 class UserAvatar extends StatelessWidget {
@@ -21,38 +23,78 @@ class UserAvatar extends StatelessWidget {
     final colors = theme.extension<AppColorsExtension>();
     final primaryColor = colors?.neonCyan ?? theme.primaryColor;
 
-    final initials = _getInitials(name);
-    
     Widget avatarContent;
 
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
+    if (imageUrl != null && imageUrl!.trim().isNotEmpty) {
+      final cleanUrl = imageUrl!.trim();
+      final isNetwork = cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://');
+
       avatarContent = ClipOval(
-        child: Image.network(
-          imageUrl!,
-          width: radius * 2,
-          height: radius * 2,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildFallback(primaryColor);
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return _buildFallback(primaryColor, isLoading: true);
-          },
-        ),
+        child: isNetwork
+            ? Image.network(
+                cleanUrl,
+                width: radius * 2,
+                height: radius * 2,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildLocalOrInitialsFallback(primaryColor);
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return _buildFallback(primaryColor, isLoading: true);
+                },
+              )
+            : Image.file(
+                File(cleanUrl),
+                width: radius * 2,
+                height: radius * 2,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildLocalOrInitialsFallback(primaryColor);
+                },
+              ),
       );
     } else {
-      avatarContent = _buildFallback(primaryColor);
+      avatarContent = _buildLocalOrInitialsFallback(primaryColor);
     }
 
     return GestureDetector(
       onTap: onTap,
-      child: CircleAvatar(
-        radius: radius,
-        backgroundColor: Colors.transparent, // Handled by content or fallback
-        child: avatarContent,
+      child: ClipOval(
+        child: Container(
+          width: radius * 2,
+          height: radius * 2,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: avatarContent,
+        ),
       ),
     );
+  }
+
+  Widget _buildLocalOrInitialsFallback(Color primaryColor) {
+    try {
+      if (Hive.isBoxOpen('settings')) {
+        final localPath = Hive.box('settings').get('local_avatar_path') as String?;
+        if (localPath != null && localPath.isNotEmpty) {
+          final file = File(localPath);
+          if (file.existsSync()) {
+            return ClipOval(
+              child: Image.file(
+                file,
+                width: radius * 2,
+                height: radius * 2,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildFallback(primaryColor),
+              ),
+            );
+          }
+        }
+      }
+    } catch (_) {}
+    return _buildFallback(primaryColor);
   }
 
   Widget _buildFallback(Color primaryColor, {bool isLoading = false}) {

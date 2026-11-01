@@ -17,8 +17,8 @@ import 'package:intl/intl.dart';
 import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/features/auth/domain/entities/user_entity.dart';
 import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
+import 'package:customer_nzubia_global/core/widgets/app_advanced_switch.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:customer_nzubia_global/l10n/app_localizations.dart';
 
 class ShipmentWizardScreen extends StatelessWidget {
   const ShipmentWizardScreen({super.key});
@@ -920,14 +920,14 @@ class _CargoStepState extends State<_CargoStep> {
                  const SizedBox(height: 12),
 
                  // Attributes Switches
-                  SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.fragile),
+                 AppAdvancedSwitchListTile(
+                   title: Text(AppLocalizations.of(context)!.fragile),
                    value: _isFragile,
                    onChanged: (val) => setState(() => _isFragile = val),
                    contentPadding: EdgeInsets.zero,
                  ),
-                  SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.perishable),
+                 AppAdvancedSwitchListTile(
+                   title: Text(AppLocalizations.of(context)!.perishable),
                    value: _isPerishable,
                    onChanged: (val) => setState(() => _isPerishable = val),
                    contentPadding: EdgeInsets.zero,
@@ -1073,7 +1073,7 @@ class _ServiceStepState extends State<_ServiceStep> {
           onChanged: (val) => context.read<ShipmentWizardBloc>().add(ShipmentServiceSelected('SEA')),
         ),
         // Insurance Toggle
-        SwitchListTile(
+        AppAdvancedSwitchListTile(
           title: Text(AppLocalizations.of(context)!.requestInsurance),
           subtitle: Text(AppLocalizations.of(context)!.insuranceSubtitle),
           value: state.isInsuranceRequested,

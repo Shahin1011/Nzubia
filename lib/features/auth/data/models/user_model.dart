@@ -92,7 +92,13 @@ class UserModel extends UserEntity {
       kycVerifiedAt: json['kyc_verified_at'] == null ? null : DateTime.tryParse(json['kyc_verified_at'].toString()),
       firstName: fName,
       lastName: lName,
-      profilePictureUrl: json['profile_picture_url'],
+      profilePictureUrl: json['profile_picture_url'] ??
+          json['profile_image_url'] ??
+          json['profilePictureUrl'] ??
+          json['profileImageUrl'] ??
+          json['avatar_url'] ??
+          json['avatar'] ??
+          (hasNestedProfile ? agentProfile['profile_picture_url'] ?? agentProfile['profile_image_url'] : null),
       phone: json['phone'] as String? ?? '',
       // Try nested agentProfile first (API response), then root level (cached data)
       companyName: hasNestedProfile ? agentProfile['company_name'] : json['company_name'],
@@ -131,6 +137,7 @@ class UserModel extends UserEntity {
       'first_name': firstName,
       'last_name': lastName,
       'profile_picture_url': profilePictureUrl,
+      'profile_image_url': profilePictureUrl,
       'phone': phone,
       'company_name': companyName,
       'agent_type': agentType,

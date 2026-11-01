@@ -49,7 +49,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Clear any previous session data first
       await _storage.delete(key: 'accessToken');
+      await _storage.delete(key: 'user_role');
+      await _storage.delete(key: 'user_id');
       await _settingsBox.delete('cached_user');
+      await _settingsBox.delete('user_role');
+      await _settingsBox.delete('user_id');
 
       await _storage.write(key: 'accessToken', value: accessToken);
       if (kDebugMode) debugPrint('AuthRepository: Token saved to storage.');
@@ -62,8 +66,18 @@ class AuthRepositoryImpl implements AuthRepository {
         return _currentUser!;
       } else {
         // Fetch user profile if not returned in login response
-        final profileResponse = await _dioClient.dio.get(ApiConstants.profile);
-        final userModel = UserModel.fromJson(profileResponse.data);
+        Response profileResponse;
+        try {
+          profileResponse = await _dioClient.dio.get(ApiConstants.authMe);
+        } catch (_) {
+          profileResponse = await _dioClient.dio.get(ApiConstants.profile);
+        }
+        final Map<String, dynamic> userMap = profileResponse.data is Map<String, dynamic>
+            ? (profileResponse.data['user'] is Map<String, dynamic>
+                ? profileResponse.data['user'] as Map<String, dynamic>
+                : profileResponse.data as Map<String, dynamic>)
+            : throw Exception('Unexpected response format from profile endpoint');
+        final userModel = UserModel.fromJson(userMap);
         _currentUser = userModel;
         await _cacheUser(userModel);
         return _currentUser!;
@@ -318,7 +332,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await _storage.delete(key: 'accessToken');
+    await _storage.delete(key: 'user_role');
+    await _storage.delete(key: 'user_id');
     await _settingsBox.delete('cached_user');
+    await _settingsBox.delete('cached_profile_details');
+    await _settingsBox.delete('user_role');
+    await _settingsBox.delete('user_id');
     _pendingEmail = null;
     _currentUser = null;
   }
@@ -337,23 +356,59 @@ class AuthRepositoryImpl implements AuthRepository {
         // Ensure cache is cleared if no token (prevents zombie state)
         if (_settingsBox.containsKey('cached_user')) {
            await _settingsBox.delete('cached_user');
+           await _settingsBox.delete('cached_profile_details');
+           await _settingsBox.delete('user_role');
+           await _settingsBox.delete('user_id');
         }
         return null;
       }
 
       try {
-        // Try fetching fresh profile from API
-        final response = await _dioClient.dio.get(ApiConstants.profile);
+        // Try fetching fresh profile from API (first /auth/me, fallback to /users/profile)
+        Response response;
+        try {
+          response = await _dioClient.dio.get(ApiConstants.authMe);
+        } catch (_) {
+          response = await _dioClient.dio.get(ApiConstants.profile);
+        }
         
         if (response.data == null || response.data == '') {
           throw Exception('Backend returned an empty response for profile.');
         }
         
-        if (response.data is! Map<String, dynamic>) {
-           throw Exception('Unexpected response format from profile endpoint: ${response.data}');
+        final dynamic raw = response.data;
+        Map<String, dynamic> userMap;
+        if (raw is Map<String, dynamic>) {
+          if (raw['user'] is Map<String, dynamic>) {
+            userMap = Map<String, dynamic>.from(raw['user'] as Map);
+          } else {
+            userMap = Map<String, dynamic>.from(raw);
+          }
+        } else {
+          throw Exception('Unexpected response format from profile endpoint: $raw');
         }
 
-        final userModel = UserModel.fromJson(response.data as Map<String, dynamic>);
+        // Merge with locally cached profile if API values are missing/empty
+        final cachedProfileStr = _settingsBox.get('cached_profile_details');
+        if (cachedProfileStr != null) {
+          try {
+            final cachedProfile = jsonDecode(cachedProfileStr) as Map<String, dynamic>;
+            final hasServerName = (userMap['full_name'] ?? userMap['fullName'] ?? userMap['first_name'] ?? '').toString().trim().isNotEmpty;
+            if (!hasServerName && (cachedProfile['fullName'] ?? '').toString().trim().isNotEmpty) {
+              userMap['full_name'] = cachedProfile['fullName'];
+            }
+            final hasServerPhone = (userMap['phone'] ?? '').toString().trim().isNotEmpty;
+            if (!hasServerPhone && (cachedProfile['phoneNumber'] ?? '').toString().trim().isNotEmpty) {
+              userMap['phone'] = cachedProfile['phoneNumber'];
+            }
+            final hasServerPic = (userMap['profile_picture_url'] ?? userMap['profile_image_url'] ?? userMap['avatar_url'] ?? '').toString().trim().isNotEmpty;
+            if (!hasServerPic && (cachedProfile['profileImageUrl'] ?? '').toString().trim().isNotEmpty) {
+              userMap['profile_picture_url'] = cachedProfile['profileImageUrl'];
+            }
+          } catch (_) {}
+        }
+
+        final userModel = UserModel.fromJson(userMap);
         _currentUser = userModel;
         await _cacheUser(userModel); // Update cache
         return _currentUser;
@@ -445,6 +500,10 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final jsonString = jsonEncode(user.toJson());
       await _settingsBox.put('cached_user', jsonString);
+      await _settingsBox.put('user_role', user.role);
+      await _settingsBox.put('user_id', user.id);
+      await _storage.write(key: 'user_role', value: user.role);
+      await _storage.write(key: 'user_id', value: user.id);
     } catch (e) {
       if (kDebugMode) debugPrint('AuthRepository: Failed to cache user: $e');
     }

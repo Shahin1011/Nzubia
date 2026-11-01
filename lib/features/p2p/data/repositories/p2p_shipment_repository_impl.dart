@@ -106,9 +106,15 @@ class P2pShipmentRepositoryImpl implements P2pShipmentRepository {
     try {
       final response =
           await _client.dio.get(ApiConstants.p2pShipmentMatch(requestId));
-      final list = response.data as List;
+      final raw = response.data;
+      final list = raw is List
+          ? raw
+          : (raw is Map
+              ? (raw['items'] ?? raw['routes'] ?? raw['data']) as List? ?? const []
+              : const []);
       return list
-          .map((e) => P2pRouteFeedItem.fromJson(e as Map<String, dynamic>))
+          .whereType<Map>()
+          .map((e) => P2pRouteFeedItem.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     } on DioException catch (e) {
       _handleDioError(e);

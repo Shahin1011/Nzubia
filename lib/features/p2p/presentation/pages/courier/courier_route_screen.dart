@@ -33,7 +33,7 @@ class _RouteViewState extends State<_RouteView> {
   final List<ItemCategory> _selectedCategories = [];
 
   static const _countries = [
-    'Ghana', 'Nigeria', 'United Kingdom', 'United States', 'France',
+    'Bangladesh', 'Ghana', 'Nigeria', 'United Kingdom', 'United States', 'France',
     'Germany', 'Canada', 'Australia', 'Netherlands', 'UAE', 'Kenya',
     'South Africa', 'China', 'Japan', 'India', 'Brazil', 'Other',
   ];

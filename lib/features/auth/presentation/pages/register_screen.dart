@@ -8,6 +8,7 @@ import 'package:customer_nzubia_global/features/auth/presentation/bloc/register/
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/register/register_state.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:customer_nzubia_global/core/widgets/app_advanced_switch.dart';
 
 import 'package:customer_nzubia_global/l10n/app_localizations.dart';
 
@@ -432,10 +433,9 @@ class _BusinessSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(AppLocalizations.of(context)!.registerAsBusiness),
-            Switch(
+            AppAdvancedSwitch(
               value: isBusiness,
               onChanged: onIsBusinessChanged,
-              activeColor: AppTheme.primaryColor,
             ),
           ],
         ),

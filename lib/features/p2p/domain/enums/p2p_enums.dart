@@ -15,16 +15,18 @@ enum CourierVerificationState {
   rejected;
 
   static CourierVerificationState fromJson(String? value) {
-    switch (value) {
+    switch (value?.toUpperCase()) {
       case 'DRAFT':
         return CourierVerificationState.draft;
       case 'SUBMITTED':
         return CourierVerificationState.submitted;
       case 'PENDING_REVIEW':
+      case 'PENDING':
         return CourierVerificationState.pendingReview;
       case 'APPROVED':
         return CourierVerificationState.approved;
       case 'ACTIVE':
+      case 'VERIFIED':
         return CourierVerificationState.active;
       case 'SUSPENDED':
         return CourierVerificationState.suspended;

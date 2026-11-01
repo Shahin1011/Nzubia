@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:customer_nzubia_global/core/utils/role_navigation.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 
@@ -14,7 +15,7 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-          context.go('/dashboard');
+          navigateBasedOnRole(context, state.user);
         } else if (state.status == AuthStatus.unauthenticated) {
           try {
             final box = Hive.box('settings');

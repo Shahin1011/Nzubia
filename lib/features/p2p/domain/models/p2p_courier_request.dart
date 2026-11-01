@@ -33,28 +33,33 @@ class P2pCourierRequest {
   });
 
   factory P2pCourierRequest.fromJson(Map<String, dynamic> json) {
-    final seeker = json['seeker'] as Map<String, dynamic>?;
+    final seeker = (json['seeker'] is Map<String, dynamic>)
+        ? json['seeker'] as Map<String, dynamic>
+        : null;
     return P2pCourierRequest(
-      id: json['id'] as String,
-      shipmentRequestId: json['shipment_request_id'] as String,
-      routeId: json['route_id'] as String,
+      id: (json['id'] ?? '').toString(),
+      shipmentRequestId: (json['shipment_request_id'] ?? json['shipmentRequestId'] ?? '').toString(),
+      routeId: (json['route_id'] ?? json['routeId'] ?? '').toString(),
       route: json['route'] is Map<String, dynamic>
           ? P2pRoute.fromJson(json['route'] as Map<String, dynamic>)
           : null,
-      seekerUserId: json['seeker_user_id'] as String,
+      seekerUserId: (json['seeker_user_id'] ?? json['seekerUserId'] ?? '').toString(),
       seekerName: seeker?['name'] as String? ??
+          seeker?['full_name'] as String? ??
           seeker?['first_name'] as String?,
       seekerEmail: seeker?['email'] as String?,
       message: json['message'] as String?,
       status: CourierRequestStatus.fromJson(json['status'] as String?),
-      declineReason: json['decline_reason'] as String?,
-      respondedAt: json['responded_at'] != null
-          ? DateTime.tryParse(json['responded_at'] as String)
+      declineReason: (json['decline_reason'] ?? json['declineReason']) as String?,
+      respondedAt: json['responded_at'] != null || json['respondedAt'] != null
+          ? DateTime.tryParse((json['responded_at'] ?? json['respondedAt']).toString())
           : null,
-      expiresAt: json['expires_at'] != null
-          ? DateTime.tryParse(json['expires_at'] as String)
+      expiresAt: json['expires_at'] != null || json['expiresAt'] != null
+          ? DateTime.tryParse((json['expires_at'] ?? json['expiresAt']).toString())
           : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? (DateTime.tryParse((json['created_at'] ?? json['createdAt']).toString()) ?? DateTime.now())
+          : DateTime.now(),
     );
   }
 }

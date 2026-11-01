@@ -8,6 +8,9 @@ import 'package:customer_nzubia_global/features/p2p/domain/enums/p2p_enums.dart'
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_route_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_shipment_repository.dart';
+import 'package:customer_nzubia_global/core/constants/api_constants.dart';
+import 'package:customer_nzubia_global/core/network/dio_client.dart';
+import 'package:customer_nzubia_global/core/utils/service_locator.dart';
 
 part 'courier_dashboard_event.dart';
 part 'courier_dashboard_state.dart';
@@ -66,6 +69,35 @@ class CourierDashboardBloc
           break;
         }
       }
+      if (activeRoute == null && myRoutes.isNotEmpty) {
+        activeRoute = myRoutes.first;
+      }
+      // If routes list is empty or doesn't have an active route, but courier profile has an active destination_route:
+      if (activeRoute == null && profile.destinationRoute != null && profile.destinationRoute!.isNotEmpty) {
+        String destCity = '';
+        String destCountry = profile.destinationRoute!;
+        if (destCountry.contains(',')) {
+          final parts = destCountry.split(',');
+          destCity = parts.first.trim();
+          destCountry = parts.sublist(1).join(',').trim();
+        }
+        activeRoute = P2pRoute(
+          id: profile.id,
+          courierProfileId: profile.id,
+          destinationCity: destCity,
+          destinationCountry: destCountry,
+          departureDate: profile.departureDate ?? DateTime.now(),
+          returnDate: profile.returnDate,
+          pickupOrigin: (profile.pickupOrigin != null && profile.pickupOrigin!.isNotEmpty)
+              ? profile.pickupOrigin!
+              : 'Current Location',
+          capacityKg: profile.capacityKg ?? 0.0,
+          status: RouteStatus.published,
+        );
+        if (myRoutes.isEmpty) {
+          myRoutes = [activeRoute];
+        }
+      }
 
       List<P2pCourierRequest> pendingRequests = const [];
       try {
@@ -122,6 +154,20 @@ class CourierDashboardBloc
         (r) => r.status == RouteStatus.published,
         orElse: () => updated,
       );
+      try {
+        final dest = [updated.destinationCity, updated.destinationCountry]
+            .where((s) => s.trim().isNotEmpty)
+            .join(', ');
+        await sl<DioClient>().dio.patch(
+          ApiConstants.courierLocation,
+          data: {
+            'is_available': true,
+            'location': {
+              'destination_route': dest,
+            },
+          },
+        );
+      } catch (_) {}
       emit(state.copyWith(myRoutes: newRoutes, activeRoute: activeRoute));
     } catch (e) {
       emit(state.copyWith(
@@ -172,17 +218,32 @@ class CourierDashboardBloc
   ) async {
     final previous = state.profile;
     if (previous == null) return;
+
+    // Optimistically update the UI so toggle switch responds immediately
+    final optimistic = previous.copyWith(isActive: event.isActive);
+    emit(state.copyWith(
+      status: CourierDashboardStatus.success,
+      profile: optimistic,
+      errorMessage: null,
+    ));
+
     try {
       final updated =
           await _courierRepo.setAvailability(isActive: event.isActive);
-      emit(state.copyWith(profile: updated));
-    } catch (e) {
-      // Surface the error to the UI so couriers can see why the toggle failed
-      // (most commonly: courier is not yet APPROVED).
       emit(state.copyWith(
-        status: CourierDashboardStatus.failure,
-        errorMessage: e.toString(),
+        status: CourierDashboardStatus.success,
+        profile: updated,
+      ));
+    } catch (e) {
+      // Revert the switch back to previous without breaking dashboard view!
+      final cleanMsg = e.toString()
+          .replaceAll('Exception: ', '')
+          .replaceAll('P2pException: ', '')
+          .replaceAll('Courier not found.', 'Could not update status on server.');
+      emit(state.copyWith(
+        status: CourierDashboardStatus.success,
         profile: previous,
+        errorMessage: cleanMsg,
       ));
     }
   }
@@ -241,6 +302,24 @@ class CourierDashboardBloc
         'homeLatitude': event.latitude,
         'homeLongitude': event.longitude,
       });
+      try {
+        final dest = state.activeRoute != null
+            ? [state.activeRoute!.destinationCity, state.activeRoute!.destinationCountry]
+                .where((s) => s.trim().isNotEmpty)
+                .join(', ')
+            : null;
+        await sl<DioClient>().dio.patch(
+          ApiConstants.courierLocation,
+          data: {
+            'is_available': updated.isActive,
+            'location': {
+              'lat': event.latitude,
+              'lng': event.longitude,
+              if (dest != null && dest.isNotEmpty) 'destination_route': dest,
+            },
+          },
+        );
+      } catch (_) {}
       emit(state.copyWith(profile: updated));
     } catch (e) {
       emit(state.copyWith(

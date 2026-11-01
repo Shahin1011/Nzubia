@@ -555,12 +555,6 @@ class _CreateShipmentViewState extends State<_CreateShipmentView> {
     return null;
   }
 
-  String? _positiveNumber(dynamic v) {
-    if (v == null || v.toString().trim().isEmpty) return 'Required';
-    final n = double.tryParse(v.toString());
-    if (n == null || n <= 0) return 'Enter a positive number';
-    return null;
-  }
 
   Future<void> _pickPhoto() async {
     if (_photoPaths.length >= 4) {

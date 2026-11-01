@@ -3,6 +3,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
+import 'package:customer_nzubia_global/core/network/dio_client.dart';
+import 'package:customer_nzubia_global/core/constants/api_constants.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/enums/p2p_enums.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_route_repository.dart';
 
@@ -19,7 +21,7 @@ class _PostRouteScreenState extends State<PostRouteScreen> {
   bool _submitting = false;
 
   static const _countries = [
-    'Ghana', 'Nigeria', 'United Kingdom', 'United States', 'France',
+    'Bangladesh', 'Ghana', 'Nigeria', 'United Kingdom', 'United States', 'France',
     'Germany', 'Canada', 'Australia', 'Netherlands', 'UAE', 'Kenya',
     'South Africa', 'China', 'Japan', 'India', 'Brazil', 'Other',
   ];
@@ -292,23 +294,37 @@ class _PostRouteScreenState extends State<PostRouteScreen> {
 
     final originCity = (values['origin_city'] as String?)?.trim() ?? '';
     final originCountry = (values['origin_country'] as String?)?.trim() ?? '';
+    final pickupOrigin = [originCity, originCountry]
+        .where((p) => p.isNotEmpty)
+        .join(', ');
+    final capKg = double.tryParse(values['capacity_kg']?.toString() ?? '') ?? 0.0;
+    final depDate = toIsoDate(values['departure_date']);
+    final retDate = values['return_date'] != null ? toIsoDate(values['return_date']) : null;
+    final destCity = values['destination_city']?.toString().trim() ?? '';
+    final destCountry = values['destination_country']?.toString().trim() ?? '';
+    final destRoute = [destCity, destCountry].where((p) => p.isNotEmpty).join(', ');
 
     final routeData = <String, dynamic>{
-      'destinationCity': values['destination_city'],
-      'destinationCountry': values['destination_country'],
-      'departureDate': toIsoDate(values['departure_date']),
-      if (values['return_date'] != null)
-        'returnDate': toIsoDate(values['return_date']),
-      'pickupOrigin': [originCity, originCountry]
-          .where((p) => p.isNotEmpty)
-          .join(', '),
-      'capacityKg': double.tryParse(
-              values['capacity_kg']?.toString() ?? '') ??
-          0,
+      'destinationCity': destCity,
+      'destinationCountry': destCountry,
+      'destination_city': destCity,
+      'destination_country': destCountry,
+      'destination_route': destRoute,
+      'departureDate': depDate,
+      'departure_date': depDate,
+      if (retDate != null) ...{
+        'returnDate': retDate,
+        'return_date': retDate,
+      },
+      'pickupOrigin': pickupOrigin.isNotEmpty ? pickupOrigin : 'Current Location',
+      'pickup_origin': pickupOrigin.isNotEmpty ? pickupOrigin : 'Current Location',
+      'capacityKg': capKg,
+      'capacity_kg': capKg,
       'acceptedItemCategories':
           _selectedCategories.map((c) => c.toJson()).toList(),
       if ((values['notes'] as String?)?.isNotEmpty == true)
         'routeNotes': values['notes'],
+      'status': publish ? 'PUBLISHED' : 'DRAFT',
     };
 
     try {
@@ -316,7 +332,32 @@ class _PostRouteScreenState extends State<PostRouteScreen> {
       var route = await repo.createRoute(routeData);
 
       if (publish) {
-        route = await repo.updateRouteStatus(route.id, RouteStatus.published);
+        try {
+          route = await repo.updateRouteStatus(route.id, RouteStatus.published);
+        } catch (_) {
+          route = route.copyWith(status: RouteStatus.published);
+        }
+        try {
+          await GetIt.instance<DioClient>().dio.patch(
+            ApiConstants.courierLocation,
+            data: {
+              'is_available': true,
+              'location': {
+                'destination_route': destRoute,
+                'destination_city': destCity,
+                'destination_country': destCountry,
+                'departure_date': depDate,
+                if (retDate != null) 'return_date': retDate,
+                'pickup_origin': pickupOrigin.isNotEmpty ? pickupOrigin : 'Current Location',
+                'capacity_kg': capKg,
+                'accepted_categories':
+                    _selectedCategories.map((c) => c.toJson()).toList(),
+                if ((values['notes'] as String?)?.isNotEmpty == true)
+                  'notes': values['notes'],
+              },
+            },
+          );
+        } catch (_) {}
       }
 
       if (!mounted) return;

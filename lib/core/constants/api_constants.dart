@@ -1,7 +1,8 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://165.232.40.77:3000/api/v1',
+    //defaultValue: 'http://165.232.40.77:3000/api/v1',
+    defaultValue: 'https://analyzed-newer-measured-achieve.trycloudflare.com/api/v1',
   );
 
   static String get stripePublishableKey => const String.fromEnvironment(
@@ -35,6 +36,7 @@ class ApiConstants {
 
   // Auth
   static const String login = '/auth/login';
+  static const String authMe = '/auth/me';
   static const String register = '/auth/register';
   static const String verifyOtp = '/auth/verify-otp';
   static const String resendOtp = '/auth/resend-otp';
@@ -47,6 +49,8 @@ class ApiConstants {
   static const String changePassword = '/auth/change-password';
   static const String stripeOnboarding = '/users/stripe/onboarding';
   static const String stripeStatus = '/users/stripe/status';
+  static const String deviceToken = '/users/device-token';
+  static const String courierLocation = '/users/courier/location';
 
   // Shipments
   static const String shipments = '/shipments';
@@ -77,7 +81,7 @@ class ApiConstants {
   // Routes
   static const String p2pRoutes = '/p2p/routes';
   static const String p2pRoutesFeed = '/p2p/routes/feed';
-  static const String p2pRoutesMine = '/p2p/routes/mine';
+  static const String p2pRoutesMine = '/p2p/routes/me';
   static String p2pRouteById(String id) => '/p2p/routes/$id';
   static String p2pRouteStatus(String id) => '/p2p/routes/$id/status';
 

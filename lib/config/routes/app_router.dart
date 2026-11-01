@@ -108,6 +108,9 @@ class AppRouter {
       GoRoute(path: '/profile-setup', builder: (context, state) => const ProfileSetupScreen()),
       GoRoute(path: '/agent-onboarding', builder: (context, state) => const AgentOnboardingScreen()),
       GoRoute(path: '/agent-dashboard', builder: (context, state) => const AgentDashboardScreen()),
+      GoRoute(path: '/agent-home', builder: (context, state) => const AgentDashboardScreen()),
+      GoRoute(path: '/courier-home', redirect: (context, state) => '/p2p/courier/dashboard'),
+      GoRoute(path: '/customer-home', builder: (context, state) => const HomeScreen()),
 
       // Main App Shell
       StatefulShellRoute.indexedStack(
@@ -415,6 +418,10 @@ class AppRouter {
           if (shipment == null) return const Scaffold(body: Center(child: Text('Shipment not found')));
           return ShipmentDetailScreen(shipment: shipment);
         },
+      ),
+      GoRoute(
+        path: '/shipment/:id',
+        redirect: (context, state) => '/p2p/shipment/${state.pathParameters['id']}',
       ),
       GoRoute(
         path: '/shipment/:id/quotes',

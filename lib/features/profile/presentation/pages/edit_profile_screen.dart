@@ -10,6 +10,7 @@ import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_p
 import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_profile/user_profile_event.dart';
 import 'package:customer_nzubia_global/features/profile/presentation/bloc/user_profile/user_profile_state.dart';
 import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
+import 'package:customer_nzubia_global/features/profile/domain/repositories/profile_repository.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserProfileEntity profile;
@@ -27,6 +28,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final ImagePicker _picker = ImagePicker();
   String? _selectedImagePath;
+  bool _isUploadingPhoto = false;
 
   @override
   void initState() {
@@ -177,7 +179,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   else
                                     UserAvatar(
                                       imageUrl: widget.profile.profileImageUrl,
-                                      name: widget.profile.fullName.isNotEmpty ? widget.profile.fullName : 'U',
+                                      name: widget.profile.fullName.isNotEmpty
+                                          ? widget.profile.fullName
+                                          : (widget.profile.email.isNotEmpty ? widget.profile.email : 'U'),
                                       radius: 40,
                                     ),
                                   GestureDetector(
@@ -268,12 +272,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: state.status == UserProfileStatus.loading
+                      onPressed: (state.status == UserProfileStatus.loading || _isUploadingPhoto)
                           ? null
-                          : () {
+                          : () async {
+                              final bloc = context.read<UserProfileBloc>();
+                              String photoUrl = widget.profile.profileImageUrl;
+
+                              if (_selectedImagePath != null) {
+                                setState(() => _isUploadingPhoto = true);
+                                try {
+                                  photoUrl = await sl<ProfileRepository>().uploadProfileImage(_selectedImagePath!);
+                                } catch (e) {
+                                  if (mounted) {
+                                    setState(() => _isUploadingPhoto = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Failed to upload image: $e')),
+                                    );
+                                  }
+                                  return;
+                                }
+                                if (mounted) {
+                                  setState(() => _isUploadingPhoto = false);
+                                }
+                              }
+
                               if (isAgent) {
                                 // For agents: submit change request
                                 final changes = <String, dynamic>{};
+
+                                if (photoUrl != widget.profile.profileImageUrl) {
+                                  changes['profile_image_url'] = {
+                                    'old': widget.profile.profileImageUrl,
+                                    'new': photoUrl,
+                                  };
+                                }
                                 
                                 if (_nameController.text != widget.profile.fullName) {
                                   changes['full_name'] = {
@@ -303,18 +335,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   return;
                                 }
 
-                                context.read<UserProfileBloc>().add(SubmitChangeRequest(changes));
+                                bloc.add(SubmitChangeRequest(changes));
                               } else {
-                                // For customers: direct update
+                                // For customers & other users: direct update
                                 final updatedProfile = UserProfileEntity(
                                   id: widget.profile.id,
                                   email: widget.profile.email,
                                   fullName: _nameController.text,
                                   phoneNumber: _phoneController.text,
                                   role: widget.profile.role,
-                                  profileImageUrl: widget.profile.profileImageUrl,
+                                  profileImageUrl: photoUrl,
                                 );
-                                context.read<UserProfileBloc>().add(UpdateUserProfile(updatedProfile));
+                                bloc.add(UpdateUserProfile(updatedProfile));
                               }
                             },
                       style: ElevatedButton.styleFrom(
@@ -322,7 +354,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white, 
                       ),
-                      child: state.status == UserProfileStatus.loading
+                      child: (state.status == UserProfileStatus.loading || _isUploadingPhoto)
                           ? const SizedBox(
                               height: 20,
                               width: 20,

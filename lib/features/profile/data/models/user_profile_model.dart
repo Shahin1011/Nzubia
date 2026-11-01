@@ -57,7 +57,15 @@ class UserProfileModel extends UserProfileEntity {
       role: json['role'] ?? 'CUSTOMER',
       companyName: agentProfile?['company_name'],
       businessAddress: agentProfile?['address'] as String? ?? json['address'] as String?,
-      profileImageUrl: json['profile_image_url'] ?? '',
+      profileImageUrl: json['profile_image_url'] ??
+          json['profile_picture_url'] ??
+          json['profileImageUrl'] ??
+          json['profilePictureUrl'] ??
+          json['avatar_url'] ??
+          json['avatar'] ??
+          agentProfile?['profile_image_url'] ??
+          agentProfile?['profile_picture_url'] ??
+          '',
       agentType: agentProfile?['agent_type'],
       serviceRegions: regions,
       rating: double.tryParse(agentProfile?['rating']?.toString() ?? '0') ?? 0.0,
@@ -78,6 +86,7 @@ class UserProfileModel extends UserProfileEntity {
       'full_name': fullName,
       'phone': phoneNumber,
       'profile_image_url': profileImageUrl,
+      'profile_picture_url': profileImageUrl,
       'preferred_payout_method': preferredPayoutMethod,
       'zelle_email': zelleEmail,
       'zelle_phone': zellePhone,

@@ -21,11 +21,20 @@ import 'package:customer_nzubia_global/core/localization/language_cubit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:customer_nzubia_global/l10n/app_localizations.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("Handling a background message: ${message.messageId}");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  } catch (_) {}
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
   final stripeKey = ApiConstants.stripePublishableKey;
   if (stripeKey.isNotEmpty) {
@@ -136,6 +145,10 @@ Future<void> _initBackgroundServices() async {
              } else if (type == 'P2P_DIRECT_REQUEST') {
                 // Courier: seeker sent a direct booking request
                 AppRouter.router.push('/p2p/courier/requests');
+             } else if (type == 'P2P_SHIPMENT_REQUEST' && shipmentId != null) {
+                AppRouter.router.push('/shipment/$shipmentId');
+             } else if (type == 'SHIPMENT_REQUEST_CREATED' && shipmentId != null) {
+                AppRouter.router.push('/shipment/$shipmentId');
              }
           }
         });

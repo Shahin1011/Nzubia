@@ -20,6 +20,8 @@ import 'package:customer_nzubia_global/core/widgets/offline_error_widget.dart';
 import 'package:customer_nzubia_global/core/network/socket_client.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/enums/p2p_enums.dart';
+import 'package:customer_nzubia_global/features/auth/domain/entities/user_entity.dart';
+import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/bloc/shipment/p2p_shipment_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -62,7 +64,6 @@ class _HomeView extends StatelessWidget {
         final user = authState.user!;
         final displayName = user.fullName.isNotEmpty ? user.fullName : (user.firstName?.isNotEmpty == true ? user.firstName! : '');
         final greetingText = displayName.isNotEmpty ? 'Welcome, $displayName! 👋' : 'Welcome! 👋';
-        final initials = _initials(user.firstName, user.lastName);
 
         return DefaultTabController(
           length: 2,
@@ -71,7 +72,7 @@ class _HomeView extends StatelessWidget {
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
-                  _buildHeader(context, greetingText, initials),
+                  _buildHeader(context, greetingText, user),
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _SliverTabBarDelegate(
@@ -136,13 +137,6 @@ class _HomeView extends StatelessWidget {
     );
   }
 
-  String _initials(String? firstName, String? lastName) {
-    final a = firstName?.isNotEmpty == true ? firstName![0].toUpperCase() : '';
-    final b = lastName?.isNotEmpty == true ? lastName![0].toUpperCase() : '';
-    if (a.isEmpty && b.isEmpty) return '?';
-    return '$a$b';
-  }
-
   TabBar _buildTabBar(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
@@ -165,7 +159,7 @@ class _HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, String greetingText, String initials) {
+  Widget _buildHeader(BuildContext context, String greetingText, UserEntity user) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final subtitleColor = theme.colorScheme.onSurface.withValues(alpha: 0.55);
@@ -207,26 +201,14 @@ class _HomeView extends StatelessWidget {
                 // Top bar: avatar + greeting + refresh
                 Row(
                   children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [primaryColor, primaryColor.withValues(alpha: 0.65)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          initials,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
+                    GestureDetector(
+                      onTap: () => context.push('/profile'),
+                      child: UserAvatar(
+                        imageUrl: user.profileImageUrl,
+                        name: user.fullName.isNotEmpty
+                            ? user.fullName
+                            : (user.email.isNotEmpty ? user.email : 'U'),
+                        radius: 22,
                       ),
                     ),
                     const SizedBox(width: 12),

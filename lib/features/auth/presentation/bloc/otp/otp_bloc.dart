@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_repository.dart';
+import 'package:customer_nzubia_global/core/utils/service_locator.dart';
+import 'package:customer_nzubia_global/core/services/firebase_service.dart';
 import 'otp_event.dart';
 import 'otp_state.dart';
 
@@ -36,6 +38,9 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     try {
       final isVerified = await _authRepository.verifyOtp(state.code);
       if (isVerified) {
+        try {
+          unawaited(sl<FirebaseService>().syncDeviceToken());
+        } catch (_) {}
         emit(state.copyWith(status: OtpStatus.success));
       } else {
         emit(state.copyWith(

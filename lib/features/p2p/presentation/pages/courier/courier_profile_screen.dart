@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
+import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_courier_profile.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_review.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/repositories/p2p_courier_repository.dart';
@@ -32,7 +33,20 @@ class _CourierProfileScreenState extends State<CourierProfileScreen> {
     final reviewRepo = GetIt.instance<P2pReviewRepository>();
 
     final profile = await courierRepo.getPublicProfile(widget.courierId);
-    final reputation = await courierRepo.getReputation(widget.courierId);
+    P2pCourierReputation reputation = const P2pCourierReputation(
+      averageRating: 0.0,
+      reviewCount: 0,
+      recentReviews: [],
+    );
+    try {
+      reputation = await courierRepo.getReputation(widget.courierId);
+    } catch (_) {
+      reputation = const P2pCourierReputation(
+        averageRating: 0.0,
+        reviewCount: 0,
+        recentReviews: [],
+      );
+    }
     List<P2pReview> reviews = const [];
     try {
       reviews = await reviewRepo.getCourierReviews(widget.courierId);
@@ -123,19 +137,10 @@ class _ProfileBody extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircleAvatar(
+                    UserAvatar(
+                      imageUrl: profile.profilePictureUrl,
+                      name: profile.displayName,
                       radius: 40,
-                      backgroundColor: Colors.white.withAlpha(40),
-                      child: Text(
-                        profile.displayName.isNotEmpty
-                            ? profile.displayName[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(

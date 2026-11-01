@@ -120,6 +120,7 @@ class _MarketplaceViewState extends State<_MarketplaceView> {
                       if (state.isCourier == true) _CourierDashboardBanner(),
                       Expanded(
                         child: _EmptyState(
+                          isCourier: state.isCourier == true,
                           destination: _selectedDestination,
                           onClearFilter: () {
                             setState(() => _selectedDestination = null);
@@ -491,10 +492,15 @@ class _MetaChip extends StatelessWidget {
 // ─── Empty / Error states ─────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
+  final bool isCourier;
   final String? destination;
   final VoidCallback onClearFilter;
 
-  const _EmptyState({this.destination, required this.onClearFilter});
+  const _EmptyState({
+    this.isCourier = false,
+    this.destination,
+    required this.onClearFilter,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -517,27 +523,41 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Be the first — become a courier and post your route.',
+              isCourier
+                  ? 'No travel routes listed yet. Post your route to start receiving delivery requests.'
+                  : 'Be the first — become a courier and post your route.',
               style: theme.textTheme.bodyMedium
                   ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.55)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            if (destination != null)
+            if (destination != null) ...[
               OutlinedButton(
                 onPressed: onClearFilter,
                 child: const Text('Clear filter'),
               ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () => context.push('/p2p/courier/apply'),
-              icon: const Icon(Icons.flight_takeoff_outlined),
-              label: const Text('Become a Courier'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
+              const SizedBox(height: 12),
+            ],
+            if (isCourier)
+              ElevatedButton.icon(
+                onPressed: () => context.push('/p2p/courier/post-route'),
+                icon: const Icon(Icons.add_road_outlined),
+                label: const Text('Post a Route'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+              )
+            else
+              ElevatedButton.icon(
+                onPressed: () => context.push('/p2p/courier/apply'),
+                icon: const Icon(Icons.flight_takeoff_outlined),
+                label: const Text('Become a Courier'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                ),
               ),
-            ),
           ],
         ),
       ),

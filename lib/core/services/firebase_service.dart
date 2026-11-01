@@ -1,13 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
-import 'package:customer_nzubia_global/core/network/dio_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:customer_nzubia_global/core/network/dio_client.dart';
+import 'package:customer_nzubia_global/core/constants/api_constants.dart';
+import 'package:customer_nzubia_global/config/routes/app_router.dart';
+import 'package:customer_nzubia_global/features/notifications/presentation/bloc/notifications_bloc.dart';
 
 class FirebaseService {
   final DioClient _dioClient;
   static Future<void>? _initializationFuture;
+  String? _fcmToken;
 
   FirebaseService(this._dioClient);
+
+  String? get fcmToken => _fcmToken;
 
   Future<void> initialize() {
     _initializationFuture ??= _initializeInternal();
@@ -16,38 +23,34 @@ class FirebaseService {
 
   Future<void> _initializeInternal() async {
     try {
-      // If Firebase is already configured by another code path, do not configure again.
-      if (Firebase.apps.isNotEmpty) {
-        debugPrint('FirebaseService: Already initialized (apps list check passed).');
-        return;
-      }
-      try {
-        Firebase.app();
-        debugPrint('FirebaseService: Already initialized (native app check passed).');
-        return;
-      } catch (_) {
-        // Continue with dynamic initialization.
+      if (Firebase.apps.isEmpty) {
+        try {
+          await Firebase.initializeApp();
+          debugPrint('FirebaseService: Initialized via native configuration.');
+        } catch (nativeError) {
+          debugPrint('FirebaseService: Native init failed ($nativeError), trying dynamic options...');
+          await _tryDynamicInitialize();
+        }
+      } else {
+        debugPrint('FirebaseService: Firebase already initialized.');
       }
 
-      debugPrint('FirebaseService: Attempting to fetch configuration...');
-      
-      // 1. Fetch settings from backend with a timeout
+      await _setupMessaging();
+    } catch (e) {
+      debugPrint('FirebaseService: Failed to initialize: $e');
+    }
+  }
+
+  Future<void> _tryDynamicInitialize() async {
+    try {
       final response = await _dioClient.dio.get('/platform-settings').timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          debugPrint('FirebaseService: Backend fetch timed out. Skipping dynamic config.');
-          return Response(data: [], requestOptions: RequestOptions(path: ''));
-        },
+        const Duration(seconds: 5),
+        onTimeout: () => Response(data: [], requestOptions: RequestOptions(path: '')),
       );
-      
       final List settings = response.data is List ? response.data : [];
-      
       String? find(String key) {
         try {
-          final setting = settings.firstWhere(
-              (s) => s['key'] == key, 
-              orElse: () => null
-          );
+          final setting = settings.firstWhere((s) => s['key'] == key, orElse: () => null);
           return setting?['value'];
         } catch (_) {
           return null;
@@ -60,7 +63,6 @@ class FirebaseService {
       final storageBucket = find('FIREBASE_STORAGE_BUCKET');
       final authDomain = find('FIREBASE_AUTH_DOMAIN');
 
-      // Use platform-specific App IDs if available
       String? appId;
       if (defaultTargetPlatform == TargetPlatform.android) {
         appId = find('FIREBASE_APP_ID_ANDROID') ?? find('FIREBASE_APP_ID');
@@ -69,58 +71,127 @@ class FirebaseService {
       } else {
         appId = find('FIREBASE_APP_ID');
       }
-      
-      bool isValid(String? val) => val != null && val.trim().isNotEmpty;
-      bool isLikelyValidFirebaseAppId(String value) {
-        final normalized = value.trim();
-        final iosPattern = RegExp(r'^1:\d+:ios:[0-9a-fA-F]{8,}$');
-        final androidPattern = RegExp(r'^1:\d+:android:[0-9a-fA-F]{8,}$');
-        if (defaultTargetPlatform == TargetPlatform.iOS) {
-          return iosPattern.hasMatch(normalized);
+
+      if (apiKey != null && appId != null && projectId != null) {
+        if (Firebase.apps.isEmpty) {
+          await Firebase.initializeApp(
+            options: FirebaseOptions(
+              apiKey: apiKey.trim(),
+              appId: appId.trim(),
+              messagingSenderId: messagingSenderId?.trim() ?? '0',
+              projectId: projectId.trim(),
+              storageBucket: storageBucket?.trim(),
+              authDomain: authDomain?.trim(),
+              iosBundleId: defaultTargetPlatform == TargetPlatform.iOS ? 'com.nzubia.global' : null,
+            ),
+          );
         }
-        if (defaultTargetPlatform == TargetPlatform.android) {
-          return androidPattern.hasMatch(normalized);
-        }
-        return normalized.startsWith('1:');
       }
-
-      final appIdIsValid = isValid(appId) && isLikelyValidFirebaseAppId(appId!);
-
-      if (isValid(apiKey) && appIdIsValid && isValid(projectId)) {
-          // Re-check right before configure to avoid duplicate-app races.
-          if (Firebase.apps.isNotEmpty) {
-            debugPrint('FirebaseService: Already initialized (pre-configure check passed).');
-            return;
-          }
-
-          try {
-            await Firebase.initializeApp(
-              options: FirebaseOptions(
-                  apiKey: apiKey!.trim(),
-                  appId: appId.trim(),
-                  messagingSenderId: messagingSenderId?.trim() ?? '0', // Use '0' as safe fallback if missing
-                  projectId: projectId!.trim(),
-                  storageBucket: isValid(storageBucket) ? storageBucket!.trim() : null,
-                  authDomain: isValid(authDomain) ? authDomain!.trim() : null,
-                  iosBundleId: defaultTargetPlatform == TargetPlatform.iOS ? 'com.nzubia.global' : null,
-              ),
-            );
-            debugPrint('FirebaseService: Initialized successfully for $defaultTargetPlatform');
-          } catch (e) {
-            final message = e.toString().toLowerCase();
-            final isDuplicateApp = message.contains('duplicate-app') || message.contains('already exists');
-            if (isDuplicateApp) {
-              debugPrint('FirebaseService: Duplicate init avoided: $e');
-              return;
-            }
-            rethrow;
-          }
-      } else {
-        debugPrint('FirebaseService: Configuration invalid or missing (apiKey: ${isValid(apiKey)}, appId: $appIdIsValid, projectId: ${isValid(projectId)}). Skipping.');
-      }
-
     } catch (e) {
-      debugPrint('FirebaseService: Failed to initialize: $e');
+      debugPrint('FirebaseService: Dynamic initialize error: $e');
+    }
+  }
+
+  Future<void> _setupMessaging() async {
+    try {
+      final messaging = FirebaseMessaging.instance;
+
+      // Request notification permissions
+      final settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+      debugPrint('FirebaseService: Notification permission status: ${settings.authorizationStatus}');
+
+      // Get FCM token
+      _fcmToken = await messaging.getToken();
+      if (_fcmToken != null) {
+        debugPrint('FirebaseService: Fetched FCM Token: $_fcmToken');
+        await syncDeviceToken(_fcmToken!);
+      }
+
+      // Listen for token refresh
+      messaging.onTokenRefresh.listen((newToken) {
+        debugPrint('FirebaseService: FCM Token refreshed: $newToken');
+        _fcmToken = newToken;
+        syncDeviceToken(newToken);
+      });
+
+      // Handle notification when app opened from background
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        debugPrint('FirebaseService: onMessageOpenedApp received: ${message.data}');
+        _handleNotificationClick(message.data);
+      });
+
+      // Handle notification when app opened from terminated state
+      final initialMessage = await messaging.getInitialMessage();
+      if (initialMessage != null) {
+        debugPrint('FirebaseService: getInitialMessage received: ${initialMessage.data}');
+        _handleNotificationClick(initialMessage.data);
+      }
+
+      // Foreground message listener
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint('FirebaseService: Foreground message received: ${message.notification?.title}');
+        final title = message.notification?.title ?? message.data['title']?.toString() ?? 'Notification';
+        final body = message.notification?.body ?? message.data['body']?.toString() ?? message.data['message']?.toString() ?? '';
+        final type = message.data['type']?.toString() ?? 'SYSTEM';
+        final entityId = message.data['entity_id']?.toString() ?? message.data['shipment_id']?.toString() ?? '';
+        if (title.isNotEmpty || body.isNotEmpty) {
+          NotificationsBloc.savePushNotification(
+            title: title,
+            message: body,
+            type: type,
+            relatedEntityId: entityId,
+          );
+        }
+      });
+    } catch (e) {
+      debugPrint('FirebaseService: Error setting up messaging: $e');
+    }
+  }
+
+  Future<void> syncDeviceToken([String? token]) async {
+    final tokenToSend = token ?? _fcmToken;
+    if (tokenToSend == null || tokenToSend.isEmpty) return;
+    _fcmToken = tokenToSend;
+
+    try {
+      // 1. Primary: dedicated endpoint PATCH /users/device-token
+      await _dioClient.dio.patch(
+        ApiConstants.deviceToken,
+        data: {'device_token': tokenToSend},
+      );
+      debugPrint('FirebaseService: Device token synced to ${ApiConstants.deviceToken}');
+    } catch (e) {
+      debugPrint('FirebaseService: Notice from ${ApiConstants.deviceToken}: $e. Attempting fallback sync via ${ApiConstants.profile}...');
+      try {
+        // 2. Fallback: PATCH /users/profile also directly persists device_token in users table
+        await _dioClient.dio.patch(
+          ApiConstants.profile,
+          data: {'device_token': tokenToSend},
+        );
+        debugPrint('FirebaseService: Device token synced via fallback ${ApiConstants.profile}');
+      } catch (e2) {
+        debugPrint('FirebaseService: Error syncing fallback device token: $e2');
+      }
+    }
+  }
+
+  void _handleNotificationClick(Map<String, dynamic> data) {
+    debugPrint('FirebaseService: Handling notification click: $data');
+    final type = data['type']?.toString();
+    final shipmentId = (data['shipmentId'] ?? data['shipment_id'] ?? data['id'])?.toString();
+
+    if ((type == 'P2P_SHIPMENT_REQUEST' || type == 'SHIPMENT_REQUEST_CREATED') && shipmentId != null && shipmentId.isNotEmpty) {
+      AppRouter.router.push('/p2p/shipment/$shipmentId');
+    } else if (shipmentId != null && shipmentId.isNotEmpty) {
+      AppRouter.router.push('/p2p/shipment/$shipmentId');
     }
   }
 }

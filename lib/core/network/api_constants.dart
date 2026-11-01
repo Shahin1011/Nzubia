@@ -1,7 +1,8 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://165.232.40.77:3000/api/v1',
+    //defaultValue: 'http://165.232.40.77:3000/api/v1',
+    defaultValue: 'https://analyzed-newer-measured-achieve.trycloudflare.com/api/v1',
   );
   
   // Auth

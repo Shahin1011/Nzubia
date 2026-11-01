@@ -6,6 +6,7 @@ import 'package:customer_nzubia_global/core/utils/service_locator.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/profile_setup/profile_setup_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/profile_setup/profile_setup_event.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/profile_setup/profile_setup_state.dart';
+import 'package:customer_nzubia_global/core/utils/role_navigation.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_event.dart';
@@ -36,16 +37,7 @@ class ProfileSetupView extends StatelessWidget {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state.status == AuthStatus.authenticated && state.user != null) {
-                 final user = state.user!;
-                 if (user.role.toUpperCase() == 'AGENT') {
-                    if (user.kycStatus == 'NOT_SUBMITTED') {
-                       context.go('/agent-onboarding');
-                    } else {
-                       context.go('/agent-dashboard');
-                    }
-                 } else {
-                    context.go('/dashboard');
-                 }
+                navigateBasedOnRole(context, state.user);
               }
             },
           ),

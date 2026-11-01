@@ -4,4 +4,5 @@ abstract class ProfileRepository {
   Future<UserProfileEntity> getProfile();
   Future<void> updateProfile(UserProfileEntity profile);
   Future<void> submitChangeRequest(Map<String, dynamic> changes);
+  Future<String> uploadProfileImage(String filePath);
 }

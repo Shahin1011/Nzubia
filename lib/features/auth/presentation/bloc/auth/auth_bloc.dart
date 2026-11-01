@@ -7,6 +7,9 @@ import 'auth_state.dart';
 
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
+import 'package:customer_nzubia_global/core/utils/service_locator.dart';
+import 'package:customer_nzubia_global/core/services/firebase_service.dart';
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
@@ -22,6 +25,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.getCurrentUser();
       if (user != null) {
+        try {
+          unawaited(sl<FirebaseService>().syncDeviceToken());
+        } catch (_) {}
         emit(AuthState.authenticated(user));
       }
     } catch (e) {
@@ -43,6 +49,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             debugPrint('OneSignal login failed: $e');
           }
         }
+        try {
+          unawaited(sl<FirebaseService>().syncDeviceToken());
+        } catch (_) {}
         emit(AuthState.authenticated(user));
       } else {
         emit(AuthState.unauthenticated());

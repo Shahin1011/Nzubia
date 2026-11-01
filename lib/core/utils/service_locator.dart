@@ -120,7 +120,10 @@ Future<void> setupServiceLocator() async {
 
   // ── P2P repositories ────────────────────────────────────────────────────────
   sl.registerLazySingleton<P2pCourierRepository>(
-    () => P2pCourierRepositoryImpl(client: sl<DioClient>()),
+    () => P2pCourierRepositoryImpl(
+      client: sl<DioClient>(),
+      authRepository: sl<AuthRepository>(),
+    ),
   );
   sl.registerLazySingleton<P2pRouteRepository>(
     () => P2pRouteRepositoryImpl(client: sl<DioClient>()),
@@ -149,8 +152,8 @@ Future<void> setupServiceLocator() async {
     () => P2pShipmentBloc(repository: sl<P2pShipmentRepository>()),
   );
 
-  // P2pOnboardingBloc is a factory so each wizard flow gets a fresh instance
-  sl.registerFactory<P2pOnboardingBloc>(
+  // P2pOnboardingBloc is a lazy singleton so the multi-step onboarding wizard shares collected data
+  sl.registerLazySingleton<P2pOnboardingBloc>(
     () => P2pOnboardingBloc(
       courierRepository: sl<P2pCourierRepository>(),
       routeRepository: sl<P2pRouteRepository>(),

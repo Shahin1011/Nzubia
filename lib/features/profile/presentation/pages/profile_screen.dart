@@ -16,6 +16,7 @@ import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_re
 import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
 import 'package:customer_nzubia_global/core/localization/language_cubit.dart';
 import 'package:customer_nzubia_global/core/widgets/offline_error_widget.dart';
+import 'package:customer_nzubia_global/core/widgets/app_advanced_switch.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -69,12 +70,46 @@ class ProfileView extends StatelessWidget {
             child: Column(
               children: [
                 // Profile Header
-                UserAvatar(
-                  imageUrl: profile.profileImageUrl,
-                  name: profile.fullName,
-                  radius: 50,
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    UserAvatar(
+                      imageUrl: profile.profileImageUrl,
+                      name: profile.fullName.isNotEmpty ? profile.fullName : profile.email,
+                      radius: 50,
+                      onTap: () async {
+                        final result = await context.push('/profile/edit', extra: profile);
+                        if (result == true && context.mounted) {
+                          context.read<UserProfileBloc>().add(LoadUserProfile());
+                          context.read<AuthBloc>().add(UserRefreshRequested());
+                        }
+                      },
+                    ),
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final result = await context.push('/profile/edit', extra: profile);
+                          if (result == true && context.mounted) {
+                            context.read<UserProfileBloc>().add(LoadUserProfile());
+                            context.read<AuthBloc>().add(UserRefreshRequested());
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: theme.scaffoldBackgroundColor, width: 2),
+                          ),
+                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 8),
                 Text(
                   profile.fullName.isNotEmpty ? profile.fullName : '',
                   style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -102,7 +137,7 @@ class ProfileView extends StatelessWidget {
                 // Theme Toggle
                 BlocBuilder<ThemeCubit, ThemeMode>(
                   builder: (context, themeMode) {
-                    return SwitchListTile(
+                    return AppAdvancedSwitchListTile(
                       title: Text(AppLocalizations.of(context)!.darkMode),
                       secondary: Icon(
                         themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
@@ -112,7 +147,6 @@ class ProfileView extends StatelessWidget {
                       onChanged: (val) {
                         context.read<ThemeCubit>().toggleTheme();
                       },
-                      activeThumbColor: AppTheme.primaryColor,
                     );
                   },
                 ),
@@ -775,7 +809,7 @@ class _SecuritySettingsDialogState extends State<_SecuritySettingsDialog> {
         children: [
           /*
           if (_isBiometricAvailable) ...[
-            SwitchListTile(
+            AppAdvancedSwitchListTile(
               title: const Text('Biometric Login'),
               subtitle: const Text('Use FaceID/Fingerprint'),
               value: _biometricsEnabled,

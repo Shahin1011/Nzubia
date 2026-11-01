@@ -40,11 +40,18 @@ class P2pReviewRepositoryImpl implements P2pReviewRepository {
     try {
       final response = await _client.dio
           .get(ApiConstants.p2pReviewsForCourier(courierId));
-      final list = response.data as List;
+      final raw = response.data;
+      final list = raw is List
+          ? raw
+          : (raw is Map
+              ? (raw['items'] ?? raw['reviews'] ?? raw['data']) as List? ?? const []
+              : const []);
       return list
-          .map((e) => P2pReview.fromJson(e as Map<String, dynamic>))
+          .whereType<Map>()
+          .map((e) => P2pReview.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return const [];
       _handleDioError(e);
     }
   }

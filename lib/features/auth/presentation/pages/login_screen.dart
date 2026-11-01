@@ -10,6 +10,7 @@ import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_state.dart';
 import 'package:customer_nzubia_global/features/auth/presentation/bloc/auth/auth_event.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:customer_nzubia_global/core/utils/role_navigation.dart';
 import '../../../../core/theme/custom_theme_extension.dart';
 
 
@@ -65,16 +66,7 @@ class _LoginViewState extends State<LoginView> {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state.status == AuthStatus.authenticated) {
-                 final user = state.user;
-                 if (user?.role.toUpperCase() == 'AGENT') {
-                    if (user?.kycStatus == 'NOT_SUBMITTED') {
-                       context.go('/agent-onboarding');
-                    } else {
-                       context.go('/agent-dashboard');
-                    }
-                 } else {
-                    context.go('/dashboard');
-                 }
+                navigateBasedOnRole(context, state.user);
               }
             },
           ),
@@ -229,7 +221,7 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ],
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
@@ -245,7 +237,7 @@ class _LoginViewState extends State<LoginView> {
                             ],
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 0),
 
                         if (!state.isOtpRequired)
                           Column(
@@ -262,7 +254,7 @@ class _LoginViewState extends State<LoginView> {
                                   }
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
                                   child: RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(

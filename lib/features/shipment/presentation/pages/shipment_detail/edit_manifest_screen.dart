@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
 import 'package:customer_nzubia_global/core/utils/service_locator.dart';
+import 'package:customer_nzubia_global/core/widgets/app_advanced_switch.dart';
 import 'package:customer_nzubia_global/features/shipment/domain/entities/shipment_entity.dart';
 import 'package:customer_nzubia_global/features/shipment/domain/entities/cargo_item_entity.dart';
 import 'package:customer_nzubia_global/features/shipment/domain/repositories/shipment_repository.dart';
@@ -246,13 +247,13 @@ class _EditManifestScreenState extends State<EditManifestScreen> {
         const SizedBox(height: 12),
 
         // Switches
-        SwitchListTile(
+        AppAdvancedSwitchListTile(
           title: Text(l10n.isFragileQuestion),
           value: _isFragile,
           onChanged: (val) => setState(() => _isFragile = val),
           contentPadding: EdgeInsets.zero,
         ),
-        SwitchListTile(
+        AppAdvancedSwitchListTile(
           title: Text(l10n.isPerishableQuestion),
           value: _isPerishable,
           onChanged: (val) => setState(() => _isPerishable = val),

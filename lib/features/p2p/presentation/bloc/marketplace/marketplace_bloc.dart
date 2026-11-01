@@ -46,7 +46,7 @@ class MarketplaceBloc extends Bloc<MarketplaceEvent, MarketplaceState> {
         status: MarketplaceStatus.success,
         routes: routes,
         feed: feed,
-        isCourier: isCourier ?? state.isCourier,
+        isCourier: isCourier ?? false,
       ));
     } catch (e) {
       emit(state.copyWith(

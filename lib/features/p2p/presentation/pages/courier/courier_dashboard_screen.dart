@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:customer_nzubia_global/core/theme/app_theme.dart';
+import 'package:customer_nzubia_global/core/widgets/app_advanced_switch.dart';
+import 'package:customer_nzubia_global/core/widgets/user_avatar.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/enums/p2p_enums.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_courier_profile.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_route.dart';
@@ -30,7 +32,24 @@ class _DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourierDashboardBloc, CourierDashboardState>(
+    return BlocConsumer<CourierDashboardBloc, CourierDashboardState>(
+      listenWhen: (prev, curr) =>
+          curr.errorMessage != null &&
+          curr.errorMessage != prev.errorMessage &&
+          curr.profile != null,
+      listener: (context, state) {
+        if (state.errorMessage != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: AppTheme.errorColor,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+        }
+      },
       builder: (context, state) {
         final theme = Theme.of(context);
         final canPostRoutes =
@@ -63,26 +82,17 @@ class _DashboardView extends StatelessWidget {
                     .read<CourierDashboardBloc>()
                     .add(const CourierDashboardLoadRequested()),
               ),
+              IconButton(
+                icon: const Icon(Icons.person_outline),
+                onPressed: () => context.push('/profile'),
+                tooltip: 'Profile',
+              ),
             ],
           ),
-          body: switch (state.status) {
-            CourierDashboardStatus.initial ||
-            CourierDashboardStatus.loading =>
-              const Center(
-                child: CircularProgressIndicator(color: AppTheme.primaryColor),
-              ),
-            CourierDashboardStatus.failure => _ErrorPanel(
-                message: state.errorMessage ?? 'Failed to load dashboard',
-                onRetry: () => context
-                    .read<CourierDashboardBloc>()
-                    .add(const CourierDashboardLoadRequested()),
-                onApply: state.errorMessage?.contains('profile') == true
-                    ? () => context.push('/p2p/courier/apply')
-                    : null,
-              ),
-            CourierDashboardStatus.success => () {
-                final profile = state.profile!;
-                return RefreshIndicator(
+          body: state.profile != null
+              ? () {
+                  final profile = state.profile!;
+                  return RefreshIndicator(
                   color: AppTheme.primaryColor,
                   onRefresh: () async => context
                       .read<CourierDashboardBloc>()
@@ -249,8 +259,21 @@ class _DashboardView extends StatelessWidget {
                     ],
                   ),
                 );
-              }(),
-          },
+              }()
+              : state.status == CourierDashboardStatus.failure
+                  ? _ErrorPanel(
+                      message: state.errorMessage ?? 'Failed to load dashboard',
+                      onRetry: () => context
+                          .read<CourierDashboardBloc>()
+                          .add(const CourierDashboardLoadRequested()),
+                      onApply: state.errorMessage?.contains('profile') == true
+                          ? () => context.push('/p2p/courier/apply')
+                          : null,
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(
+                          color: AppTheme.primaryColor),
+                    ),
         );
       },
     );
@@ -302,19 +325,11 @@ class _ProfileCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            CircleAvatar(
+            UserAvatar(
+              imageUrl: profile.profilePictureUrl,
+              name: profile.displayName,
               radius: 30,
-              backgroundColor: AppTheme.primaryColor.withAlpha(30),
-              child: Text(
-                profile.displayName.isNotEmpty
-                    ? profile.displayName[0].toUpperCase()
-                    : '?',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
+              onTap: () => context.push('/profile'),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -393,13 +408,12 @@ class _ProfileCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Switch.adaptive(
+                const SizedBox(height: 4),
+                AppAdvancedSwitch(
                   value: profile.isActive,
                   onChanged: profile.verificationState.isApproved
                       ? onToggle
                       : null,
-                  activeThumbColor: AppTheme.primaryColor,
-                  activeTrackColor: AppTheme.primaryColor.withAlpha(80),
                 ),
               ],
             ),

@@ -107,9 +107,15 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
           minCapacityKg: minCapacityKg,
         ),
       );
-      final list = response.data as List;
+      final raw = response.data;
+      final list = raw is List
+          ? raw
+          : (raw is Map
+              ? (raw['items'] ?? raw['routes'] ?? raw['data']) as List? ?? const []
+              : const []);
       return list
-          .map((e) => P2pRouteFeedItem.fromJson(e as Map<String, dynamic>))
+          .whereType<Map>()
+          .map((e) => P2pRouteFeedItem.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     } on DioException catch (e) {
       _handleDioError(e);
@@ -118,15 +124,31 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
 
   @override
   Future<List<P2pRoute>> listMyRoutes() async {
+    Response? response;
     try {
-      final response = await _client.dio.get(ApiConstants.p2pRoutesMine);
-      final list = response.data as List;
-      return list
-          .map((e) => P2pRoute.fromJson(e as Map<String, dynamic>))
-          .toList();
+      response = await _client.dio.get(ApiConstants.p2pRoutesMine);
     } on DioException catch (e) {
-      _handleDioError(e);
+      if (e.response?.statusCode == 404) {
+        try {
+          response = await _client.dio.get('/p2p/routes');
+        } on DioException catch (e2) {
+          _handleDioError(e2);
+        }
+      } else {
+        _handleDioError(e);
+      }
     }
+
+    final raw = response.data;
+    final list = raw is List
+        ? raw
+        : (raw is Map
+            ? (raw['items'] ?? raw['routes'] ?? raw['data']) as List? ?? const []
+            : const []);
+    return list
+        .whereType<Map>()
+        .map((e) => P2pRoute.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
   }
 
   @override
@@ -162,6 +184,21 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
       );
       return P2pRoute.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        // Backend creates and publishes routes directly via POST /p2p/routes,
+        // and does not maintain a separate /routes/:id/status endpoint.
+        return P2pRoute(
+          id: routeId,
+          courierProfileId: routeId,
+          destinationCountry: '',
+          destinationCity: '',
+          status: newStatus,
+          acceptedItemCategories: const [],
+          capacityKg: 0,
+          pickupOrigin: '',
+          departureDate: DateTime.now(),
+        );
+      }
       _handleDioError(e);
     }
   }

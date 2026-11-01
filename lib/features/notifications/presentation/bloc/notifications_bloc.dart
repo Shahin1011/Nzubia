@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:customer_nzubia_global/features/notifications/domain/entities/notification_entity.dart';
 
 // Events
@@ -50,56 +51,147 @@ class NotificationsState extends Equatable {
 
 // Bloc
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
-  // In a real app, inject GetAllNotifications use case
+  static const String _boxKey = 'settings';
+  static const String _notificationsStorageKey = 'app_user_notifications';
+  static const String _readIdsStorageKey = 'read_notification_ids';
+
   NotificationsBloc() : super(const NotificationsState()) {
     on<LoadNotifications>(_onLoadNotifications);
     on<MarkNotificationAsRead>(_onMarkNotificationAsRead);
   }
 
+  Box? _getBox() {
+    if (Hive.isBoxOpen(_boxKey)) {
+      return Hive.box(_boxKey);
+    }
+    return null;
+  }
+
+  Set<String> _getReadIds() {
+    final box = _getBox();
+    if (box != null) {
+      final list = box.get(_readIdsStorageKey);
+      if (list is List) {
+        return list.map((e) => e.toString()).toSet();
+      }
+    }
+    return {};
+  }
+
+  Future<void> _saveReadId(String id) async {
+    final box = _getBox();
+    if (box != null) {
+      final ids = _getReadIds()..add(id);
+      await box.put(_readIdsStorageKey, ids.toList());
+    }
+  }
+
+  static Future<void> savePushNotification({
+    required String title,
+    required String message,
+    String type = 'SYSTEM',
+    String relatedEntityId = '',
+  }) async {
+    try {
+      if (Hive.isBoxOpen(_boxKey)) {
+        final box = Hive.box(_boxKey);
+        final storedData = box.get(_notificationsStorageKey);
+        final list = storedData is List ? List<dynamic>.from(storedData) : <dynamic>[];
+        final newNotif = NotificationEntity(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: title,
+          message: message,
+          type: type,
+          relatedEntityId: relatedEntityId,
+          isRead: false,
+          createdAt: DateTime.now(),
+        );
+        list.insert(0, newNotif.toJson());
+        await box.put(_notificationsStorageKey, list);
+      }
+    } catch (_) {}
+  }
+
   Future<void> _onLoadNotifications(LoadNotifications event, Emitter<NotificationsState> emit) async {
     emit(state.copyWith(status: NotificationsStatus.loading));
     try {
-      // Mock API Delay
-      await Future.delayed(const Duration(seconds: 1));
+      final box = _getBox();
+      final readIds = _getReadIds();
 
-      // Mock Data (simulating what backend NotificationsService returns)
-      final mockNotifications = [
-        NotificationEntity(
-          id: '1',
-          title: 'New Shipment Request',
-          message: 'Shipment #S-12345 matches your profile.',
-          type: 'SHIPMENT_REQUEST',
-          relatedEntityId: 'uuid-shipment-123',
-          isRead: false,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-        ),
-        NotificationEntity(
-          id: '2',
-          title: 'Welcome',
-          message: 'Welcome to the Nzubia Agent Portal.',
-          type: 'SYSTEM',
-          relatedEntityId: '',
-          isRead: true,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        ),
-      ];
+      List<NotificationEntity> notifs = [];
 
-      emit(state.copyWith(status: NotificationsStatus.success, notifications: mockNotifications));
+      final storedData = box?.get(_notificationsStorageKey);
+      if (storedData is List && storedData.isNotEmpty) {
+        for (final item in storedData) {
+          if (item is Map) {
+            final entity = NotificationEntity.fromJson(Map<String, dynamic>.from(item));
+            notifs.add(entity.copyWith(
+              isRead: entity.isRead || readIds.contains(entity.id),
+            ));
+          }
+        }
+      }
+
+      // If storage is empty (first time opening notifications):
+      if (notifs.isEmpty) {
+        final now = DateTime.now();
+        notifs = [
+          NotificationEntity(
+            id: '1',
+            title: 'New Shipment Request',
+            message: 'Shipment #S-12345 matches your profile.',
+            type: 'SHIPMENT_REQUEST',
+            relatedEntityId: 'uuid-shipment-123',
+            isRead: readIds.contains('1'),
+            createdAt: now.subtract(const Duration(minutes: 5)),
+          ),
+          NotificationEntity(
+            id: '2',
+            title: 'Welcome',
+            message: 'Welcome to Nzubia.',
+            type: 'SYSTEM',
+            relatedEntityId: '',
+            isRead: true,
+            createdAt: now.subtract(const Duration(days: 1)),
+          ),
+        ];
+
+        // Persist to box with fixed createdAt timestamps so they are NEVER recomputed on refresh!
+        if (box != null) {
+          await box.put(
+            _notificationsStorageKey,
+            notifs.map((n) => n.toJson()).toList(),
+          );
+        }
+      }
+
+      emit(state.copyWith(
+        status: NotificationsStatus.success,
+        notifications: notifs,
+      ));
     } catch (e) {
       emit(state.copyWith(status: NotificationsStatus.failure, errorMessage: e.toString()));
     }
   }
 
   Future<void> _onMarkNotificationAsRead(MarkNotificationAsRead event, Emitter<NotificationsState> emit) async {
-      // Optomistic UI Update
-      final updatedList = state.notifications.map((n) {
-          return n.id == event.id ?
-             NotificationEntity(
-                 id: n.id, title: n.title, message: n.message, type: n.type,
-                 relatedEntityId: n.relatedEntityId, isRead: true, createdAt: n.createdAt
-             ) : n;
-      }).toList();
-      emit(state.copyWith(notifications: updatedList));
-      // Fire and forget API call would go here
+    await _saveReadId(event.id);
+
+    final box = _getBox();
+    final updatedList = state.notifications.map((n) {
+      if (n.id == event.id) {
+        return n.copyWith(isRead: true);
+      }
+      return n;
+    }).toList();
+
+    if (box != null) {
+      await box.put(
+        _notificationsStorageKey,
+        updatedList.map((n) => n.toJson()).toList(),
+      );
+    }
+
+    emit(state.copyWith(notifications: updatedList));
   }
 }

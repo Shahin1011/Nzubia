@@ -10,6 +10,8 @@ import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_courier_re
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_offer.dart';
 import 'package:customer_nzubia_global/features/p2p/domain/models/p2p_shipment_request.dart';
 import 'package:customer_nzubia_global/features/p2p/presentation/bloc/shipment/p2p_shipment_bloc.dart';
+import 'package:customer_nzubia_global/features/auth/domain/repositories/auth_repository.dart';
+import 'package:customer_nzubia_global/features/p2p/presentation/pages/courier/courier_offer_sheet.dart';
 
 class P2pShipmentDetailScreen extends StatelessWidget {
   final String shipmentId;
@@ -79,6 +81,13 @@ class _ShipmentBody extends StatelessWidget {
     final theme = Theme.of(context);
     final dateFmt = DateFormat('dd MMM yyyy');
     final stepIndex = _statusToStep(shipment.status);
+    final authRepo = GetIt.instance.isRegistered<AuthRepository>()
+        ? GetIt.instance<AuthRepository>()
+        : null;
+    final currentUserId = authRepo?.currentUser?.id;
+    final isSeeker = currentUserId != null && currentUserId == shipment.seekerUserId;
+    final role = authRepo?.currentUser?.role;
+    final isCourier = role?.toUpperCase() == 'COURIER' || !isSeeker;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -351,17 +360,41 @@ class _ShipmentBody extends StatelessWidget {
             ],
 
             if (shipment.status == ShipmentRequestStatus.open ||
-                shipment.status == ShipmentRequestStatus.draft)
-              _ActionCard(
-                icon: Icons.people_alt_outlined,
-                title: 'Find a courier',
-                subtitle:
-                    'Browse couriers going to ${shipment.destinationCity}',
-                color: AppTheme.primaryColor,
-                onTap: () => context.push(
-                  '/p2p/couriers?destinationCity=${Uri.encodeComponent(shipment.destinationCity)}&destinationCountry=${Uri.encodeComponent(shipment.destinationCountry)}&shipmentId=${shipment.id}',
+                shipment.status == ShipmentRequestStatus.draft) ...[
+              if (isCourier)
+                _ActionCard(
+                  icon: Icons.local_offer_outlined,
+                  title: 'Submit Offer / Bid',
+                  subtitle: 'Make a delivery offer for this shipment',
+                  color: AppTheme.primaryColor,
+                  onTap: () async {
+                    await showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => CourierOfferSheet(
+                        shipment: shipment,
+                        onSubmitted: () {
+                          context.read<P2pShipmentBloc>().add(
+                                P2pShipmentDetailRequested(shipment.id),
+                              );
+                        },
+                      ),
+                    );
+                  },
                 ),
-              ),
+              if (isSeeker)
+                _ActionCard(
+                  icon: Icons.people_alt_outlined,
+                  title: 'Find a courier',
+                  subtitle:
+                      'Browse couriers going to ${shipment.destinationCity}',
+                  color: AppTheme.primaryColor,
+                  onTap: () => context.push(
+                    '/p2p/couriers?destinationCity=${Uri.encodeComponent(shipment.destinationCity)}&destinationCountry=${Uri.encodeComponent(shipment.destinationCountry)}&shipmentId=${shipment.id}',
+                  ),
+                ),
+            ],
 
             if (shipment.status == ShipmentRequestStatus.handoffPending) ...[
               const SizedBox(height: 8),
