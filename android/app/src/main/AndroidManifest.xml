@@ -15,6 +15,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${googleMapsApiKey}"/>
 
+        <!-- Default notification channel for high importance heads-up notifications -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/launcher_icon" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

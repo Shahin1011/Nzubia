@@ -75,6 +75,7 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
       final list = response.data as List;
       return list
           .map((e) => P2pRoute.fromJson(e as Map<String, dynamic>))
+          .where((r) => r.hasValidRouteData)
           .take(limit)
           .toList();
     } on DioException catch (e) {
@@ -116,6 +117,7 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
       return list
           .whereType<Map>()
           .map((e) => P2pRouteFeedItem.fromJson(Map<String, dynamic>.from(e)))
+          .where((item) => item.route.hasValidRouteData)
           .toList();
     } on DioException catch (e) {
       _handleDioError(e);
@@ -148,6 +150,7 @@ class P2pRouteRepositoryImpl implements P2pRouteRepository {
     return list
         .whereType<Map>()
         .map((e) => P2pRoute.fromJson(Map<String, dynamic>.from(e)))
+        .where((r) => r.hasValidRouteData)
         .toList();
   }
 

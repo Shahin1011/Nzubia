@@ -178,7 +178,7 @@ class _ApplyView extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'Get Started — 5 quick steps',
+                  'Start Verification — 4 quick steps',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -198,7 +198,7 @@ class _ApplyView extends StatelessWidget {
   }
 
   static const _complianceBullets = [
-    'You must have a valid passport and confirmed travel booking.',
+    'You must have a valid government-issued ID and live selfie verification.',
     'Prohibited items (weapons, narcotics, hazardous materials) are strictly forbidden.',
     'You are responsible for declaring carried goods at customs.',
     'Maximum declared item value per shipment: \$500 USD.',

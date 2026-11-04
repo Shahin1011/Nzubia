@@ -24,10 +24,34 @@ import 'package:customer_nzubia_global/l10n/app_localizations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Handling a background message: ${message.messageId}");
+  if (message.notification == null) {
+    try {
+      final title = message.data['title']?.toString();
+      final body = message.data['body']?.toString() ?? message.data['message']?.toString();
+      if (title != null && title.isNotEmpty) {
+        final localNotifications = FlutterLocalNotificationsPlugin();
+        await localNotifications.show(
+          id: message.hashCode,
+          title: title,
+          body: body,
+          notificationDetails: const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'high_importance_channel',
+              'High Importance Notifications',
+              importance: Importance.max,
+              priority: Priority.high,
+              icon: '@mipmap/launcher_icon',
+            ),
+          ),
+        );
+      }
+    } catch (_) {}
+  }
 }
 
 void main() async {
