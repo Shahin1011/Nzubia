@@ -157,8 +157,8 @@ class P2pCourierProfile extends Equatable {
           .toList(growable: false),
       payoutReady: (data['payout_ready'] ??
               data['payoutReady'] ??
-              data['is_verified'] ??
-              data['isVerified']) as bool? ??
+              data['payouts_enabled'] ??
+              data['payoutsEnabled']) as bool? ??
           false,
       reputationSummary:
           (data['reputation_summary'] ?? data['reputationSummary']) as String?,

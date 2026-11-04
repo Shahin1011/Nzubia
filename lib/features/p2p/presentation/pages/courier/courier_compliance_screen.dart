@@ -53,7 +53,7 @@ class _ComplianceViewState extends State<_ComplianceView> {
       ),
       body: Column(
         children: [
-          const P2pStepHeader(currentStep: 4, totalSteps: 5),
+          const P2pStepHeader(currentStep: 3, totalSteps: 4),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),

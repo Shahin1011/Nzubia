@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:customer_nzubia_global/core/network/dio_client.dart';
@@ -11,6 +13,18 @@ class FirebaseService {
   final DioClient _dioClient;
   static Future<void>? _initializationFuture;
   String? _fcmToken;
+
+  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.max,
+    playSound: true,
+    enableVibration: true,
+  );
+
+  static final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   FirebaseService(this._dioClient);
 
@@ -108,6 +122,45 @@ class FirebaseService {
       );
       debugPrint('FirebaseService: Notification permission status: ${settings.authorizationStatus}');
 
+      // Setup local notifications for Android & iOS foreground heads-up display
+      const initializationSettingsAndroid =
+          AndroidInitializationSettings('@mipmap/launcher_icon');
+      const initializationSettingsDarwin = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+      const initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsDarwin,
+      );
+
+      await _localNotifications.initialize(
+        settings: initializationSettings,
+        onDidReceiveNotificationResponse: (response) {
+          final payload = response.payload;
+          if (payload != null && payload.isNotEmpty) {
+            try {
+              final data = jsonDecode(payload) as Map<String, dynamic>;
+              _handleNotificationClick(data);
+            } catch (_) {}
+          }
+        },
+      );
+
+      // Create Android High Importance Notification Channel for heads-up alerts
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(_channel);
+
+      // Set presentation options for iOS foreground notifications
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
       // Get FCM token
       _fcmToken = await messaging.getToken();
       if (_fcmToken != null) {
@@ -135,7 +188,7 @@ class FirebaseService {
         _handleNotificationClick(initialMessage.data);
       }
 
-      // Foreground message listener
+      // Foreground message listener: save in-app AND trigger heads-up popup banner
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         debugPrint('FirebaseService: Foreground message received: ${message.notification?.title}');
         final title = message.notification?.title ?? message.data['title']?.toString() ?? 'Notification';
@@ -148,6 +201,29 @@ class FirebaseService {
             message: body,
             type: type,
             relatedEntityId: entityId,
+          );
+
+          // Show heads-up notification with sound and banner
+          _localNotifications.show(
+            id: message.hashCode,
+            title: title,
+            body: body,
+            notificationDetails: NotificationDetails(
+              android: AndroidNotificationDetails(
+                _channel.id,
+                _channel.name,
+                channelDescription: _channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                icon: '@mipmap/launcher_icon',
+              ),
+              iOS: const DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
+            ),
+            payload: jsonEncode(message.data),
           );
         }
       });

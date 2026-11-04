@@ -197,6 +197,20 @@ class ProfileView extends StatelessWidget {
                   title: AppLocalizations.of(context)!.notifications,
                   onTap: () => context.push('/notifications'),
                 ),
+
+                // Payout Settings (Stripe Connect Bank Account)
+                if (profile.role == 'COURIER' || profile.role == 'AGENT') ...[
+                  _buildSettingsItem(
+                    context,
+                    icon: Icons.account_balance_outlined,
+                    title: 'Payout Settings',
+                    subtitle: const Text(
+                      'Link or manage your bank account for payouts',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    onTap: () => context.push('/p2p/courier/payout'),
+                  ),
+                ],
                 // _buildSettingsItem(
                 //   context,
                 //   icon: Icons.receipt_long,
@@ -415,10 +429,18 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsItem(BuildContext context, {required IconData icon, required String title, required VoidCallback onTap, Color? textColor}) {
+  Widget _buildSettingsItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color? textColor,
+    Widget? subtitle,
+  }) {
     return ListTile(
       leading: Icon(icon, color: textColor ?? AppTheme.primaryColor),
       title: Text(title, style: TextStyle(color: textColor)),
+      subtitle: subtitle,
       trailing: const Icon(Icons.chevron_right, color: Colors.grey),
       onTap: onTap,
     );

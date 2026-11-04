@@ -103,7 +103,7 @@ class _IdentityViewState extends State<_IdentityView> {
       ),
       body: Column(
         children: [
-          const P2pStepHeader(currentStep: 1, totalSteps: 5),
+          const P2pStepHeader(currentStep: 1, totalSteps: 4),
           Expanded(
             child: FormBuilder(
               key: _formKey,
@@ -259,7 +259,7 @@ class _IdentityViewState extends State<_IdentityView> {
                           ),
                         ),
                         child: const Text(
-                          'Next: Travel Documents',
+                          'Next: Upload Documents & Selfie',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),

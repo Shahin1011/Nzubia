@@ -35,22 +35,112 @@ class _ReviewViewState extends State<_ReviewView> {
     return BlocConsumer<P2pOnboardingBloc, P2pOnboardingState>(
       listener: (context, state) {
         if (state.status == OnboardingStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  '🎉 Application submitted! We\'ll review it within 24 hours.'),
-              backgroundColor: AppTheme.primaryColor,
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              title: Column(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.verified_rounded,
+                      size: 36,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
+                    '🎉 Background Check Approved!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+              content: const Text(
+                'Your background verification cleared successfully. Your courier account is now activated and verified. You can now post routes and start earning.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      context.go('/p2p/courier/dashboard');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Go to Courier Dashboard',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
-          context.go('/p2p');
         }
         if (state.status == OnboardingStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Submission failed'),
-              backgroundColor: AppTheme.errorColor,
-            ),
-          );
+          final isFlagged =
+              state.errorMessage?.toLowerCase().contains('flagged') == true ||
+              state.errorMessage?.toLowerCase().contains('rejected') == true;
+          if (isFlagged) {
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                title: const Row(
+                  children: [
+                    Icon(Icons.gavel_rounded, color: AppTheme.errorColor, size: 24),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Verification Failed',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+                content: Text(
+                  state.errorMessage ??
+                      'Verification failed. Background check flagged records. Application rejected. Please contact support.',
+                  style: const TextStyle(fontSize: 14, height: 1.4),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage ?? 'Submission failed'),
+                backgroundColor: AppTheme.errorColor,
+              ),
+            );
+          }
         }
       },
       builder: (context, state) {
@@ -67,7 +157,7 @@ class _ReviewViewState extends State<_ReviewView> {
           ),
           body: Column(
             children: [
-              const P2pStepHeader(currentStep: 5, totalSteps: 5),
+              const P2pStepHeader(currentStep: 4, totalSteps: 4),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
@@ -103,21 +193,36 @@ class _ReviewViewState extends State<_ReviewView> {
 
                       // Documents summary
                       _SummaryCard(
-                        title: 'Documents',
+                        title: 'Verification Documents',
                         icon: Icons.folder_outlined,
                         onEdit: () => context.go('/p2p/courier/documents'),
                         rows: [
                           _SummaryRow(
-                            label: 'Passport',
-                            value: data['passport_image_path'] != null
+                            label: data['id_type'] != null
+                                ? '${data['id_type']} Photo'
+                                : 'ID Document',
+                            value: (data['id_document_path'] ??
+                                        data['passport_image_path']) !=
+                                    null
                                 ? '✓ Uploaded'
                                 : '—',
-                            valueColor: data['passport_image_path'] != null
+                            valueColor: (data['id_document_path'] ??
+                                        data['passport_image_path']) !=
+                                    null
                                 ? AppTheme.primaryColor
                                 : null,
                           ),
                           _SummaryRow(
-                            label: 'Visa',
+                            label: 'Selfie Verification',
+                            value: data['selfie_image_path'] != null
+                                ? '✓ Captured'
+                                : '—',
+                            valueColor: data['selfie_image_path'] != null
+                                ? AppTheme.primaryColor
+                                : null,
+                          ),
+                          _SummaryRow(
+                            label: 'Visa / Permit',
                             value: data['visa_image_path'] != null
                                 ? '✓ Uploaded'
                                 : 'Not provided',
@@ -125,86 +230,59 @@ class _ReviewViewState extends State<_ReviewView> {
                                 ? AppTheme.primaryColor
                                 : null,
                           ),
-                          _SummaryRow(
-                            label: 'Itinerary',
-                            value: data['itinerary_image_path'] != null
-                                ? '✓ Uploaded'
-                                : '—',
-                            valueColor: data['itinerary_image_path'] != null
-                                ? AppTheme.primaryColor
-                                : null,
-                          ),
+                          if (data['itinerary_image_path'] != null)
+                            _SummaryRow(
+                              label: 'Itinerary',
+                              value: '✓ Uploaded',
+                              valueColor: AppTheme.primaryColor,
+                            ),
                         ],
                       ),
 
                       const SizedBox(height: 16),
 
-                      // Route summary
+                      // Terms & Compliance summary
                       _SummaryCard(
-                        title: 'Route',
-                        icon: Icons.alt_route_outlined,
-                        onEdit: () => context.go('/p2p/courier/route'),
+                        title: 'Terms & Compliance',
+                        icon: Icons.gavel_outlined,
+                        onEdit: () => context.go('/p2p/courier/compliance'),
                         rows: [
                           _SummaryRow(
-                            label: 'From',
-                            value: (data['pickupOrigin'] as String?) ??
-                                _routeCity(
-                                    data['origin_city'], data['origin_country']),
+                            label: 'P2P Insurance',
+                            value: data['insurance_acknowledged'] == true
+                                ? '✓ Accepted'
+                                : '—',
+                            valueColor: AppTheme.primaryColor,
                           ),
                           _SummaryRow(
-                            label: 'To',
-                            value: _routeCity(data['destinationCity'],
-                                data['destinationCountry']),
+                            label: 'Liability Policy',
+                            value: data['liability_acknowledged'] == true
+                                ? '✓ Accepted'
+                                : '—',
+                            valueColor: AppTheme.primaryColor,
                           ),
                           _SummaryRow(
-                            label: 'Departure',
-                            value: _formatDate(data['departureDate']),
+                            label: 'Prohibited Items',
+                            value: data['prohibited_acknowledged'] == true
+                                ? '✓ Confirmed'
+                                : '—',
+                            valueColor: AppTheme.primaryColor,
                           ),
                           _SummaryRow(
-                            label: 'Capacity',
-                            value:
-                                '${data['capacityKg']?.toString() ?? '—'} kg',
+                            label: 'Customs Declaration',
+                            value: data['customs_acknowledged'] == true
+                                ? '✓ Accepted'
+                                : '—',
+                            valueColor: AppTheme.primaryColor,
+                          ),
+                          _SummaryRow(
+                            label: 'Courier Terms',
+                            value: data['terms_acknowledged'] == true
+                                ? '✓ Agreed'
+                                : '—',
+                            valueColor: AppTheme.primaryColor,
                           ),
                         ],
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Compliance check result (green — semantic success colour)
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.green[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.green[200]!),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.check_circle,
-                                color: Colors.green[600], size: 20),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                'All compliance acknowledgements accepted',
-                                style:
-                                    Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: Colors.green[800],
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () =>
-                                context.go('/p2p/courier/compliance'),
-                              style: TextButton.styleFrom(
-                                  minimumSize: Size.zero,
-                                  padding: EdgeInsets.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap),
-                              child: const Text('Edit'),
-                            ),
-                          ],
-                        ),
                       ),
 
                       const SizedBox(height: 24),
@@ -276,13 +354,27 @@ class _ReviewViewState extends State<_ReviewView> {
                             ),
                           ),
                           child: isSubmitting
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2.5,
-                                  ),
+                              ? const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2.2,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      'Verifying background...',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 )
                               : const Text(
                                   'Submit Application',
@@ -325,13 +417,6 @@ class _ReviewViewState extends State<_ReviewView> {
     final s = val.toString();
     if (s.length <= 4) return s;
     return '••••${s.substring(s.length - 4)}';
-  }
-
-  String _routeCity(dynamic city, dynamic country) {
-    final c = city?.toString() ?? '';
-    final co = country?.toString() ?? '';
-    if (c.isEmpty && co.isEmpty) return '—';
-    return '$c, $co'.trim().replaceAll(RegExp(r'^,\s*'), '');
   }
 }
 

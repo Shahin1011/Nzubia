@@ -157,22 +157,35 @@ class _CourierPayoutScreenState extends State<CourierPayoutScreen>
         children: [
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.open_in_new),
-              label: const Text('Open Stripe Dashboard'),
+            height: 52,
+            child: ElevatedButton(
               onPressed: _actionLoading ? null : _openDashboard,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
+              child: _actionLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Text(
+                      'Manage Bank Account',
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
             ),
           ),
           const SizedBox(height: 12),
           Text(
-            'View your balance, payout schedule, and bank account details in your Stripe Express dashboard.',
-            style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
+            'View or update your bank account details and payout schedule in Stripe.',
+            style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).textTheme.bodySmall?.color),
             textAlign: TextAlign.center,
           ),
         ],
@@ -183,30 +196,37 @@ class _CourierPayoutScreenState extends State<CourierPayoutScreen>
       children: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
-            icon: _actionLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : Icon(isPending ? Icons.edit_outlined : Icons.account_balance_wallet_outlined),
-            label: Text(isPending ? 'Continue Stripe Setup' : 'Connect Bank Account'),
+          height: 52,
+          child: ElevatedButton(
             onPressed: _actionLoading ? null : _connect,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
+            child: _actionLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : Text(
+                    isPending ? 'Complete Bank Setup' : 'Connect Bank Account',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
           ),
         ),
         const SizedBox(height: 12),
         Text(
           isPending
-              ? 'Your Stripe account is created but needs more details before payouts can be sent.'
-              : 'You\'ll be taken to Stripe\'s secure onboarding to link your bank account. This takes about 2 minutes.',
-          style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
+              ? 'Your Stripe account is created but needs more bank details before payouts can be sent.'
+              : 'You will be redirected to Stripe\'s secure page to link your bank account. This takes about 1-2 minutes.',
+          style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).textTheme.bodySmall?.color),
           textAlign: TextAlign.center,
         ),
       ],
@@ -235,7 +255,8 @@ class _StatusCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.15), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15), shape: BoxShape.circle),
             child: Icon(icon, color: color, size: 28),
           ),
           const SizedBox(width: 16),
@@ -243,7 +264,9 @@ class _StatusCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: color)),
+                Text(title,
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold, color: color)),
                 const SizedBox(height: 4),
                 Text(subtitle, style: theme.textTheme.bodySmall),
               ],
@@ -256,15 +279,38 @@ class _StatusCard extends StatelessWidget {
 
   (Color, IconData, String, String) _resolveState() {
     if (status == null) {
-      return (Colors.grey, Icons.help_outline, 'Unknown', 'Could not load status.');
+      return (
+        Colors.grey,
+        Icons.help_outline,
+        'Unknown',
+        'Could not load status.'
+      );
     }
     if (!status!.connected) {
-      return (Colors.orange, Icons.warning_amber_outlined, 'Not Connected', 'Link your bank account to receive payouts.');
+      return (
+        Colors.orange,
+        Icons.account_balance_outlined,
+        'Not Connected',
+        'Link your bank account to receive shipment payouts directly.'
+      );
     }
-    if (status!.payoutReady == true) {
-      return (Colors.green, Icons.verified_outlined, 'Payout Ready', 'Your bank account is connected. Payouts are automatic.');
+    if (status!.payoutReady) {
+      final bankInfo = status!.bankName != null && status!.bankName!.isNotEmpty
+          ? '${status!.bankName} •••• ${status!.last4 ?? ""}'
+          : 'Your bank account is connected.';
+      return (
+        Colors.green,
+        Icons.verified_outlined,
+        'Payout Ready',
+        '$bankInfo Payouts are automatic.'
+      );
     }
-    return (Colors.blue, Icons.hourglass_top_outlined, 'Setup Pending', 'Stripe is reviewing your information. This usually takes a few minutes.');
+    return (
+      Colors.blue,
+      Icons.hourglass_top_outlined,
+      'Setup Incomplete',
+      'Stripe account created. Please complete bank details to enable payouts.'
+    );
   }
 }
 

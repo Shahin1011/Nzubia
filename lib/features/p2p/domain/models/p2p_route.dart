@@ -113,7 +113,10 @@ class P2pRoute extends Equatable {
 
     final rawStatus = json['status']?.toString();
     RouteStatus status = RouteStatus.fromJson(rawStatus);
-    if (rawStatus == null && (json['is_available'] == true || destRoute.isNotEmpty)) {
+    final hasDestination = destRoute.isNotEmpty ||
+        destCity.isNotEmpty ||
+        (destCountry.isNotEmpty && destCountry.toLowerCase() != 'global');
+    if (rawStatus == null && (destRoute.isNotEmpty || (json['is_available'] == true && hasDestination))) {
       status = RouteStatus.published;
     }
 
@@ -240,6 +243,12 @@ class P2pRoute extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  /// Whether this route has actual destination/travel details
+  bool get hasValidRouteData =>
+      destinationCity.trim().isNotEmpty ||
+      (destinationCountry.trim().isNotEmpty &&
+          destinationCountry.trim().toLowerCase() != 'global');
 }
 
 /// One item from `/p2p/routes/feed` — a route paired with a relevance score.

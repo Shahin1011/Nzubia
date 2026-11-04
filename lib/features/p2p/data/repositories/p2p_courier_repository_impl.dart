@@ -121,6 +121,47 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> verifyBackgroundCheck({
+    String? firstName,
+    String? lastName,
+    String? dob,
+    String? state,
+    Map<String, dynamic>? documentUrls,
+  }) async {
+    try {
+      final payload = <String, dynamic>{
+        if (firstName != null && firstName.isNotEmpty) 'firstName': firstName,
+        if (lastName != null && lastName.isNotEmpty) 'lastName': lastName,
+        if (dob != null && dob.isNotEmpty) 'dob': dob,
+        if (state != null && state.isNotEmpty) 'state': state,
+        if (documentUrls != null && documentUrls.isNotEmpty)
+          'documentUrls': documentUrls,
+      };
+
+      final response = await _client.dio.post(
+        ApiConstants.p2pCourierBackgroundCheck,
+        data: payload,
+      );
+
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        if (data['status'] == 'CLEARED' || data['success'] == true) {
+          try {
+            await _authRepository?.getCurrentUser();
+          } catch (_) {}
+        }
+        return data;
+      }
+      return {'success': false, 'status': 'UNKNOWN', 'message': 'Unexpected response format'};
+    } on DioException catch (e) {
+      if (e.response?.data is Map<String, dynamic>) {
+        return e.response!.data as Map<String, dynamic>;
+      }
+      _handleDioError(e);
+    }
+  }
+
+  @override
   Future<P2pCourierProfile> updateProfile(
       Map<String, dynamic> updates) async {
     try {
@@ -331,10 +372,22 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
   }
 
   @override
-  Future<P2pStripeConnectResult> initiateStripeConnect() async {
+  Future<P2pStripeConnectResult> initiateStripeConnect({
+    String? country,
+    String? returnUrl,
+    String? refreshUrl,
+  }) async {
     try {
-      final response = await _client.dio.post(ApiConstants.p2pCourierMeStripeConnect);
-      return P2pStripeConnectResult.fromJson(response.data as Map<String, dynamic>);
+      final response = await _client.dio.post(
+        ApiConstants.paymentsConnectOnboarding,
+        data: {
+          if (country != null && country.isNotEmpty) 'country': country,
+          if (returnUrl != null && returnUrl.isNotEmpty) 'return_url': returnUrl,
+          if (refreshUrl != null && refreshUrl.isNotEmpty) 'refresh_url': refreshUrl,
+        },
+      );
+      return P2pStripeConnectResult.fromJson(
+          response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       _handleDioError(e);
     }
@@ -343,8 +396,10 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
   @override
   Future<P2pStripeConnectStatus> getStripeConnectStatus() async {
     try {
-      final response = await _client.dio.get(ApiConstants.p2pCourierMeStripeStatus);
-      return P2pStripeConnectStatus.fromJson(response.data as Map<String, dynamic>);
+      final response =
+          await _client.dio.get(ApiConstants.paymentsConnectStatus);
+      return P2pStripeConnectStatus.fromJson(
+          response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       _handleDioError(e);
     }
@@ -353,9 +408,8 @@ class P2pCourierRepositoryImpl implements P2pCourierRepository {
   @override
   Future<String> getStripeDashboardLink() async {
     try {
-      final response = await _client.dio.get(ApiConstants.p2pCourierMeStripeDashboard);
-      final body = response.data as Map<String, dynamic>;
-      return body['url'] as String;
+      final result = await initiateStripeConnect();
+      return result.onboardingUrl;
     } on DioException catch (e) {
       _handleDioError(e);
     }

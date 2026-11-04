@@ -118,6 +118,7 @@ class _DashboardView extends StatelessWidget {
                               label: 'Active routes',
                               value: state.myRoutes
                                   .where((r) =>
+                                      r.hasValidRouteData &&
                                       r.status == RouteStatus.published)
                                   .length
                                   .toString(),
@@ -229,8 +230,12 @@ class _DashboardView extends StatelessWidget {
                       ],
 
                       // All routes list (so couriers can publish drafts)
-                      if (state.myRoutes.isNotEmpty)
-                        _MyRoutesSection(routes: state.myRoutes),
+                      if (state.myRoutes.any((r) => r.hasValidRouteData))
+                        _MyRoutesSection(
+                          routes: state.myRoutes
+                              .where((r) => r.hasValidRouteData)
+                              .toList(),
+                        ),
 
                       const SizedBox(height: 16),
 
@@ -1837,7 +1842,14 @@ class _PayoutSettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () => context.push('/p2p/courier/payout'),
+      onTap: () async {
+        await context.push('/p2p/courier/payout');
+        if (context.mounted) {
+          context
+              .read<CourierDashboardBloc>()
+              .add(const CourierDashboardLoadRequested());
+        }
+      },
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

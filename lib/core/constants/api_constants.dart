@@ -1,8 +1,8 @@
 class ApiConstants {
   static String get baseUrl => const String.fromEnvironment(
     'API_BASE_URL',
-    //defaultValue: 'http://165.232.40.77:3000/api/v1',
-    defaultValue: 'https://analyzed-newer-measured-achieve.trycloudflare.com/api/v1',
+    defaultValue: 'http://201.79.44.216:3000/api/v1',
+    //defaultValue: 'https://analyzed-newer-measured-achieve.trycloudflare.com/api/v1',
   );
 
   static String get stripePublishableKey => const String.fromEnvironment(
@@ -70,11 +70,15 @@ class ApiConstants {
   static const String p2pCourierMe = '/p2p/couriers/me';
   static const String p2pCourierMeSubmit = '/p2p/couriers/me/submit';
   static const String p2pCourierMeKyc = '/p2p/couriers/me/kyc';
+  static const String p2pCourierBackgroundCheck =
+      '/p2p/couriers/verify/background-check';
   static const String p2pCourierMeAvailability = '/p2p/couriers/me/availability';
   static const String p2pCourierMeStatus = '/p2p/couriers/me/status';
-  static const String p2pCourierMeStripeConnect = '/p2p/couriers/me/stripe/connect';
-  static const String p2pCourierMeStripeStatus = '/p2p/couriers/me/stripe/status';
-  static const String p2pCourierMeStripeDashboard = '/p2p/couriers/me/stripe/dashboard-link';
+  static const String p2pCourierMeStripeConnect = '/payments/connect/onboarding-link';
+  static const String p2pCourierMeStripeStatus = '/payments/connect/status';
+  static const String p2pCourierMeStripeDashboard = '/payments/connect/onboarding-link';
+  static const String paymentsConnectOnboarding = '/payments/connect/onboarding-link';
+  static const String paymentsConnectStatus = '/payments/connect/status';
   static String p2pCourierById(String id) => '/p2p/couriers/$id';
   static String p2pCourierReputation(String id) => '/p2p/couriers/$id/reputation';
 

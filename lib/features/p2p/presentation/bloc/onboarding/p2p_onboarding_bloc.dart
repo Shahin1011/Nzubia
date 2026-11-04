@@ -8,37 +8,14 @@ import 'package:customer_nzubia_global/features/p2p/data/exceptions/p2p_exceptio
 part 'p2p_onboarding_event.dart';
 part 'p2p_onboarding_state.dart';
 
-/// Keys carried inside `collectedData` that the bloc maps onto courier-apply
-/// and route-create payloads at submit time.
-class _OnboardingKeys {
-  // Courier profile (matches CreateCourierProfileDto on the backend)
-  static const homeLatitude = 'homeLatitude';
-  static const homeLongitude = 'homeLongitude';
-  static const serviceRadiusKm = 'serviceRadiusKm';
-  static const acceptedCategories = 'acceptedCategories';
-
-  // Optional initial route (matches CreateRouteDto)
-  static const destinationCountry = 'destinationCountry';
-  static const destinationCity = 'destinationCity';
-  static const departureDate = 'departureDate';
-  static const returnDate = 'returnDate';
-  static const pickupOrigin = 'pickupOrigin';
-  static const pickupLatitude = 'pickupLatitude';
-  static const pickupLongitude = 'pickupLongitude';
-  static const capacityKg = 'capacityKg';
-  static const acceptedItemCategories = 'acceptedItemCategories';
-  static const routeNotes = 'routeNotes';
-}
 
 class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
   final P2pCourierRepository _courierRepo;
-  final P2pRouteRepository _routeRepo;
 
   P2pOnboardingBloc({
     required P2pCourierRepository courierRepository,
-    required P2pRouteRepository routeRepository,
+    P2pRouteRepository? routeRepository,
   })  : _courierRepo = courierRepository,
-        _routeRepo = routeRepository,
         super(const P2pOnboardingState()) {
     on<P2pOnboardingStarted>(_onStarted);
     on<P2pOnboardingProfileSubmitted>(_onProfileSubmitted);
@@ -118,7 +95,7 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
       ..addAll(event.data);
     emit(state.copyWith(
       status: OnboardingStatus.step,
-      stepIndex: 5,
+      stepIndex: 4,
       collectedData: merged,
     ));
   }
@@ -132,50 +109,61 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
       // 1. Upload document images to GCS and collect their URLs.
       final docUrls = await _uploadDocuments(state.collectedData);
 
-      // 2. Create the courier profile with service preferences.
-      //    If a profile already exists (409), fetch it and continue — this
-      //    handles the case where a previous submission failed after profile
-      //    creation, leaving the profile stuck in DRAFT.
-      final profilePayload = _extractCourierData(state.collectedData);
-      P2pCourierProfile profile;
+      // 2. Prepare document URLs map for the background check endpoint
+      final docUrlsMap = <String, String>{};
+      for (final doc in docUrls) {
+        final type = (doc['type'] as String?)?.toUpperCase() ?? '';
+        final url = doc['url'] as String? ?? '';
+        if (url.isEmpty) continue;
+        if (type.contains('PASSPORT') ||
+            type.contains('NATIONAL') ||
+            type.contains('DRIVING') ||
+            type.contains('RESIDENCE') ||
+            type.contains('ID')) {
+          docUrlsMap['idFront'] = url;
+        } else if (type == 'SELFIE') {
+          docUrlsMap['selfie'] = url;
+        } else if (type == 'VISA') {
+          docUrlsMap['visa'] = url;
+        }
+      }
+
+      // 3. Format Date of Birth
+      final rawDob = state.collectedData['dob'];
+      String? dobFormatted;
+      if (rawDob != null) {
+        try {
+          final dt =
+              rawDob is DateTime ? rawDob : DateTime.parse(rawDob.toString());
+          dobFormatted =
+              '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+        } catch (_) {
+          dobFormatted = rawDob.toString();
+        }
+      }
+
+      // 4. Run automated real-time background check with documents
+      final bgResult = await _courierRepo.verifyBackgroundCheck(
+        firstName: state.collectedData['first_name'] as String?,
+        lastName: state.collectedData['last_name'] as String?,
+        dob: dobFormatted,
+        state: state.collectedData['state'] as String?,
+        documentUrls: docUrlsMap,
+      );
+
+      final isCleared =
+          bgResult['status'] == 'CLEARED' || bgResult['success'] == true;
+      if (!isCleared) {
+        final reason = bgResult['message'] as String? ??
+            'Verification failed. Background check flagged records. Application rejected. Please contact support.';
+        throw P2pException.forbidden(reason);
+      }
+
+      // 5. Fetch the activated courier profile
+      P2pCourierProfile? profile;
       try {
-        profile = await _courierRepo.applyAsCourier(profilePayload);
-      } on P2pException catch (e) {
-        if (e.statusCode == 409) {
-          profile = await _courierRepo.getMyProfile() ??
-              (throw const P2pException(
-                  statusCode: 404, message: 'Courier profile not found.'));
-        } else {
-          rethrow;
-        }
-      }
-
-      // 3. Save KYC identity data and the uploaded document URLs.
-      final identity = _extractIdentityData(state.collectedData);
-      if (identity.isNotEmpty || docUrls.isNotEmpty) {
-        try {
-          await _courierRepo.submitKyc(
-            identity: identity,
-            documentUrls: docUrls,
-          );
-        } catch (_) {
-          // KYC save failure is non-fatal — the courier can re-upload later.
-        }
-      }
-
-      // 4. Optionally create the initial route in DRAFT.
-      final routeData = _extractRouteData(state.collectedData);
-      if (routeData.isNotEmpty) {
-        try {
-          await _routeRepo.createRoute(routeData);
-        } catch (_) {
-          // intentionally swallowed
-        }
-      }
-
-      // 5. Transition the profile to PENDING_REVIEW so it appears in the
-      //    admin verification queue.
-      await _courierRepo.submitForReview();
+        profile = await _courierRepo.getMyProfile();
+      } catch (_) {}
 
       emit(state.copyWith(
         status: OnboardingStatus.success,
@@ -185,7 +173,7 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
       emit(state.copyWith(
         status: OnboardingStatus.failure,
         errorMessage: e.toString(),
-        stepIndex: 5,
+        stepIndex: 4,
       ));
     }
   }
@@ -195,10 +183,28 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
   Future<List<Map<String, dynamic>>> _uploadDocuments(
       Map<String, dynamic> data) async {
     final results = <Map<String, dynamic>>[];
+    final idDocPath = data['id_document_path'] as String? ??
+        data['passport_image_path'] as String? ??
+        '';
+    final selfiePath = data['selfie_image_path'] as String? ?? '';
+    final visaPath = data['visa_image_path'] as String? ?? '';
+    final itineraryPath = data['itinerary_image_path'] as String? ?? '';
+
+    final rawIdType = (data['id_type'] as String?)?.trim() ?? 'PASSPORT';
+    String docType = 'PASSPORT';
+    if (rawIdType.toLowerCase().contains('national')) {
+      docType = 'NATIONAL_ID';
+    } else if (rawIdType.toLowerCase().contains('driver')) {
+      docType = 'DRIVING_LICENSE';
+    } else if (rawIdType.toLowerCase().contains('residence')) {
+      docType = 'RESIDENCE_PERMIT';
+    }
+
     final uploads = <String, String>{
-      'PASSPORT': data['passport_image_path'] as String? ?? '',
-      'VISA': data['visa_image_path'] as String? ?? '',
-      'ITINERARY': data['itinerary_image_path'] as String? ?? '',
+      docType: idDocPath,
+      'SELFIE': selfiePath,
+      'VISA': visaPath,
+      'ITINERARY': itineraryPath,
     };
 
     for (final entry in uploads.entries) {
@@ -218,56 +224,7 @@ class P2pOnboardingBloc extends Bloc<P2pOnboardingEvent, P2pOnboardingState> {
     return results;
   }
 
-  Map<String, dynamic> _extractIdentityData(Map<String, dynamic> data) {
-    const keys = [
-      'full_name', 'first_name', 'last_name', 'dob',
-      'nationality', 'address_line1', 'id_type', 'id_number',
-    ];
-    return {
-      for (final k in keys)
-        if (data[k] != null) k: data[k],
-    };
-  }
-
   void _onReset(P2pOnboardingReset event, Emitter<P2pOnboardingState> emit) {
     emit(const P2pOnboardingState());
-  }
-
-  Map<String, dynamic> _extractCourierData(Map<String, dynamic> data) {
-    const keys = [
-      _OnboardingKeys.homeLatitude,
-      _OnboardingKeys.homeLongitude,
-      _OnboardingKeys.serviceRadiusKm,
-      _OnboardingKeys.acceptedCategories,
-    ];
-    return {
-      for (final k in keys)
-        if (data[k] != null) k: data[k],
-    };
-  }
-
-  Map<String, dynamic> _extractRouteData(Map<String, dynamic> data) {
-    const required = [
-      _OnboardingKeys.destinationCountry,
-      _OnboardingKeys.destinationCity,
-      _OnboardingKeys.departureDate,
-      _OnboardingKeys.pickupOrigin,
-      _OnboardingKeys.capacityKg,
-    ];
-    final hasRequired = required.every((k) => data[k] != null);
-    if (!hasRequired) return const {};
-
-    const optional = [
-      _OnboardingKeys.returnDate,
-      _OnboardingKeys.pickupLatitude,
-      _OnboardingKeys.pickupLongitude,
-      _OnboardingKeys.acceptedItemCategories,
-      _OnboardingKeys.routeNotes,
-    ];
-
-    return {
-      for (final k in [...required, ...optional])
-        if (data[k] != null) k: data[k],
-    };
   }
 }
