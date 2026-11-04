@@ -45,14 +45,21 @@ class CourierDashboardBloc
   ) async {
     emit(state.copyWith(status: CourierDashboardStatus.loading));
     try {
-      final profile = await _courierRepo.getMyProfile();
-      if (profile == null) {
+      final initialProfile = await _courierRepo.getMyProfile();
+      if (initialProfile == null) {
         emit(state.copyWith(
           status: CourierDashboardStatus.failure,
           errorMessage: 'No courier profile found. Please apply first.',
         ));
         return;
       }
+
+      var profile = initialProfile;
+      // Sync real-time Stripe Connect payout readiness
+      try {
+        final stripeStatus = await _courierRepo.getStripeConnectStatus();
+        profile = initialProfile.copyWith(payoutReady: stripeStatus.payoutReady);
+      } catch (_) {}
 
       // Load courier-owned routes. Pick the next PUBLISHED route by departure
       // as the "active" route for the dashboard hero card.
@@ -64,18 +71,25 @@ class CourierDashboardBloc
       }
       P2pRoute? activeRoute;
       for (final r in myRoutes) {
-        if (r.status == RouteStatus.published) {
+        if (r.hasValidRouteData && r.status == RouteStatus.published) {
           activeRoute = r;
           break;
         }
       }
       if (activeRoute == null && myRoutes.isNotEmpty) {
-        activeRoute = myRoutes.first;
+        final valid = myRoutes.where((r) => r.hasValidRouteData).toList();
+        if (valid.isNotEmpty) {
+          activeRoute = valid.first;
+        }
       }
       // If routes list is empty or doesn't have an active route, but courier profile has an active destination_route:
-      if (activeRoute == null && profile.destinationRoute != null && profile.destinationRoute!.isNotEmpty) {
+      final rawDest = profile.destinationRoute?.trim();
+      final hasRealDest = rawDest != null &&
+          rawDest.isNotEmpty &&
+          rawDest.toLowerCase() != 'global';
+      if (activeRoute == null && hasRealDest) {
         String destCity = '';
-        String destCountry = profile.destinationRoute!;
+        String destCountry = rawDest;
         if (destCountry.contains(',')) {
           final parts = destCountry.split(',');
           destCity = parts.first.trim();
